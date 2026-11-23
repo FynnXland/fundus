@@ -167,3 +167,5 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   Workflow: R2- und Deploy-Schritte nur mit Repo-Variable `FUNDUS_DEPLOY=1`; Secrets `CLOUDFLARE_API_TOKEN`,
   `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`. Lokal mit `wrangler dev` geprüft: Seite, Vorschau
   aus lokalem R2, `/mcp` (Suche, Vorschau), Prius und Toy Car in 3D unter der CSP.
+
+- 23.11.2026 abends: Linkprüfung `--max 5000` lief beim Herunterfahren noch, Ergebnis verloren (schreibt erst am Ende). Nach dem Neustart erneut starten. Cloudflare: R2 im Konto noch nicht freigeschaltet, Bucket und Tokens folgen.
