@@ -1,0 +1,194 @@
+{
+ "tree": [
+  {
+   "path": "LICENSE",
+   "type": "blob",
+   "size": 1141
+  },
+  {
+   "path": "README.md",
+   "type": "blob",
+   "size": 792
+  },
+  {
+   "path": "assets/1st place medal/3D/1st_place_medal_3d.png",
+   "type": "blob",
+   "size": 30635
+  },
+  {
+   "path": "assets/1st place medal/Color/1st_place_medal_color.svg",
+   "type": "blob",
+   "size": 10552
+  },
+  {
+   "path": "assets/1st place medal/Flat/1st_place_medal_flat.svg",
+   "type": "blob",
+   "size": 1666
+  },
+  {
+   "path": "assets/1st place medal/High Contrast/1st_place_medal_high_contrast.svg",
+   "type": "blob",
+   "size": 1953
+  },
+  {
+   "path": "assets/Blackbird/3D/blackbird_3d.png",
+   "type": "blob",
+   "size": 30086
+  },
+  {
+   "path": "assets/Blackbird/Color/blackbird_color.svg",
+   "type": "blob",
+   "size": 44724
+  },
+  {
+   "path": "assets/Blackbird/Flat/blackbird_flat.svg",
+   "type": "blob",
+   "size": 1698
+  },
+  {
+   "path": "assets/Blackbird/High Contrast/blackbird_high_contrast.svg",
+   "type": "blob",
+   "size": 3605
+  },
+  {
+   "path": "assets/Eight oclock/3D/eight_oclock_3d.png",
+   "type": "blob",
+   "size": 43762
+  },
+  {
+   "path": "assets/Eight oclock/Color/eight_oclock_color.svg",
+   "type": "blob",
+   "size": 7957
+  },
+  {
+   "path": "assets/Eight oclock/Flat/eight_oclock_flat.svg",
+   "type": "blob",
+   "size": 1226
+  },
+  {
+   "path": "assets/Eight oclock/High Contrast/eight_oclock_high_contrast.svg",
+   "type": "blob",
+   "size": 802
+  },
+  {
+   "path": "assets/Grinning face/3D/grinning_face_3d.png",
+   "type": "blob",
+   "size": 38711
+  },
+  {
+   "path": "assets/Grinning face/Color/grinning_face_color.svg",
+   "type": "blob",
+   "size": 6686
+  },
+  {
+   "path": "assets/Grinning face/Flat/grinning_face_flat.svg",
+   "type": "blob",
+   "size": 1273
+  },
+  {
+   "path": "assets/Grinning face/High Contrast/grinning_face_high_contrast.svg",
+   "type": "blob",
+   "size": 1206
+  },
+  {
+   "path": "assets/Waving hand/Dark/3D/waving_hand_3d_dark.png",
+   "type": "blob",
+   "size": 32548
+  },
+  {
+   "path": "assets/Waving hand/Dark/Color/waving_hand_color_dark.svg",
+   "type": "blob",
+   "size": 29174
+  },
+  {
+   "path": "assets/Waving hand/Dark/Flat/waving_hand_flat_dark.svg",
+   "type": "blob",
+   "size": 4893
+  },
+  {
+   "path": "assets/Waving hand/Default/3D/waving_hand_3d_default.png",
+   "type": "blob",
+   "size": 34079
+  },
+  {
+   "path": "assets/Waving hand/Default/Color/waving_hand_color_default.svg",
+   "type": "blob",
+   "size": 31309
+  },
+  {
+   "path": "assets/Waving hand/Default/Flat/waving_hand_flat_default.svg",
+   "type": "blob",
+   "size": 4893
+  },
+  {
+   "path": "assets/Waving hand/Default/High Contrast/waving_hand_high_contrast_default.svg",
+   "type": "blob",
+   "size": 7118
+  },
+  {
+   "path": "assets/Waving hand/Light/3D/waving_hand_3d_light.png",
+   "type": "blob",
+   "size": 30539
+  },
+  {
+   "path": "assets/Waving hand/Light/Color/waving_hand_color_light.svg",
+   "type": "blob",
+   "size": 30913
+  },
+  {
+   "path": "assets/Waving hand/Light/Flat/waving_hand_flat_light.svg",
+   "type": "blob",
+   "size": 4893
+  },
+  {
+   "path": "assets/Waving hand/Medium-Dark/3D/waving_hand_3d_medium-dark.png",
+   "type": "blob",
+   "size": 32475
+  },
+  {
+   "path": "assets/Waving hand/Medium-Dark/Color/waving_hand_color_medium-dark.svg",
+   "type": "blob",
+   "size": 30575
+  },
+  {
+   "path": "assets/Waving hand/Medium-Dark/Flat/waving_hand_flat_medium-dark.svg",
+   "type": "blob",
+   "size": 4893
+  },
+  {
+   "path": "assets/Waving hand/Medium-Light/3D/waving_hand_3d_medium-light.png",
+   "type": "blob",
+   "size": 31149
+  },
+  {
+   "path": "assets/Waving hand/Medium-Light/Color/waving_hand_color_medium-light.svg",
+   "type": "blob",
+   "size": 30913
+  },
+  {
+   "path": "assets/Waving hand/Medium-Light/Flat/waving_hand_flat_medium-light.svg",
+   "type": "blob",
+   "size": 4893
+  },
+  {
+   "path": "assets/Waving hand/Medium/3D/waving_hand_3d_medium.png",
+   "type": "blob",
+   "size": 33085
+  },
+  {
+   "path": "assets/Waving hand/Medium/Color/waving_hand_color_medium.svg",
+   "type": "blob",
+   "size": 30982
+  },
+  {
+   "path": "assets/Waving hand/Medium/Flat/waving_hand_flat_medium.svg",
+   "type": "blob",
+   "size": 4893
+  },
+  {
+   "path": "assets/Waving hand/metadata.json",
+   "type": "blob",
+   "size": 458
+  }
+ ]
+}

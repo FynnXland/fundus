@@ -63,6 +63,24 @@ Noch offen aus den Stand-Dateien: Videoprobe in der Detailansicht (`PREVIEW_TYPE
 `preview.video` in `check-links.mjs`), `minisearch` aus `package.json` entfernen. Openclipart-Sitemap: entschieden, nur der Feed
 (Fynn, 23.11.2026), kein Eintrag mehr offen.
 
+## Einbindung 23.11.2026 abends: 3D-Fahrzeuge, Icons, KI-Anbindung
+
+- fundus-3d (`docs/stand/fundus-3d.md`): Gazebo Fuel (`fuel.mjs`) eingeschaltet, 2.642 Modelle. Sketchfab abgelehnt
+  (Bedingungen). Offen für Fynn: Objaverse (Sketchfab-Vorschaubilder), OpenGameArt-Listenseiten für 3D-Fahrzeuge.
+- fundus-icons (`docs/stand/fundus-icons.md`): OpenMoji, Twemoji, Noto Emoji (2D), Fluent Emoji, game-icons, Streamline
+  eingeschaltet, 14.643 Einzelicons. Offen für Fynn: Noto 3D (Lizenz der 3D-Dateien unklar). Vorschlag a2 (alle
+  Iconify-Icons als Set-Ansicht im Browser) noch nicht gebaut.
+- fundus-mcp (`docs/stand/fundus-mcp.md`, `docs/KI-ANBINDUNG.md`, `mcp/`): MCP-Server, lokal geprüft (Probelauf gegen
+  Port 4570). CI installiert `mcp/` vor `npm test`. Hosten braucht Cloudflare-Konto (Fynn), dann `functions/mcp.js`.
+  Seite „KI anschließen“ in `src/` erst, wenn eine öffentliche Adresse steht.
+- Taxonomie: Icons nach `meta.stil`; 3D neu „Schuhe“ und „Spielzeug“ vor Fahrzeugen (Google-Scans in Fuel), Drohnen,
+  U-Bahn, Golfwagen usw. als Fahrzeuge. Fahrzeuge & Raumfahrt jetzt 320 (vorher 41).
+- Katalog: 59.622 Objekte. 3D 4.561, Icons 14.906.
+- **Vorschau-Speicher:** schon über 22.000 Dateien, mit Icons und Fuel bald rund 40.000. Grenze Cloudflare Pages 20.000
+  Dateien: R2 oder ein anderer Speicher ist vor dem Hosten Pflicht (Entscheidung Fynn).
+- `check-links.mjs`: für die Icon-Quellen nur die Vorschau bei raw.githubusercontent.com prüfen, nicht die
+  github.com-Landeseiten (sonst massenhaft 429). Noch nicht umgesetzt.
+
 ## Wenn ein Unterchat seinen Bericht schickt: einbinden
 
 1. Bericht und `docs/stand/<name>.md` lesen, neue Dateien ansehen.

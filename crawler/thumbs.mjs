@@ -108,6 +108,9 @@ async function main() {
   setHostGap('cdn.jsdelivr.net', 120);
   // opengameart.org/robots.txt asks for Crawl-delay: 10
   setHostGap('opengameart.org', 10000);
+  // icons (about 14,600 files) and the Khronos/Godot pictures: GitHub names no limit for raw, politeFetch backs off on 429
+  setHostGap('raw.githubusercontent.com', 400);
+  setHostGap('fuel.gazebosim.org', 500);
 
   // The register can be committed while the image files are not (CI), so a missing file counts as new.
   // --quelle <id> and --max <n> limit a run (handy for a first look or for splitting a big backlog)

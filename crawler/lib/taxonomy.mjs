@@ -45,7 +45,9 @@ export const UNTER = {
   '3d': [
     W('Geometrie & Mathematik', 'polyhedron', 'polyhedra', 'polytope', 'prism', 'antiprism', 'pyramid', 'bipyramid', 'trapezohedron', 'rotunda', 'cupola', 'stellation', 'deltahedron', 'compound of', 'torus', 'tori', 'klein bottle', 'möbius', 'mobius', 'knot', 'minimal surface', 'tessellation', 'lattice', 'fractal', 'curve', 'courbe', 'viviani', 'geometr*', /hedr(?:on|a)\b/, /\bJ\d{1,2}\b/),
     W('Anatomie & Biologie', 'bodyparts3d', 'anatomy', 'anatomical', 'bone', 'skull', 'cranium', 'neurocranium', 'rib', 'vertebra', 'vertebrae', 'cartilage', 'femur', 'tibia', 'pelvis', 'mandible', 'tooth', 'teeth', 'heart', 'brain', 'organ', 'muscle', 'skeleton', 'fossil', 'shell', 'tortoise', 'turtle', 'insect', 'protein', 'molecule', 'virus', 'cell', 'ear', 'jaw', 'hip', 'spine', 'clavicle', 'fibula', 'humerus', 'ulna', 'scapula', 'sternum', 'ventricle', 'artery', 'arteries', 'aorta', 'vein', 'venography', 'angiography', 'abdominal', 'kidney', 'liver', 'lung', 'cta', 'mri', 'crânio', 'schädel'),
-    W('Fahrzeuge & Raumfahrt', 'vehicle', 'car', 'automobile', /(?<!hand\s)\btrucks?\b/, 'lorry', 'bus', 'van', 'tractor', 'forklift', 'train', 'locomotive', 'tram', 'wagon', 'railcar', 'ship', 'boat', 'yacht', 'sailboat', 'canoe', 'kayak', 'submarine', 'ferry', 'pinnace', 'aircraft', 'jet', 'airplane', 'aeroplane', 'seaplane', 'warplane', 'airliner', 'glider', 'helicopter', 'drone', 'rocket', 'spacecraft', 'space shuttle', 'lunar module', 'rover', 'motorcycle', 'motorbike', 'scooter', 'bike', 'bicycle', 'panzer', /\b(?:battle|army|military|merkava|leopard|tiger|sherman|abrams|t-\d{2})\s+tanks?\b/, 'kart', 'probe', 'space probe', 'space telescope', 'lander', 'carriage', 'fahrzeug', 'auto', 'schiff', 'flugzeug'),
+    W('Schuhe', 'shoe', 'sneaker', 'boot', 'sandal', 'slipper', 'loafer', 'moccasin', 'heel', 'oxford shoe', 'vans', 'crocs', 'schuh'),
+    W('Spielzeug', 'toy', 'lego', 'duplo', 'plush', 'plushie', 'teddy', 'doll', 'puzzle', 'rattle', 'sorting', 'stacking', 'baby', 'kids', 'spielzeug'),
+    W('Fahrzeuge & Raumfahrt', 'vehicle', 'car', 'automobile', /(?<!hand\s)\btrucks?\b/, 'lorry', 'bus', 'van', 'tractor', 'forklift', 'train', 'locomotive', 'tram', 'wagon', 'railcar', 'ship', 'boat', 'yacht', 'sailboat', 'canoe', 'kayak', 'submarine', 'ferry', 'pinnace', 'aircraft', 'jet', 'airplane', 'aeroplane', 'seaplane', 'warplane', 'airliner', 'glider', 'helicopter', 'drone', 'rocket', 'spacecraft', 'space shuttle', 'lunar module', 'rover', 'motorcycle', 'motorbike', 'scooter', 'bike', 'bicycle', 'panzer', /\b(?:battle|army|military|merkava|leopard|tiger|sherman|abrams|t-\d{2})\s+tanks?\b/, 'kart', 'probe', 'space probe', 'space telescope', 'space station', 'capsule', 'lander', 'uav', 'quadrotor', 'quadcopter', 'multirotor', 'multicopter', 'hexacopter', 'vtol', 'auv', 'rov', 'ugv', 'usv', 'golf cart', 'cart', 'wheelchair', 'buggy', 'atv', 'trailer', 'pickup', 'suv', 'hatchback', 'sedan', 'ambulance', 'fire truck', 'subway', 'metro', 'cessna', 'prius', 'wam-v', 'carriage', 'fahrzeug', 'auto', 'schiff', 'flugzeug'),
     W('Musikinstrumente', 'violin', 'viola', 'cello', 'guitar', 'piano', 'drum', 'trumpet', 'trombone', 'flute', 'clarinet', 'saxophone', 'harp', 'accordion', 'banjo', 'ukulele', 'lute', 'xylophone', 'instrument', 'musical instrument'),
     W('Waffen & Militär', 'weapon', 'rifle', 'gun', 'pistol', 'revolver', 'cartridge', 'ammunition', 'bullet', 'grenade', 'cannon', 'mortar', 'sword', 'dagger', 'estoc', 'machete', 'spear', 'bow', 'arrow', 'shield', 'armor', 'armour', 'parabellum', 'nato'),
     W('Figuren & Skulpturen', 'statue', 'sculpture', 'bust', 'figurine', 'figure', 'carved', 'carving', 'relief', 'idol', 'totem', 'gargoyle', 'lion', 'elephant', 'skulptur', 'statuette', 'venus', 'torso', 'scan the world', 'death mask', 'dödsmask', 'gisant'),
@@ -103,10 +105,11 @@ export const UNTER = {
     W('Atmosphären & Feldaufnahmen', 'ambience', 'ambient', 'atmosphere', 'atmosfeer', 'sfeer', 'drone', 'room tone', 'field recording', 'soundscape', 'phonography', 'soundmap', 'geluid van nederland', 'radio aporee'),
   ],
   icon: [
+    R('Farbig', 'multicolor', 'multi-color', 'colorful', 'flat color'),
     R('Allgemein', 'material', 'general', 'ui'),
     R('Marken & Logos', 'logo', 'brand'),
     R('Emoji', 'emoji'),
-    R('Flaggen & Karten', 'flag', 'map'),
+    W('Flaggen & Karten', 'flag', 'map', 'country flag', 'flags'),
   ],
   schrift: [
     R('Serif', 'serif'),
@@ -165,9 +168,17 @@ export const UNTER = {
 
 export const SONSTIGES = 'Sonstiges';
 
+// Icon styles that the icon adapters set in meta.stil; they decide before any word rule.
+const ICON_STILE = new Set(['Emoji', '3D', 'Farbig', 'Illustrationen', 'Pixel', 'Spiele']);
+
 export function unterkategorie(item) {
   const regeln = UNTER[item.kind];
   if (!regeln) return SONSTIGES;
+  if (item.kind === 'icon') {
+    if (ICON_STILE.has(item.meta?.stil)) return item.meta.stil;
+    // Iconify sets: the set's category ("UI Multicolor", "Emoji", "Flags") says more than its name
+    for (const r of regeln) if (item.meta?.kategorie && r.re.test(item.meta.kategorie)) return r.label;
+  }
   const rest = [...(item.tags ?? []), item.meta?.kategorie, item.meta?.art, item.description?.slice(0, 160)].filter(Boolean).join(' · ');
   for (const text of [item.title ?? '', rest]) {
     for (const r of regeln) if (r.re.test(text)) return r.label;

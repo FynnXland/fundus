@@ -20,7 +20,9 @@ test('3D: der Titel entscheidet vor den Schlagwörtern', () => {
 });
 
 test('3D: Fahrzeuge erkannt, Gasflasche und Sackkarre nicht', () => {
-  for (const t of ['Toy Car', 'Dutch Ship Large 01', 'Merkava Tank 3D print model', 'Voskhod Rocket', 'Curiosity Rover', 'Fire Truck']) {
+  assert.equal(u('3d', 'Toy Car'), 'Spielzeug');
+  assert.equal(u('3d', 'Boat Shoe', ['boat']), 'Schuhe');
+  for (const t of ['Dutch Ship Large 01', 'Merkava Tank 3D print model', 'Voskhod Rocket', 'Curiosity Rover', 'Fire Truck']) {
     assert.equal(u('3d', t), 'Fahrzeuge & Raumfahrt', t);
   }
   assert.notEqual(u('3d', 'Propane Tank'), 'Fahrzeuge & Raumfahrt');
@@ -53,4 +55,17 @@ test('Musik und Sounds: Komponisten, Vogelstimmen, Feldaufnahmen', () => {
   assert.equal(u('sound', 'Fernsprecher Bergmannstraße 99', ['field recording', 'soundscape']), 'Stadt & Verkehr');
   assert.equal(u('sound', 'Algemene sfeer van station Hilversum'), 'Stadt & Verkehr');
   assert.equal(u('sound', 'Messton(1000hz)'), 'Instrumente & Töne');
+});
+
+test('Icons: Stil aus dem Adapter vor dem Titel, Iconify-Kategorie vor dem Set-Namen', () => {
+  assert.equal(unterkategorie({ kind: 'icon', title: 'Red Apple', tags: ['emoji'], meta: { stil: '3D' } }), '3D');
+  assert.equal(unterkategorie({ kind: 'icon', title: 'Flat Color Icons', tags: [], meta: { kategorie: 'UI Multicolor' } }), 'Farbig');
+  assert.equal(unterkategorie({ kind: 'icon', title: 'Maple leaf', tags: [] }), 'Sonstiges');
+  assert.equal(unterkategorie({ kind: 'icon', title: 'Flag: Germany', tags: [] }), 'Flaggen & Karten');
+});
+
+test('3D: Drohnen und Gazebo-Fahrzeuge', () => {
+  for (const t of ['X3 UAV Config 2', 'Quadrotor', 'Golf Cart', 'Subway R160', 'International Space Station', 'Prius Hybrid']) {
+    assert.equal(u('3d', t), 'Fahrzeuge & Raumfahrt', t);
+  }
 });

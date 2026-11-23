@@ -34,6 +34,7 @@ jobs:
       - run: node crawler/check-links.mjs --max 5000
         env:
           FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
+      - run: npm --prefix mcp ci
       - run: npm test
       - name: Daten committen
         run: |

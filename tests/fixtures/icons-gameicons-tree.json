@@ -1,0 +1,89 @@
+{
+ "tree": [
+  {
+   "path": "lorc/ace.svg",
+   "type": "blob",
+   "size": 1983
+  },
+  {
+   "path": "lorc/acid-blob.svg",
+   "type": "blob",
+   "size": 2469
+  },
+  {
+   "path": "delapouite/3d-glasses.svg",
+   "type": "blob",
+   "size": 320
+  },
+  {
+   "path": "delapouite/3d-hammer.svg",
+   "type": "blob",
+   "size": 636
+  },
+  {
+   "path": "andymeneely/police-badge.svg",
+   "type": "blob",
+   "size": 1466
+  },
+  {
+   "path": "andymeneely/riposte.svg",
+   "type": "blob",
+   "size": 289
+  },
+  {
+   "path": "viscious-speed/abstract-001.svg",
+   "type": "blob",
+   "size": 6115
+  },
+  {
+   "path": "viscious-speed/abstract-002.svg",
+   "type": "blob",
+   "size": 7035
+  },
+  {
+   "path": "zeromancer/heart-minus.svg",
+   "type": "blob",
+   "size": 361
+  },
+  {
+   "path": "zeromancer/heart-plus.svg",
+   "type": "blob",
+   "size": 425
+  },
+  {
+   "path": "various-artists/infinity.svg",
+   "type": "blob",
+   "size": 1395
+  },
+  {
+   "path": "various-artists/salmon.svg",
+   "type": "blob",
+   "size": 4102
+  },
+  {
+   "path": "badges/anvil.svg",
+   "type": "blob",
+   "size": 488
+  },
+  {
+   "path": "badges/arrow-down.svg",
+   "type": "blob",
+   "size": 226
+  },
+  {
+   "path": "README.md",
+   "type": "blob",
+   "size": 1580
+  },
+  {
+   "path": "check-svgs.sh",
+   "type": "blob",
+   "size": 713
+  },
+  {
+   "path": "license.txt",
+   "type": "blob",
+   "size": 1421
+  }
+ ]
+}

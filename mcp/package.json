@@ -1,0 +1,31 @@
+{
+  "name": "fundus-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "KI-Anbindung (MCP-Server) für den Fundus-Katalog freier Assets: suchen, Vorschau ansehen, Details mit Lizenz, direkt von der Quelle herunterladen.",
+  "type": "module",
+  "bin": {
+    "fundus-mcp": "src/stdio.mjs"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "start": "node src/stdio.mjs",
+    "sync": "node scripts/sync.mjs",
+    "prepack": "node scripts/sync.mjs",
+    "test": "node --test ../tests/mcp.test.mjs",
+    "probe": "node scripts/probelauf.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@jsquash/webp": "1.5.0",
+    "@modelcontextprotocol/server": "2.4.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/client": "2.4.0"
+  }
+}

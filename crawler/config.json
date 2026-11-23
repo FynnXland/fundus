@@ -386,5 +386,18 @@
   },
   "wellcome": {
     "budget": 40
+  },
+  "fuel": {
+    "budget": 40,
+    "proSeite": 100,
+    "wiederholenNachTagen": 14
+  },
+  "openmoji": {},
+  "twemoji": {},
+  "notoemoji": {},
+  "fluentemoji": {},
+  "gameicons": {},
+  "streamline": {
+    "jeStil": 120
   }
 }

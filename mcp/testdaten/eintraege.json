@@ -1,0 +1,1041 @@
+[
+ {
+  "id": "polyhaven:gallinera_chair",
+  "sig": "3D·PH·SHTCY",
+  "kind": "3d",
+  "title": "Gallinera Chair",
+  "tags": [
+   "furniture",
+   "seating",
+   "vintage",
+   "antique",
+   "philippines",
+   "traditional",
+   "old",
+   "wooden"
+  ],
+  "creator": {
+   "name": "Ulan Cabanilla"
+  },
+  "source": {
+   "id": "polyhaven",
+   "name": "Poly Haven",
+   "url": "https://polyhaven.com/a/gallinera_chair"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "model",
+   "thumb": "https://cdn.polyhaven.com/asset_img/thumbs/gallinera_chair.png?width=480&height=256&format=webp&v=55377660",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/gallinera_chair/gallinera_chair_1k.gltf"
+  },
+  "downloads": [
+   {
+    "label": "glTF-Paket (2K-Texturen)",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/gallinera_chair/gallinera_chair_2k.gltf",
+    "format": "zip",
+    "size": 7707955,
+    "paket": {
+     "name": "gallinera_chair_gltf_2k",
+     "files": [
+      {
+       "path": "gallinera_chair_2k.gltf",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/gallinera_chair/gallinera_chair_2k.gltf"
+      },
+      {
+       "path": "textures/gallinera_chair_nor_gl_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/gallinera_chair/gallinera_chair_nor_gl_2k.jpg"
+      },
+      {
+       "path": "textures/gallinera_chair_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/gallinera_chair/gallinera_chair_diff_2k.jpg"
+      },
+      {
+       "path": "textures/gallinera_chair_arm_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/gallinera_chair/gallinera_chair_arm_2k.jpg"
+      }
+     ],
+     "size": 7707955
+    }
+   },
+   {
+    "label": "Blender-Paket (.blend)",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/gallinera_chair/gallinera_chair_2k.blend",
+    "format": "zip",
+    "size": 11162082,
+    "paket": {
+     "name": "gallinera_chair_blend",
+     "files": [
+      {
+       "path": "gallinera_chair_2k.blend",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/gallinera_chair/gallinera_chair_2k.blend"
+      },
+      {
+       "path": "textures/gallinera_chair_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/gallinera_chair/gallinera_chair_diff_2k.jpg"
+      },
+      {
+       "path": "textures/gallinera_chair_nor_gl_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/gallinera_chair/gallinera_chair_nor_gl_2k.exr"
+      },
+      {
+       "path": "textures/gallinera_chair_rough_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/gallinera_chair/gallinera_chair_rough_2k.exr"
+      }
+     ],
+     "size": 11162082
+    }
+   },
+   {
+    "label": "FBX-Paket",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/gallinera_chair/gallinera_chair_2k.fbx",
+    "format": "zip",
+    "size": 11126459,
+    "paket": {
+     "name": "gallinera_chair_fbx",
+     "files": [
+      {
+       "path": "gallinera_chair_2k.fbx",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/gallinera_chair/gallinera_chair_2k.fbx"
+      },
+      {
+       "path": "textures/gallinera_chair_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/gallinera_chair/gallinera_chair_diff_2k.jpg"
+      },
+      {
+       "path": "textures/gallinera_chair_nor_gl_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/gallinera_chair/gallinera_chair_nor_gl_2k.exr"
+      },
+      {
+       "path": "textures/gallinera_chair_rough_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/gallinera_chair/gallinera_chair_rough_2k.exr"
+      }
+     ],
+     "size": 11126459
+    }
+   }
+  ],
+  "meta": {
+   "polygone": "11560",
+   "aufloesung": "4096 × 4096 px",
+   "art": "3D-Modell"
+  },
+  "attribution": "„Gallinera Chair“ von Ulan Cabanilla, https://polyhaven.com/a/gallinera_chair (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-23T00:10:40.558Z",
+  "unter": "Möbel",
+  "vorschau": {
+   "pfad": "14/3585b7405fcb4d.webp",
+   "b": 200,
+   "h": 320
+  }
+ },
+ {
+  "id": "polyhaven:painted_wooden_chair_01",
+  "sig": "3D·PH·2ESPN",
+  "kind": "3d",
+  "title": "Painted Wooden Chair 01",
+  "tags": [
+   "furniture",
+   "seating",
+   "chair",
+   "wood",
+   "painted",
+   "farmhouse",
+   "dining",
+   "diner",
+   "american",
+   "kitchen"
+  ],
+  "creator": {
+   "name": "Kuutti Siitonen"
+  },
+  "source": {
+   "id": "polyhaven",
+   "name": "Poly Haven",
+   "url": "https://polyhaven.com/a/painted_wooden_chair_01"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "model",
+   "thumb": "https://cdn.polyhaven.com/asset_img/thumbs/painted_wooden_chair_01.png?width=480&height=256&format=webp&v=d08f51dc",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/painted_wooden_chair_01/painted_wooden_chair_01_1k.gltf"
+  },
+  "downloads": [
+   {
+    "label": "glTF-Paket (2K-Texturen)",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/painted_wooden_chair_01/painted_wooden_chair_01_2k.gltf",
+    "format": "zip",
+    "size": 1532106,
+    "paket": {
+     "name": "painted_wooden_chair_01_gltf_2k",
+     "files": [
+      {
+       "path": "painted_wooden_chair_01_2k.gltf",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/painted_wooden_chair_01/painted_wooden_chair_01_2k.gltf"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_nor_gl_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_nor_gl_2k.jpg"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_diff_2k.jpg"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_arm_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_arm_2k.jpg"
+      }
+     ],
+     "size": 1532106
+    }
+   },
+   {
+    "label": "Blender-Paket (.blend)",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/painted_wooden_chair_01/painted_wooden_chair_01_2k.blend",
+    "format": "zip",
+    "size": 4944822,
+    "paket": {
+     "name": "painted_wooden_chair_01_blend",
+     "files": [
+      {
+       "path": "painted_wooden_chair_01_2k.blend",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/painted_wooden_chair_01/painted_wooden_chair_01_2k.blend"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_nor_gl_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/painted_wooden_chair_01/painted_wooden_chair_01_nor_gl_2k.exr"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_diff_2k.jpg"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_rough_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_rough_2k.jpg"
+      }
+     ],
+     "size": 4944822
+    }
+   },
+   {
+    "label": "FBX-Paket",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/painted_wooden_chair_01/painted_wooden_chair_01_2k.fbx",
+    "format": "zip",
+    "size": 4849711,
+    "paket": {
+     "name": "painted_wooden_chair_01_fbx",
+     "files": [
+      {
+       "path": "painted_wooden_chair_01_2k.fbx",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/painted_wooden_chair_01/painted_wooden_chair_01_2k.fbx"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_nor_gl_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/painted_wooden_chair_01/painted_wooden_chair_01_nor_gl_2k.exr"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_diff_2k.jpg"
+      },
+      {
+       "path": "textures/painted_wooden_chair_01_rough_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/painted_wooden_chair_01/painted_wooden_chair_01_rough_2k.jpg"
+      }
+     ],
+     "size": 4849711
+    }
+   }
+  ],
+  "meta": {
+   "polygone": "724",
+   "aufloesung": "8192 × 8192 px",
+   "art": "3D-Modell"
+  },
+  "attribution": "„Painted Wooden Chair 01“ von Kuutti Siitonen, https://polyhaven.com/a/painted_wooden_chair_01 (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-23T00:09:11.760Z",
+  "unter": "Möbel",
+  "vorschau": {
+   "pfad": "c6/631494597d9a04.webp",
+   "b": 163,
+   "h": 320
+  }
+ },
+ {
+  "id": "khronos:SheenChair",
+  "sig": "3D·C8·INOEP",
+  "kind": "3d",
+  "title": "Sheen Chair",
+  "description": "Chair using material variants and sheen.",
+  "tags": [
+   "gltf"
+  ],
+  "creator": {
+   "name": "Eric Chadwick"
+  },
+  "source": {
+   "id": "khronos",
+   "name": "Khronos glTF Sample Assets",
+   "url": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/SheenChair"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "model",
+   "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb",
+   "thumb": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/screenshot/screenshot.jpg"
+  },
+  "downloads": [
+   {
+    "label": "glTF Binary (.glb)",
+    "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF-Binary/SheenChair.glb",
+    "format": "glb",
+    "size": 4125648
+   },
+   {
+    "label": "glTF-Paket (Einzeldateien)",
+    "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF/SheenChair.gltf",
+    "format": "zip",
+    "size": 4138211,
+    "paket": {
+     "name": "SheenChair_gltf",
+     "files": [
+      {
+       "path": "SheenChair.gltf",
+       "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF/SheenChair.gltf"
+      },
+      {
+       "path": "chair_fabric_albedo.png",
+       "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF/chair_fabric_albedo.png"
+      },
+      {
+       "path": "chair_fabric_normal.png",
+       "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF/chair_fabric_normal.png"
+      },
+      {
+       "path": "chair_label.png",
+       "url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/SheenChair/glTF/chair_label.png"
+      }
+     ],
+     "size": 4138211
+    }
+   }
+  ],
+  "attribution": "„Sheen Chair“ von Eric Chadwick, https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/SheenChair (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-23T13:21:33.965Z",
+  "unter": "Möbel"
+ },
+ {
+  "id": "wikimedia:88992301",
+  "sig": "3D·WM·003MH",
+  "kind": "3d",
+  "title": "Great enneagrammic prism",
+  "tags": [
+   "stl prisms and related",
+   "prisms based on stars"
+  ],
+  "creator": {
+   "name": "OfficialURL",
+   "url": "https://commons.wikimedia.org/wiki/User:OfficialURL"
+  },
+  "source": {
+   "id": "wikimedia",
+   "name": "Wikimedia Commons",
+   "url": "https://commons.wikimedia.org/wiki/File:Great_enneagrammic_prism.stl"
+  },
+  "license": {
+   "id": "CC-BY-SA-4.0",
+   "name": "CC BY-SA 4.0",
+   "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.de",
+   "attribution": true,
+   "shareAlike": true,
+   "family": "cc"
+  },
+  "preview": {
+   "type": "image",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Great_enneagrammic_prism.stl/500px-Great_enneagrammic_prism.stl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ee/Great_enneagrammic_prism.stl/960px-Great_enneagrammic_prism.stl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+  },
+  "downloads": [
+   {
+    "label": "STL-Datei (3D-Modell)",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Great_enneagrammic_prism.stl?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "format": "stl",
+    "size": 3684
+   }
+  ],
+  "hashes": {
+   "sha1": "c64d060c537d4729f82d1cead8dcbb4276fe1692"
+  },
+  "attribution": "„Great enneagrammic prism“ von OfficialURL, https://commons.wikimedia.org/wiki/File:Great_enneagrammic_prism.stl, Lizenz: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.de)",
+  "firstSeen": "2026-11-23T13:59:01.784Z",
+  "unter": "Geometrie & Mathematik",
+  "vorschau": {
+   "pfad": "bf/f2e95e03066744.webp",
+   "b": 320,
+   "h": 240
+  }
+ },
+ {
+  "id": "polyhaven:plastic_monobloc_chair_01",
+  "sig": "3D·PH·SKQRT",
+  "kind": "3d",
+  "title": "Plastic Monobloc Chair 01",
+  "tags": [
+   "furniture",
+   "seating",
+   "collection: the_shed",
+   "plastic",
+   "dirty",
+   "old",
+   "monobloc",
+   "outdoor",
+   "cheap",
+   "shed"
+  ],
+  "creator": {
+   "name": "Kuutti Siitonen"
+  },
+  "source": {
+   "id": "polyhaven",
+   "name": "Poly Haven",
+   "url": "https://polyhaven.com/a/plastic_monobloc_chair_01"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "model",
+   "thumb": "https://cdn.polyhaven.com/asset_img/thumbs/plastic_monobloc_chair_01.png?width=480&height=256&format=webp&v=cb7077d8",
+   "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_1k.gltf"
+  },
+  "downloads": [
+   {
+    "label": "glTF-Paket (2K-Texturen)",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_2k.gltf",
+    "format": "zip",
+    "size": 6665320,
+    "paket": {
+     "name": "plastic_monobloc_chair_01_gltf_2k",
+     "files": [
+      {
+       "path": "plastic_monobloc_chair_01_2k.gltf",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_2k.gltf"
+      },
+      {
+       "path": "plastic_monobloc_chair_01.bin",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/4k/plastic_monobloc_chair_01/plastic_monobloc_chair_01.bin"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_nor_gl_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_nor_gl_2k.jpg"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_diff_2k.jpg"
+      }
+     ],
+     "size": 6665320
+    }
+   },
+   {
+    "label": "Blender-Paket (.blend)",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_2k.blend",
+    "format": "zip",
+    "size": 11282860,
+    "paket": {
+     "name": "plastic_monobloc_chair_01_blend",
+     "files": [
+      {
+       "path": "plastic_monobloc_chair_01_2k.blend",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/blend/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_2k.blend"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_metal_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_metal_2k.exr"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_diff_2k.jpg"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_nor_gl_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_nor_gl_2k.exr"
+      }
+     ],
+     "size": 11282860
+    }
+   },
+   {
+    "label": "FBX-Paket",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_2k.fbx",
+    "format": "zip",
+    "size": 11238017,
+    "paket": {
+     "name": "plastic_monobloc_chair_01_fbx",
+     "files": [
+      {
+       "path": "plastic_monobloc_chair_01_2k.fbx",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/fbx/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_2k.fbx"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_metal_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_metal_2k.exr"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_nor_gl_2k.exr",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/exr/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_nor_gl_2k.exr"
+      },
+      {
+       "path": "textures/plastic_monobloc_chair_01_diff_2k.jpg",
+       "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/plastic_monobloc_chair_01/plastic_monobloc_chair_01_diff_2k.jpg"
+      }
+     ],
+     "size": 11238017
+    }
+   }
+  ],
+  "meta": {
+   "polygone": "3356",
+   "aufloesung": "4096 × 4096 px",
+   "art": "3D-Modell"
+  },
+  "attribution": "„Plastic Monobloc Chair 01“ von Kuutti Siitonen, https://polyhaven.com/a/plastic_monobloc_chair_01 (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-22T23:24:05.103Z",
+  "checkedAt": "2026-11-23T00:13:22.043Z",
+  "unter": "Möbel"
+ },
+ {
+  "id": "ambientcg:WoodFloor060",
+  "sig": "TEX·AC·005SS",
+  "kind": "textur",
+  "title": "Wood Floor 060",
+  "tags": [
+   "wood floor",
+   "floor",
+   "parquet",
+   "versailles",
+   "wood"
+  ],
+  "creator": {
+   "name": "ambientCG"
+  },
+  "source": {
+   "id": "ambientcg",
+   "name": "ambientCG",
+   "url": "https://ambientcg.com/a/WoodFloor060"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "image",
+   "thumb": "https://acg-media.struffelproductions.com/file/ambientCG-Web/media/thumbnail/512-PNG/WoodFloor060.png",
+   "url": "https://acg-media.struffelproductions.com/file/ambientCG-Web/media/thumbnail/1024-PNG/WoodFloor060.png"
+  },
+  "downloads": [
+   {
+    "label": "1K JPG (ZIP)",
+    "url": "https://ambientcg.com/get?file=WoodFloor060_1K-JPG.zip",
+    "format": "zip",
+    "size": 6099501
+   },
+   {
+    "label": "2K JPG (ZIP)",
+    "url": "https://ambientcg.com/get?file=WoodFloor060_2K-JPG.zip",
+    "format": "zip",
+    "size": 20992281
+   },
+   {
+    "label": "4K JPG (ZIP)",
+    "url": "https://ambientcg.com/get?file=WoodFloor060_4K-JPG.zip",
+    "format": "zip",
+    "size": 80201236
+   },
+   {
+    "label": "1K PNG (ZIP)",
+    "url": "https://ambientcg.com/get?file=WoodFloor060_1K-PNG.zip",
+    "format": "zip",
+    "size": 15459591
+   },
+   {
+    "label": "2K PNG (ZIP)",
+    "url": "https://ambientcg.com/get?file=WoodFloor060_2K-PNG.zip",
+    "format": "zip",
+    "size": 57655959
+   }
+  ],
+  "meta": {
+   "art": "Material",
+   "kategorie": "Wood Floor"
+  },
+  "attribution": "„Wood Floor 060“ von ambientCG, https://ambientcg.com/a/WoodFloor060 (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-22T23:57:02.801Z",
+  "unter": "Holz"
+ },
+ {
+  "id": "openverse:audio/5826ce13-2b48-4908-aaa0-1ab21d96b788",
+  "sig": "SND·OV·00B8R",
+  "kind": "sound",
+  "title": "HQ Explosion",
+  "tags": [
+   "bang",
+   "battle",
+   "bomb",
+   "boom",
+   "explode",
+   "explosion",
+   "fire-works",
+   "fireworks",
+   "grenade",
+   "hq",
+   "kaboom",
+   "rocket"
+  ],
+  "creator": {
+   "name": "Quaker540",
+   "url": "https://freesound.org/people/Quaker540"
+  },
+  "source": {
+   "id": "openverse",
+   "name": "Freesound",
+   "url": "https://freesound.org/people/Quaker540/sounds/245372"
+  },
+  "via": [
+   "Openverse"
+  ],
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "audio",
+   "url": "https://cdn.freesound.org/previews/245/245372_3545904-hq.mp3"
+  },
+  "downloads": [
+   {
+    "label": "MP3 (Hörprobe in hoher Qualität)",
+    "url": "https://cdn.freesound.org/previews/245/245372_3545904-hq.mp3",
+    "format": "mp3",
+    "size": 66065
+   }
+  ],
+  "meta": {
+   "dauer": "3 s"
+  },
+  "attribution": "„HQ Explosion“ von Quaker540, https://freesound.org/people/Quaker540/sounds/245372 (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-22T23:45:39.263Z",
+  "checkedAt": "2026-11-23T00:04:21.629Z",
+  "unter": "Explosion & Kampf"
+ },
+ {
+  "id": "fontsource:protest-revolution",
+  "sig": "SCH·FS·00MEW",
+  "kind": "schrift",
+  "title": "Protest Revolution",
+  "tags": [
+   "display",
+   "latin",
+   "latin-ext",
+   "math",
+   "symbols"
+  ],
+  "creator": {
+   "name": "Octavio Pardo"
+  },
+  "source": {
+   "id": "fontsource",
+   "name": "Fontsource",
+   "url": "https://fontsource.org/fonts/protest-revolution"
+  },
+  "license": {
+   "id": "OFL-1.1",
+   "name": "SIL Open Font License 1.1",
+   "url": "https://spdx.org/licenses/OFL-1.1.html",
+   "attribution": true,
+   "shareAlike": true,
+   "family": "schrift"
+  },
+  "preview": {
+   "type": "font",
+   "url": "https://cdn.jsdelivr.net/fontsource/fonts/protest-revolution@latest/latin-400-normal.woff2"
+  },
+  "downloads": [
+   {
+    "label": "Alle Schnitte (ZIP)",
+    "url": "https://r2.fontsource.org/fonts/protest-revolution@latest/download.zip",
+    "format": "zip"
+   },
+   {
+    "label": "WOFF2 400",
+    "url": "https://cdn.jsdelivr.net/fontsource/fonts/protest-revolution@latest/latin-400-normal.woff2",
+    "format": "woff2"
+   }
+  ],
+  "meta": {
+   "schnitte": "1 Stärken",
+   "kategorie": "Display"
+  },
+  "attribution": "„Protest Revolution“ von Octavio Pardo, https://fontsource.org/fonts/protest-revolution, Lizenz: SIL Open Font License 1.1 (https://spdx.org/licenses/OFL-1.1.html)",
+  "firstSeen": "2026-11-23T00:31:29.291Z",
+  "unter": "Display"
+ },
+ {
+  "id": "cleveland:2013.51",
+  "sig": "BLD·C1·002BD",
+  "kind": "bild",
+  "title": "Bacchus and Ariadne",
+  "tags": [
+   "painting",
+   "modern european painting and sculpture",
+   "england, 19th century"
+  ],
+  "creator": {
+   "name": "Henry Bone"
+  },
+  "source": {
+   "id": "cleveland",
+   "name": "Cleveland Museum of Art",
+   "url": "https://www.clevelandart.org/art/2013.51"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "image",
+   "thumb": "https://openaccess-cdn.clevelandart.org/2013.51/2013.51_web.jpg",
+   "url": "https://openaccess-cdn.clevelandart.org/2013.51/2013.51_web.jpg"
+  },
+  "downloads": [
+   {
+    "label": "JPEG in hoher Auflösung",
+    "url": "https://openaccess-cdn.clevelandart.org/2013.51/2013.51_print.jpg",
+    "format": "jpg",
+    "size": 2156795
+   },
+   {
+    "label": "TIFF in voller Auflösung",
+    "url": "https://openaccess-cdn.clevelandart.org/2013.51/2013.51_full.tif",
+    "format": "tif",
+    "size": 368097088
+   }
+  ],
+  "meta": {
+   "entstanden": "1808–11",
+   "technik": "enamel, in original gilt-wood and gesso carved frame",
+   "abmessung": "3400 × 3025 px"
+  },
+  "attribution": "„Bacchus and Ariadne“ von Henry Bone, https://www.clevelandart.org/art/2013.51 (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-23T13:20:28.090Z",
+  "unter": "Kunst & Grafik"
+ },
+ {
+  "id": "wikimedia:198908077",
+  "sig": "BLD·WM·007KO",
+  "kind": "bild",
+  "title": "Nuevo Palacio, Bayreuth, Alemania, 2024-09-07, DD 01",
+  "tags": [
+   "neues schloss bayreuth"
+  ],
+  "creator": {
+   "name": "Diego Delso",
+   "url": "https://www.wikidata.org/wiki/Q28147777"
+  },
+  "source": {
+   "id": "wikimedia",
+   "name": "Wikimedia Commons",
+   "url": "https://commons.wikimedia.org/wiki/File:Nuevo_Palacio,_Bayreuth,_Alemania,_2024-09-07,_DD_01.jpg"
+  },
+  "license": {
+   "id": "CC-BY-SA-4.0",
+   "name": "CC BY-SA 4.0",
+   "url": "https://creativecommons.org/licenses/by-sa/4.0/deed.de",
+   "attribution": true,
+   "shareAlike": true,
+   "family": "cc"
+  },
+  "preview": {
+   "type": "image",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Nuevo_Palacio%2C_Bayreuth%2C_Alemania%2C_2024-09-07%2C_DD_01.jpg/500px-Nuevo_Palacio%2C_Bayreuth%2C_Alemania%2C_2024-09-07%2C_DD_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Nuevo_Palacio%2C_Bayreuth%2C_Alemania%2C_2024-09-07%2C_DD_01.jpg/960px-Nuevo_Palacio%2C_Bayreuth%2C_Alemania%2C_2024-09-07%2C_DD_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+  },
+  "downloads": [
+   {
+    "label": "Originaldatei",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/42/Nuevo_Palacio%2C_Bayreuth%2C_Alemania%2C_2024-09-07%2C_DD_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "format": "jpeg",
+    "size": 10951025
+   }
+  ],
+  "meta": {
+   "abmessung": "8104 × 3531 px"
+  },
+  "hashes": {
+   "sha1": "e3c8c200114632da30d0a0d1553aefb7377edaec"
+  },
+  "attribution": "„Nuevo Palacio, Bayreuth, Alemania, 2024-09-07, DD 01“ von Diego Delso, https://commons.wikimedia.org/wiki/File:Nuevo_Palacio,_Bayreuth,_Alemania,_2024-09-07,_DD_01.jpg, Lizenz: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/deed.de)",
+  "firstSeen": "2026-11-22T23:25:10.302Z",
+  "checkedAt": "2026-11-23T00:23:23.054Z",
+  "unter": "Architektur"
+ },
+ {
+  "id": "openverse:audio/4262cd6c-c459-4c28-bba0-16c25f831520",
+  "sig": "MUS·OV·00DZI",
+  "kind": "musik",
+  "title": "Cheaptrip",
+  "tags": [
+   "chiptunes",
+   "electroamplified",
+   "female",
+   "speed_medium",
+   "synthesizer",
+   "vocal"
+  ],
+  "creator": {
+   "name": "Kinetic Law",
+   "url": "https://www.jamendo.com/artist/436924/Kinetic_Law"
+  },
+  "source": {
+   "id": "openverse",
+   "name": "Jamendo",
+   "url": "https://www.jamendo.com/track/1057818"
+  },
+  "via": [
+   "Openverse"
+  ],
+  "license": {
+   "id": "CC-BY-SA-3.0",
+   "name": "CC BY-SA 3.0",
+   "url": "https://creativecommons.org/licenses/by-sa/3.0/deed.de",
+   "attribution": true,
+   "shareAlike": true,
+   "family": "cc"
+  },
+  "preview": {
+   "type": "audio",
+   "url": "https://prod-1.storage.jamendo.com/?trackid=1057818&format=mp32",
+   "thumb": "https://api.openverse.org/v1/audio/4262cd6c-c459-4c28-bba0-16c25f831520/thumb/"
+  },
+  "downloads": [
+   {
+    "label": "Audiodatei",
+    "url": "https://prod-1.storage.jamendo.com/?trackid=1057818&format=mp32",
+    "format": "mp32"
+   }
+  ],
+  "meta": {
+   "dauer": "215 s"
+  },
+  "attribution": "„Cheaptrip“ von Kinetic Law, https://www.jamendo.com/track/1057818, Lizenz: CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/deed.de)",
+  "firstSeen": "2026-11-23T01:13:57.361Z",
+  "unter": "Gesang & Chor"
+ },
+ {
+  "id": "github:gosom/google-maps-scraper/skills/google-maps-scraper",
+  "sig": "SKL·GH·00IBS",
+  "kind": "skill",
+  "title": "google-maps-scraper",
+  "description": "Find businesses, leads, emails, reviews, ratings, and contact details from Google Maps. Use for requests such as \"find dentists in Berlin\", \"scrape Google Maps\", \"get local business leads\", or \"collec",
+  "tags": [
+   "claude-code",
+   "skill",
+   "agent-skills",
+   "codex-skills",
+   "distributed-scraper",
+   "distributed-scraping"
+  ],
+  "creator": {
+   "name": "gosom",
+   "url": "https://github.com/gosom"
+  },
+  "source": {
+   "id": "github",
+   "name": "GitHub",
+   "url": "https://github.com/gosom/google-maps-scraper/tree/main/skills/google-maps-scraper"
+  },
+  "license": {
+   "id": "MIT",
+   "name": "MIT",
+   "url": "https://spdx.org/licenses/MIT.html",
+   "attribution": true,
+   "shareAlike": false,
+   "family": "code"
+  },
+  "preview": {
+   "type": "text",
+   "text": "Find businesses, leads, emails, reviews, ratings, and contact details from Google Maps. Use for requests such as \"find dentists in Berlin\", \"scrape Google Maps\", \"get local business leads\", or \"collect Google Maps reviews\". Runs the open-source scraper locally with a native binary or Docker and guides nontechnical users through setup, monitoring, and results."
+  },
+  "downloads": [
+   {
+    "label": "Skill-Ordner (ZIP)",
+    "url": "https://raw.githubusercontent.com/gosom/google-maps-scraper/main/skills/google-maps-scraper/SKILL.md",
+    "format": "zip",
+    "size": 69027,
+    "paket": {
+     "name": "google-maps-scraper-skill",
+     "files": [
+      {
+       "path": "google-maps-scraper/SKILL.md",
+       "url": "https://raw.githubusercontent.com/gosom/google-maps-scraper/main/skills/google-maps-scraper/SKILL.md"
+      },
+      {
+       "path": "google-maps-scraper/references/advanced-coverage.md",
+       "url": "https://raw.githubusercontent.com/gosom/google-maps-scraper/main/skills/google-maps-scraper/references/advanced-coverage.md"
+      },
+      {
+       "path": "google-maps-scraper/references/local-execution.md",
+       "url": "https://raw.githubusercontent.com/gosom/google-maps-scraper/main/skills/google-maps-scraper/references/local-execution.md"
+      },
+      {
+       "path": "google-maps-scraper/references/proxy-setup.md",
+       "url": "https://raw.githubusercontent.com/gosom/google-maps-scraper/main/skills/google-maps-scraper/references/proxy-setup.md"
+      }
+     ],
+     "size": 69027
+    }
+   },
+   {
+    "label": "Nur SKILL.md",
+    "url": "https://raw.githubusercontent.com/gosom/google-maps-scraper/main/skills/google-maps-scraper/SKILL.md",
+    "format": "md"
+   },
+   {
+    "label": "Ganze Sammlung (ZIP)",
+    "url": "https://github.com/gosom/google-maps-scraper/archive/refs/heads/main.zip",
+    "format": "zip"
+   }
+  ],
+  "meta": {
+   "sammlung": "gosom/google-maps-scraper",
+   "dateien": "19"
+  },
+  "hashes": {
+   "sha256": "a71f29aecc0606f207500a0fca9f6ff509f46190bcbd0730ce5e5406a3036ead"
+  },
+  "collection": {
+   "id": "gosom/google-maps-scraper",
+   "name": "gosom/google-maps-scraper",
+   "url": "https://github.com/gosom/google-maps-scraper"
+  },
+  "attribution": "„google-maps-scraper“ von gosom, https://github.com/gosom/google-maps-scraper/tree/main/skills/google-maps-scraper, Lizenz: MIT (https://spdx.org/licenses/MIT.html)",
+  "firstSeen": "2026-11-23T00:42:49.313Z",
+  "unter": "Entwicklung"
+ },
+ {
+  "id": "polyhaven:pretville_street",
+  "sig": "HDR·PH·012W8",
+  "kind": "hdri",
+  "title": "Pretville Street",
+  "tags": [
+   "natural light",
+   "outdoor",
+   "urban",
+   "high contrast",
+   "partly cloudy",
+   "morning-afternoon",
+   "sun",
+   "street",
+   "road",
+   "asphalt",
+   "car",
+   "film set"
+  ],
+  "creator": {
+   "name": "Dimitrios Savva, Jarod Guest"
+  },
+  "source": {
+   "id": "polyhaven",
+   "name": "Poly Haven",
+   "url": "https://polyhaven.com/a/pretville_street"
+  },
+  "license": {
+   "id": "CC0-1.0",
+   "name": "CC0 1.0",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/deed.de",
+   "attribution": false,
+   "shareAlike": false,
+   "family": "gemeinfrei"
+  },
+  "preview": {
+   "type": "image",
+   "thumb": "https://cdn.polyhaven.com/asset_img/thumbs/pretville_street.png?width=480&height=256&format=webp&v=1131f760",
+   "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/pretville_street.jpg"
+  },
+  "downloads": [
+   {
+    "label": "HDR 1K",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/pretville_street_1k.hdr",
+    "format": "hdr",
+    "size": 1553618,
+    "md5": "dd4af023e35921c0b414f5407d08d330"
+   },
+   {
+    "label": "HDR 2K",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/pretville_street_2k.hdr",
+    "format": "hdr",
+    "size": 6059219,
+    "md5": "57545da35682e7970985afd3c2b4f551"
+   },
+   {
+    "label": "HDR 4K",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/4k/pretville_street_4k.hdr",
+    "format": "hdr",
+    "size": 24247103,
+    "md5": "849608b2bff3a25218aaa0331429fea6"
+   },
+   {
+    "label": "EXR 2K",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/exr/2k/pretville_street_2k.exr",
+    "format": "exr",
+    "size": 24215318
+   }
+  ],
+  "meta": {
+   "aufloesung": "24576 × 12288 px",
+   "art": "HDRI"
+  },
+  "hashes": {
+   "md5": "dd4af023e35921c0b414f5407d08d330"
+  },
+  "attribution": "„Pretville Street“ von Dimitrios Savva, Jarod Guest, https://polyhaven.com/a/pretville_street (CC0 1.0, Namensnennung nicht erforderlich)",
+  "firstSeen": "2026-11-23T00:20:15.784Z",
+  "unter": "Stadt"
+ }
+]

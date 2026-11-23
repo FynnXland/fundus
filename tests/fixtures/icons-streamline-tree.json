@@ -1,0 +1,444 @@
+{
+ "tree": [
+  {
+   "path": "core/flat/artificial-intelligence/ai-chip-spark.svg",
+   "type": "blob",
+   "size": 1473
+  },
+  {
+   "path": "core/flat/computer-devices/asterisk-1.svg",
+   "type": "blob",
+   "size": 1020
+  },
+  {
+   "path": "core/flat/computer-devices/database-refresh.svg",
+   "type": "blob",
+   "size": 2147
+  },
+  {
+   "path": "core/flat/computer-devices/figma.svg",
+   "type": "blob",
+   "size": 1105
+  },
+  {
+   "path": "core/flat/computer-devices/play-store.svg",
+   "type": "blob",
+   "size": 875
+  },
+  {
+   "path": "core/flat/computer-devices/watch-circle-heartbeat-monitor-2.svg",
+   "type": "blob",
+   "size": 1283
+  },
+  {
+   "path": "core/flat/culture/politics-vote-2.svg",
+   "type": "blob",
+   "size": 1440
+  },
+  {
+   "path": "core/flat/entertainment/button-record-3.svg",
+   "type": "blob",
+   "size": 462
+  },
+  {
+   "path": "core/flat/entertainment/gramophone.svg",
+   "type": "blob",
+   "size": 1482
+  },
+  {
+   "path": "core/flat/entertainment/tape-cassette-record.svg",
+   "type": "blob",
+   "size": 1625
+  },
+  {
+   "path": "core/flat/food-drink/fork-knife.svg",
+   "type": "blob",
+   "size": 815
+  },
+  {
+   "path": "core/flat/health/call-center-support-service.svg",
+   "type": "blob",
+   "size": 1281
+  },
+  {
+   "path": "core/flat/health/prescription-pills-drugs-healthcare.svg",
+   "type": "blob",
+   "size": 750
+  },
+  {
+   "path": "core/flat/images-photography/flower.svg",
+   "type": "blob",
+   "size": 836
+  },
+  {
+   "path": "core/flat/interface-essential/arrow-crossover-left.svg",
+   "type": "blob",
+   "size": 829
+  },
+  {
+   "path": "core/flat/interface-essential/arrow-up-1.svg",
+   "type": "blob",
+   "size": 477
+  },
+  {
+   "path": "core/flat/interface-essential/clipboard-check.svg",
+   "type": "blob",
+   "size": 801
+  },
+  {
+   "path": "core/flat/interface-essential/download-computer.svg",
+   "type": "blob",
+   "size": 1287
+  },
+  {
+   "path": "core/flat/interface-essential/front-camera.svg",
+   "type": "blob",
+   "size": 918
+  },
+  {
+   "path": "core/flat/interface-essential/information-circle.svg",
+   "type": "blob",
+   "size": 715
+  },
+  {
+   "path": "core/flat/interface-essential/magic-wand-2.svg",
+   "type": "blob",
+   "size": 891
+  },
+  {
+   "path": "core/flat/interface-essential/paint-palette.svg",
+   "type": "blob",
+   "size": 986
+  },
+  {
+   "path": "core/flat/interface-essential/quotation-2.svg",
+   "type": "blob",
+   "size": 738
+  },
+  {
+   "path": "core/flat/interface-essential/split-vertical.svg",
+   "type": "blob",
+   "size": 943
+  },
+  {
+   "path": "core/flat/interface-essential/two-finger-tap.svg",
+   "type": "blob",
+   "size": 983
+  },
+  {
+   "path": "core/flat/interface-essential/wave-signal.svg",
+   "type": "blob",
+   "size": 685
+  },
+  {
+   "path": "core/flat/mail/mail-search.svg",
+   "type": "blob",
+   "size": 1004
+  },
+  {
+   "path": "core/flat/mail/smiley-throw-up.svg",
+   "type": "blob",
+   "size": 1148
+  },
+  {
+   "path": "core/flat/map-travel/fire-alarm-2.svg",
+   "type": "blob",
+   "size": 1293
+  },
+  {
+   "path": "core/flat/map-travel/map-fold.svg",
+   "type": "blob",
+   "size": 774
+  },
+  {
+   "path": "core/flat/map-travel/woman-symbol.svg",
+   "type": "blob",
+   "size": 594
+  },
+  {
+   "path": "core/flat/money-shopping/business-profession-home-office.svg",
+   "type": "blob",
+   "size": 980
+  },
+  {
+   "path": "core/flat/money-shopping/gift.svg",
+   "type": "blob",
+   "size": 812
+  },
+  {
+   "path": "core/flat/money-shopping/receipt-add.svg",
+   "type": "blob",
+   "size": 976
+  },
+  {
+   "path": "core/flat/money-shopping/tag.svg",
+   "type": "blob",
+   "size": 1018
+  },
+  {
+   "path": "core/flat/nature-ecology/leaf.svg",
+   "type": "blob",
+   "size": 1559
+  },
+  {
+   "path": "core/flat/phone/call-hang-up.svg",
+   "type": "blob",
+   "size": 2111
+  },
+  {
+   "path": "core/flat/programming/browser-add.svg",
+   "type": "blob",
+   "size": 953
+  },
+  {
+   "path": "core/flat/programming/code-monitor-1.svg",
+   "type": "blob",
+   "size": 1342
+  },
+  {
+   "path": "core/flat/shipping/parachute-drop.svg",
+   "type": "blob",
+   "size": 1292
+  },
+  {
+   "path": "core/line/artificial-intelligence/ai-chip-spark.svg",
+   "type": "blob",
+   "size": 2266
+  },
+  {
+   "path": "core/line/entertainment/balloon.svg",
+   "type": "blob",
+   "size": 1048
+  },
+  {
+   "path": "core/line/images-photography/polaroid-four.svg",
+   "type": "blob",
+   "size": 1911
+  },
+  {
+   "path": "core/line/interface-essential/magic-wand-2.svg",
+   "type": "blob",
+   "size": 2115
+  },
+  {
+   "path": "core/line/mail/smiley-happy.svg",
+   "type": "blob",
+   "size": 1460
+  },
+  {
+   "path": "core/line/money-shopping/shopping-bag-hand-bag-2.svg",
+   "type": "blob",
+   "size": 1126
+  },
+  {
+   "path": "pixel/building-real-estate/building-real-eastate-deal-documant.svg",
+   "type": "blob",
+   "size": 2266
+  },
+  {
+   "path": "pixel/content-files/content-files-book.svg",
+   "type": "blob",
+   "size": 1714
+  },
+  {
+   "path": "pixel/food-drink/food-drink-desert-cotton-candy.svg",
+   "type": "blob",
+   "size": 3133
+  },
+  {
+   "path": "pixel/interface-essential/interface-essential-face-id-1.svg",
+   "type": "blob",
+   "size": 3563
+  },
+  {
+   "path": "pixel/interface-essential/interface-essential-share-3.svg",
+   "type": "blob",
+   "size": 1258
+  },
+  {
+   "path": "pixel/pet-animals/pet-animals-frog.svg",
+   "type": "blob",
+   "size": 3647
+  },
+  {
+   "path": "freebies-freemojis/activity/activity/american-football.svg",
+   "type": "blob",
+   "size": 3043
+  },
+  {
+   "path": "freebies-freemojis/animals-nature/animals-nature/tulip.svg",
+   "type": "blob",
+   "size": 4083
+  },
+  {
+   "path": "freebies-freemojis/objects/objects/green-book.svg",
+   "type": "blob",
+   "size": 2264
+  },
+  {
+   "path": "freebies-freemojis/smiley-people/smiley-people/family-man-man-boy-boy-1.svg",
+   "type": "blob",
+   "size": 10425
+  },
+  {
+   "path": "freebies-freemojis/smiley-people/smiley-people/man-police-officer-1.svg",
+   "type": "blob",
+   "size": 3403
+  },
+  {
+   "path": "freebies-freemojis/smiley-people/smiley-people/woman-astronaut-1.svg",
+   "type": "blob",
+   "size": 6815
+  },
+  {
+   "path": "logos/block/blog/blogger-logo.svg",
+   "type": "blob",
+   "size": 793
+  },
+  {
+   "path": "logos/block/professional-networks/nomad-list-logo.svg",
+   "type": "blob",
+   "size": 758
+  },
+  {
+   "path": "logos/line/blog/blogger-logo.svg",
+   "type": "blob",
+   "size": 746
+  },
+  {
+   "path": "logos/line/professional-networks/nomad-list-logo.svg",
+   "type": "blob",
+   "size": 649
+  },
+  {
+   "path": "logos/solid/blog/blogger-logo.svg",
+   "type": "blob",
+   "size": 592
+  },
+  {
+   "path": "logos/solid/professional-networks/nomad-list-logo.svg",
+   "type": "blob",
+   "size": 742
+  },
+  {
+   "path": "nasty-icons/nasty-icons/accident-arrow.svg",
+   "type": "blob",
+   "size": 1714
+  },
+  {
+   "path": "nasty-icons/nasty-icons/bong-pipe.svg",
+   "type": "blob",
+   "size": 1255
+  },
+  {
+   "path": "nasty-icons/nasty-icons/dancing-pole.svg",
+   "type": "blob",
+   "size": 2120
+  },
+  {
+   "path": "nasty-icons/nasty-icons/electro-shock.svg",
+   "type": "blob",
+   "size": 2858
+  },
+  {
+   "path": "nasty-icons/nasty-icons/in-dividing.svg",
+   "type": "blob",
+   "size": 3126
+  },
+  {
+   "path": "nasty-icons/nasty-icons/poison.svg",
+   "type": "blob",
+   "size": 1579
+  },
+  {
+   "path": "kameleon/colors/building-construction/anvil.svg",
+   "type": "blob",
+   "size": 3128
+  },
+  {
+   "path": "kameleon/colors/ecology/pine-tree.svg",
+   "type": "blob",
+   "size": 2230
+  },
+  {
+   "path": "kameleon/colors/health/grinder.svg",
+   "type": "blob",
+   "size": 1641
+  },
+  {
+   "path": "kameleon/colors/interface-essential/transfer-cloud.svg",
+   "type": "blob",
+   "size": 2912
+  },
+  {
+   "path": "kameleon/colors/money-business/money-letter.svg",
+   "type": "blob",
+   "size": 9032
+  },
+  {
+   "path": "kameleon/colors/shopping/sneakers-3.svg",
+   "type": "blob",
+   "size": 8926
+  },
+  {
+   "path": "plump/pop/artificial-intelligence/ai-edit-robot.svg",
+   "type": "blob",
+   "size": 3134
+  },
+  {
+   "path": "plump/pop/food-drink/chef-toque-hat.svg",
+   "type": "blob",
+   "size": 2870
+  },
+  {
+   "path": "plump/pop/interface-essential/customer-support-3.svg",
+   "type": "blob",
+   "size": 3678
+  },
+  {
+   "path": "plump/pop/interface-essential/one-finger-tap.svg",
+   "type": "blob",
+   "size": 3015
+  },
+  {
+   "path": "plump/pop/mail/chat-two-bubbles-oval.svg",
+   "type": "blob",
+   "size": 2049
+  },
+  {
+   "path": "plump/pop/money-shopping/gold.svg",
+   "type": "blob",
+   "size": 3583
+  },
+  {
+   "path": "memes/memes-hand-drawn/memes-hand-drawn/all-the-things-meme-hand-drawn.svg",
+   "type": "blob",
+   "size": 9863
+  },
+  {
+   "path": "memes/memes-hand-drawn/memes-hand-drawn/drake-hotline-bling-no-hand-drawn.svg",
+   "type": "blob",
+   "size": 16108
+  },
+  {
+   "path": "memes/memes-hand-drawn/memes-hand-drawn/questioner-hand-drawn.svg",
+   "type": "blob",
+   "size": 13738
+  },
+  {
+   "path": "memes/memes-hand-drawn/memes-hand-drawn/watch-the-world-burn-hand-drawn.svg",
+   "type": "blob",
+   "size": 17565
+  },
+  {
+   "path": "memes/memes/memes/doge.svg",
+   "type": "blob",
+   "size": 3641
+  },
+  {
+   "path": "memes/memes/memes/questioner.svg",
+   "type": "blob",
+   "size": 4002
+  }
+ ]
+}

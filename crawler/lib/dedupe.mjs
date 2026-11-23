@@ -68,8 +68,8 @@ const BILDARTEN = new Set(['bild']);
 // Lower wins. Every direct source must be listed: an unlisted one ranks 50, behind Openverse. Origins come
 // before copies (Openclipart before the Commons clipart categories, museums before Commons uploads of their works).
 const QUELLRANG = [
-  'polyhaven', 'ambientcg', 'khronos', 'openclipart', 'opengameart', 'cleveland', 'wellcome', 'nga', 'smk', 'rijksmuseum',
-  'met', 'smithsonian', 'wikimedia', 'commonsaudio', 'wikimediavideo', 'europeana', 'fontsource', 'iconify', 'github',
+  'polyhaven', 'ambientcg', 'khronos', 'fuel', 'openclipart', 'opengameart', 'cleveland', 'wellcome', 'nga', 'smk', 'rijksmuseum',
+  'met', 'smithsonian', 'wikimedia', 'commonsaudio', 'wikimediavideo', 'europeana', 'fontsource', 'iconify', 'openmoji', 'twemoji', 'notoemoji', 'fluentemoji', 'gameicons', 'streamline', 'github',
   'blender', 'godot', 'godotshaders', 'internetarchive', 'freesound', 'openverse',
 ];
 

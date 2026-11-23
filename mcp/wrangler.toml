@@ -1,0 +1,15 @@
+# Own Worker for the remote MCP server (option b in src/worker.mjs). Not deployed yet: needs a Cloudflare
+# account (Fynn) and `npx wrangler deploy` in this folder. Recommended instead: the Pages Function next to the
+# site (option a), then this file is not needed.
+name = "fundus-mcp"
+main = "src/worker.mjs"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# No request logs: the server keeps no record of who asked what (privacy, docs/stand/fundus-mcp.md).
+[observability]
+enabled = false
+
+[vars]
+FUNDUS_URL = "https://fundus.example"   # TODO: public address of the site
+KONTAKTBOGEN = "0"                      # "1" only with the Workers Paid plan (CPU time)

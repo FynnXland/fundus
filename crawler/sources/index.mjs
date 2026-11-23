@@ -5,6 +5,7 @@ import wikimediavideo from './wikimediavideo.mjs';
 import polyhaven from './polyhaven.mjs';
 import ambientcg from './ambientcg.mjs';
 import khronos from './khronos.mjs';
+import fuel from './fuel.mjs';
 import cleveland from './cleveland.mjs';
 import wellcome from './wellcome.mjs';
 // artic.mjs (Art Institute of Chicago) is switched off: since 23.11.2026 its IIIF image server answers
@@ -16,12 +17,20 @@ import opengameart from './opengameart.mjs';
 import openclipart from './openclipart.mjs';
 import fontsource from './fontsource.mjs';
 import iconify from './iconify.mjs';
+import openmoji from './openmoji.mjs';
+import twemoji from './twemoji.mjs';
+import notoemoji from './notoemoji.mjs';
+import fluentemoji from './fluentemoji.mjs';
+import gameicons from './gameicons.mjs';
+import streamline from './streamline.mjs';
 import internetarchive from './internetarchive.mjs';
 import smithsonian from './smithsonian.mjs';
 // freesound.mjs is switched off: the Freesound API terms (sections 1 and 4 f) forbid building similar
 // databases from it. Freesound sounds still reach the catalogue through Openverse.
 // met.mjs (Metropolitan Museum) is switched off: images.metmuseum.org answers automated requests with an
 // Imperva bot challenge (checked 23.11.2026). Blocks are respected, not worked around.
+// Sketchfab (terms forbid collecting content to make it available) and Objaverse (Sketchfab content and preview
+// pictures) are not built, see docs/stand/fundus-3d.md.
 //
 // Built but held back (23.11.2026), see docs/stand/orchestrator.md:
 //   rijksmuseum.mjs   iiif.micr.io/robots.txt ends in "Disallow: /" after an "Allow: /" block; owner decides
@@ -32,6 +41,7 @@ import smithsonian from './smithsonian.mjs';
 
 // Order matters for dedupe: direct sources first, aggregators (Openverse) last.
 export const SOURCES = [
-  wikimedia, commonsaudio, wikimediavideo, polyhaven, ambientcg, khronos, cleveland, wellcome, smithsonian,
-  github, blender, godot, opengameart, openclipart, fontsource, iconify, internetarchive, openverse,
+  wikimedia, commonsaudio, wikimediavideo, polyhaven, ambientcg, khronos, fuel, cleveland, wellcome, smithsonian,
+  github, blender, godot, opengameart, openclipart, fontsource, iconify,
+  openmoji, twemoji, notoemoji, fluentemoji, gameicons, streamline, internetarchive, openverse,
 ].map(({ crawl, ...meta }) => ({ ...meta, crawl }));

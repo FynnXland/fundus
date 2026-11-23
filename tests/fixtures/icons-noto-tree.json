@@ -1,0 +1,51 @@
+{
+ "svg2d": [
+  {
+   "path": "LICENSE",
+   "type": "blob",
+   "size": 574
+  },
+  {
+   "path": "emoji_u1f600.svg",
+   "type": "blob",
+   "size": 3153
+  },
+  {
+   "path": "emoji_u1f44b.svg",
+   "type": "blob",
+   "size": 5633
+  },
+  {
+   "path": "emoji_u1f44b_1f3fb.svg",
+   "type": "blob",
+   "size": 5633
+  },
+  {
+   "path": "emoji_u0023_20e3.svg",
+   "type": "blob",
+   "size": 2597
+  },
+  {
+   "path": "emoji_u1f1e6.svg",
+   "type": "blob",
+   "size": 479
+  }
+ ],
+ "png3d": [
+  {
+   "path": "emoji_u1f600.png",
+   "type": "blob",
+   "size": 262795
+  },
+  {
+   "path": "emoji_u1f44b_1f3fb.png",
+   "type": "blob",
+   "size": 265979
+  },
+  {
+   "path": "emoji_u1f1e6.png",
+   "type": "blob",
+   "size": 123349
+  }
+ ]
+}
