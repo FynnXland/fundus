@@ -78,8 +78,8 @@ Noch offen aus den Stand-Dateien: Videoprobe in der Detailansicht (`PREVIEW_TYPE
 - Katalog: 59.622 Objekte. 3D 4.561, Icons 14.906.
 - **Vorschau-Speicher:** schon über 22.000 Dateien, mit Icons und Fuel bald rund 40.000. Grenze Cloudflare Pages 20.000
   Dateien: R2 oder ein anderer Speicher ist vor dem Hosten Pflicht (Entscheidung Fynn).
-- `check-links.mjs`: für die Icon-Quellen nur die Vorschau bei raw.githubusercontent.com prüfen, nicht die
-  github.com-Landeseiten (sonst massenhaft 429). Noch nicht umgesetzt.
+- `check-links.mjs`: GitHub-Dateiseiten (`github.com/…/blob/…`) werden nicht mehr abgefragt, wenn dieselbe Datei roh
+  bei raw.githubusercontent.com geprüft wird (`rohAdresse()`, Test in `pipeline.test.mjs`). Erspart die 429 bei den Icons.
 
 ## Einbindung 23.11.2026 spät: Bewertungen und Skills (fundus-bewertung)
 

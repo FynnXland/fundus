@@ -94,6 +94,15 @@ test('urlsOf: jede Adresse nur einmal', () => {
   assert.deepEqual(urls, ['https://example.org/a', 'https://example.org/a-thumb.jpg', 'https://example.org/a.jpg']);
 });
 
+test('urlsOf: GitHub-Dateiseite entfällt, wenn dieselbe Datei roh geprüft wird', () => {
+  const blob = 'https://github.com/jdecked/twemoji/blob/main/assets/svg/1f004.svg';
+  const roh = 'https://raw.githubusercontent.com/jdecked/twemoji/main/assets/svg/1f004.svg';
+  const it = { source: { url: blob }, preview: { thumb: roh }, downloads: [{ url: roh }] };
+  assert.deepEqual(urlsOf(it), [{ role: 'vorschaubild', url: roh }]);
+  const anders = { source: { url: blob }, preview: { thumb: 'https://example.org/x.png' }, downloads: [] };
+  assert.equal(urlsOf(anders)[0].url, blob);
+});
+
 test('publishable: kaputte, gesperrte und ungültige Einträge bleiben draußen', () => {
   const gut = item({ sourceId: 'gut' });
   const kaputt = item({ sourceId: 'kaputt' });

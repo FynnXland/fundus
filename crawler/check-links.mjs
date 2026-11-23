@@ -13,12 +13,22 @@ import { ladeKatalog } from './lib/store.mjs';
 
 export const BROKEN_AFTER = 2;
 
-/** All URLs of an entry that must work for the card to be useful. */
+/** The raw.githubusercontent.com address of a github.com/<owner>/<repo>/blob/<ref>/<path> page, or null. */
+export function rohAdresse(url) {
+  const m = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/.exec(url);
+  return m ? `https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}` : null;
+}
+
+/** All URLs of an entry that must work for the card to be useful.
+ *  A GitHub file page is left out when the same file is also checked raw: the raw file answering proves the page
+ *  exists, and asking github.com for thousands of icon pages only earns HTTP 429. */
 export function urlsOf(item) {
-  const urls = [{ role: 'quelle', url: item.source.url }];
+  const urls = [];
   if (item.preview?.thumb) urls.push({ role: 'vorschaubild', url: item.preview.thumb });
   if (item.preview?.url && item.preview.url !== item.preview.thumb) urls.push({ role: 'vorschau', url: item.preview.url });
   for (const d of item.downloads ?? []) urls.push({ role: 'download', url: d.url });
+  const roh = rohAdresse(item.source.url);
+  if (!roh || !urls.some((u) => u.url === roh)) urls.unshift({ role: 'quelle', url: item.source.url });
   const seen = new Set();
   return urls.filter((u) => (seen.has(u.url) ? false : seen.add(u.url)));
 }
