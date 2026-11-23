@@ -1,0 +1,33 @@
+{
+  "name": "Fundus",
+  "category": "programme",
+  "url": "https://fundus.fynn.land/",
+  "openIn": "new",
+  "tileColor": "#3d2c25",
+  "accentColor": "#a6482a",
+  "pageTitle": { "de": "Katalog freier Assets", "en": "Catalogue of free assets" },
+  "tags": { "de": ["Browser", "Katalog", "Offene Lizenzen", "KI-Anbindung"], "en": ["Browser", "Catalogue", "Open licences", "AI access"] },
+  "tagline": {
+    "de": "Freie Bilder, 3D-Modelle, Texturen, Icons, Musik, Sounds, Schriften und Code aus offenen Quellen an einem Ort, jeweils mit Urheber und Lizenz.",
+    "en": "Free pictures, 3D models, textures, icons, music, sounds, fonts and code from open sources in one place, each with its creator and licence."
+  },
+  "about": {
+    "de": [
+      "Fundus sammelt frei nutzbare Werke aus über 20 offenen Quellen, darunter Wikimedia Commons, Poly Haven, ambientCG, Gazebo Fuel, Fontsource und mehrere Icon-Sammlungen.",
+      "Aufgenommen werden nur Lizenzen, die auch kommerzielle Nutzung und Bearbeitung erlauben: gemeinfrei, CC BY, CC BY-SA, offene Software- und Schriftlizenzen. NC und ND fallen heraus.",
+      "Jede Karte nennt Urheber, Lizenz und Ursprungsseite und hat einen fertigen Text für die Namensnennung zum Kopieren.",
+      "Die Dateien lädst du direkt bei der Quelle. Fundus ist ein Katalog, kein Lager.",
+      "3D-Modelle drehst du vorher im Browser, Musik und Sounds hörst du an, Schriften siehst du als Probe.",
+      "KI-Assistenten können den Katalog über einen MCP-Zugang durchsuchen, Vorschauen ansehen und Download-Links abrufen."
+    ],
+    "en": [
+      "Fundus gathers freely usable works from more than 20 open sources, among them Wikimedia Commons, Poly Haven, ambientCG, Gazebo Fuel, Fontsource and several icon collections.",
+      "Only licences that also allow commercial use and changes are taken in: public domain, CC BY, CC BY-SA, open software and font licences. NC and ND are left out.",
+      "Every card names creator, licence and original page and has a ready attribution text to copy.",
+      "You download the files straight from the source. Fundus is a catalogue, not a store.",
+      "You turn 3D models in the browser before downloading, listen to music and sounds, and see fonts as a sample.",
+      "AI assistants can search the catalogue through an MCP endpoint, look at previews and fetch download links."
+    ]
+  },
+  "action": { "de": "Öffnen", "en": "Open" }
+}
