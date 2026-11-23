@@ -8,13 +8,7 @@
     <meta name="referrer" content="no-referrer" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <script>
-      // Apply the stored theme before first paint so the page does not flash.
-      try {
-        const t = localStorage.getItem('fundus.thema');
-        if (t === 'hell' || t === 'dunkel') document.documentElement.dataset.theme = t === 'hell' ? 'light' : 'dark';
-      } catch {}
-    </script>
+    <script src="/thema.js"></script>
   </head>
   <body>
     <a class="skip" href="#inhalt">Zum Inhalt springen</a>

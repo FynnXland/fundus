@@ -29,6 +29,14 @@ jobs:
           OPENVERSE_CLIENT_SECRET: ${{ secrets.OPENVERSE_CLIENT_SECRET }}
           FREESOUND_TOKEN: ${{ secrets.FREESOUND_TOKEN }}
           SMITHSONIAN_API_KEY: ${{ secrets.SMITHSONIAN_API_KEY }}
+      # previews already in the R2 bucket count as present (the runner has no public/vorschau)
+      - name: Vorschaubilder im Bucket auflisten
+        if: vars.FUNDUS_DEPLOY == '1'
+        run: node scripts/vorschau-r2.mjs liste
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       - run: npm run vorschau
       # rotating: the entries checked longest ago; the whole catalogue comes round every few nights
       - run: node crawler/check-links.mjs --max 5000
@@ -36,11 +44,25 @@ jobs:
           FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
       - run: npm --prefix mcp ci
       - run: npm test
+      # Deploy to fundus.fynn.land, off until Fynn sets the repository variable FUNDUS_DEPLOY to 1 (wrangler.jsonc).
+      - name: Vorschaubilder nach R2
+        if: vars.FUNDUS_DEPLOY == '1'
+        run: npm run vorschau:r2
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      - name: Seite bauen und Worker veröffentlichen
+        if: vars.FUNDUS_DEPLOY == '1'
+        run: npm run build:web && npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Daten committen
         run: |
           git config user.name "fundus-bot"
           git config user.email "fundus-bot@users.noreply.github.com"
           git add data reports
-          # public/vorschau is not committed; deploy it from this job or a bucket
+          # public/vorschau is not committed; the previews live in the R2 bucket
           git diff --cached --quiet || git commit -m "Katalog: nächtlicher Abgleich"
           git push

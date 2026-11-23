@@ -157,3 +157,13 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   (1920×1200, < 400 KB). Bereiche: Spiele, Programme, Apps, Für Claude Code; neuer Tab nur durch Fynn.
 - Rechtstexte: fynn.land/impressum.html und /datenschutz.html gibt es; entweder dort ergänzen oder eigene Seiten wie
   dicehoc. Offener Rechtspunkt: Fundus liefert eigene Vorschaubilder fremder Werke selbst aus, vor dem Start klären.
+- **Umgesetzt (ohne Deploy):** `wrangler.jsonc` (Worker `fundus`, Assets aus `dist/`, R2 `fundus-vorschau` als
+  `VORSCHAU`, GUARD, `RL_MCP` 60/min, Namespace 3001, observability aus, Route `fundus.fynn.land`, dev-Port 4572),
+  `worker/index.mjs` (nur `/vorschau/*` aus R2 mit Pfadprüfung und Edge-Cache, `/mcp` mit Not-Aus und Limit),
+  `worker/schutz.mjs`, `public/_headers` (CSP: Skripte/Stile `'self'`, Bilder/Medien/Verbindungen `https:`, weil große
+  Vorschauen und Modelle nach Zustimmung direkt von den Quellen kommen), Theme-Skript nach `public/thema.js`
+  ausgelagert, `scripts/web-bauen.mjs` (`npm run build:web`, dist ohne Vorschaubilder: 517 Dateien),
+  `scripts/vorschau-r2.mjs` (`liste`/`abgleich`, MD5 gegen ETag; `thumbs.mjs` zählt Bucket-Inhalte als vorhanden).
+  Workflow: R2- und Deploy-Schritte nur mit Repo-Variable `FUNDUS_DEPLOY=1`; Secrets `CLOUDFLARE_API_TOKEN`,
+  `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`. Lokal mit `wrangler dev` geprüft: Seite, Vorschau
+  aus lokalem R2, `/mcp` (Suche, Vorschau), Prius und Toy Car in 3D unter der CSP.

@@ -6,3 +6,4 @@ public/data/
 public/vorschau/
 data/katalog.alt.json
 data/katalog/*.neu
+.wrangler/

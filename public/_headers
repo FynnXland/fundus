@@ -1,0 +1,16 @@
+# Headers for fundus.fynn.land (Cloudflare Workers static assets read this file from dist/).
+# img/media/connect allow https: because big previews, audio, 3D models and packages load straight from the
+# sources (dozens of hosts, Openverse alone links many), and only after the visitor agreed (karte.js). Scripts,
+# styles and the page itself come from this origin only. style-src-attr: the rating bar and the font sample set
+# a single CSS value inline.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' https:; connect-src 'self' https: blob: data:; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/data/*
+  Cache-Control: public, max-age=3600

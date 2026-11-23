@@ -117,6 +117,9 @@ async function main() {
   const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : undefined);
   const nurQuelle = arg('--quelle');
   const max = Number(arg('--max')) || Infinity;
+  // On a CI runner public/vorschau is empty: scripts/vorschau-r2.mjs liste writes what the bucket already holds.
+  let imBucket = new Set();
+  try { imBucket = new Set(JSON.parse(await readFile('.cache/r2-vorschau.json', 'utf8'))); } catch {}
   const offen = items.filter((it) => {
     const von = bildquelle(it);
     if (!von || gesperrtVorab[it.id] || (nurQuelle && it.source.id !== nurQuelle)) return false;
@@ -124,8 +127,8 @@ async function main() {
     if (alle || !r || r.von !== von) return true;
     // final failures (file gone, picture unreadable) are not repeated; throttling and timeouts are
     if (!r.pfad) return !r.endgueltig;
-    // a missing file is regenerated (the register can outlive the files)
-    return !existsSync(`${ZIEL}/${r.pfad}`);
+    // a missing file is regenerated (the register can outlive the files), unless it is in the R2 bucket
+    return !existsSync(`${ZIEL}/${r.pfad}`) && !imBucket.has(r.pfad);
   });
   offen.splice(max);
   console.log(`Vorschaubilder: ${offen.length} neu von ${items.length} Einträgen`);

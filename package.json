@@ -12,14 +12,18 @@
     "links": "node crawler/check-links.mjs",
     "daten": "node crawler/publish.mjs",
     "test": "node --test tests/",
-    "vorschau": "node crawler/thumbs.mjs"
+    "vorschau": "node crawler/thumbs.mjs",
+    "build:web": "node crawler/publish.mjs && node scripts/web-bauen.mjs",
+    "vorschau:r2": "node scripts/vorschau-r2.mjs abgleich"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "aws4fetch": "^1.0.20",
     "sharp": "^0.35.5",
-    "vite": "^6.4.6"
+    "vite": "^6.4.6",
+    "wrangler": "^4.167.0"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.3.0",

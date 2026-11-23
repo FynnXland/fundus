@@ -1,0 +1,47 @@
+// Cloudflare Worker for fundus.fynn.land (pattern of fynn.land, agreed with the fynn.land chat on 23.11.2026).
+// Serves dist/ as static files; worker/index.mjs runs only for /vorschau/* (previews from R2) and /mcp.
+// Not deployed yet: the first deploy needs Fynn's explicit yes, the R2 bucket and an API token (he creates both).
+//   npm run build:web            site and index into dist/, without the previews (they live in R2)
+//   npm run vorschau:r2          previews into the bucket (only new or changed files, scripts/vorschau-r2.mjs)
+//   npx wrangler deploy          the Worker; the first deploy creates fundus.fynn.land (DNS and certificate)
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "fundus",
+  "main": "worker/index.mjs",
+  "compatibility_date": "2026-11-01",
+  // the MCP server uses node:buffer through the official SDK
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    // the site routes with #/…, so an unknown path is a real 404 (a missing index file must not come back as HTML)
+    "not_found_handling": "none",
+    "run_worker_first": ["/mcp", "/vorschau/*"]
+  },
+  "r2_buckets": [
+    { "binding": "VORSCHAU", "bucket_name": "fundus-vorschau" }
+  ],
+  // The panic switch of fynn.land's admin Worker (fynnland/worker/guard.mjs): while it is on, /mcp answers 503.
+  "services": [
+    { "binding": "GUARD", "service": "fynnland-admin", "entrypoint": "Guard" }
+  ],
+  // Per visitor on /mcp: 60 tool calls a minute. Counted per Cloudflare location and only approximately; namespace ids
+  // must be unique in the account (fynn.land uses 2001 and 2002).
+  "ratelimits": [
+    { "name": "RL_MCP", "namespace_id": "3001", "simple": { "limit": 60, "period": 60 } }
+  ],
+  "vars": {
+    // "1" only with the Workers Paid plan: contact sheets decode pictures (CPU time beyond the free 10 ms)
+    "KONTAKTBOGEN": "0"
+  },
+  // The privacy text says requests are not logged: keep Workers Logs and Traces off.
+  "observability": { "enabled": false, "logs": { "enabled": false }, "traces": { "enabled": false } },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [
+    { "pattern": "fundus.fynn.land", "custom_domain": true }
+  ],
+  // Local test: npm run build:web, then npx wrangler dev. Port from the Fundus block 4570–4579 (PORTS.md).
+  "dev": { "port": 4572, "local_protocol": "http" }
+}
