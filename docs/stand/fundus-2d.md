@@ -1,9 +1,9 @@
 # Stand fundus-2d (2D-Grafik, Spiele-Assets, Code)
 
 Zuletzt aktualisiert: 23.11.2026, nachmittags. Fünf Quellen geprüft, vier Adapter gebaut. `npm test`: 150/150 grün,
-`tests/adapters-2d.test.mjs` 11/11. Nichts ist in `index.mjs` oder `config.json` eingetragen, nichts committet.
-Es lief kein Crawl gegen `data/katalog` und kein thumbs-Lauf; nur Stichproben gegen die echten Quellen
-(Godot mit 4 Details, beide Feeds vollständig) mit Stand-Datei im Temp-Ordner.
+`tests/adapters-2d.test.mjs` 11/11. Die Adapter sind inzwischen vom Orchestrator in `index.mjs`, `config.json` und
+`VORSCHAU_HOSTS` eingetragen und committet; OGA-BY steht in `licenses.mjs`. Der Abschnitt „Einbinden“ unten ist damit erledigt.
+(Beim Schreiben dieser Datei lief kein Crawl gegen `data/katalog`; nur Stichproben gegen die echten Quellen.)
 
 ## Adapter
 
