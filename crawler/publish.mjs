@@ -18,6 +18,7 @@ import { unterkategorie } from './lib/taxonomy.mjs';
 import { ladeKatalog } from './lib/store.mjs';
 import { SOURCES } from './sources/index.mjs';
 import { baueAusgabe } from './lib/ausgabe.mjs';
+import { rangwerte, sterne5 } from './lib/bewertung.mjs';
 
 export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, 2);
 export const STARTGROESSE = 240;
@@ -45,7 +46,9 @@ export const formate = (it) => [...new Set(it.downloads.flatMap((d) => (d.paket 
  * loading: art (the file belongs to one kind; start.json carries it as first field), quellname (from
  * stand.sources) and gruppe (from stand.index.lizenzgruppen).
  */
-export const FELDER = ['id', 'sig', 'unter', 'titel', 'urheber', 'quelle', 'lizenz', 'formate', 'tags', 'vorschau', 'vb', 'vh', 'neu', 'audio', 'sammlung', 'auch', 'text', 'fremd'];
+export const FELDER = ['id', 'sig', 'unter', 'titel', 'urheber', 'quelle', 'lizenz', 'formate', 'tags', 'vorschau', 'vb', 'vh', 'neu', 'audio', 'sammlung', 'auch', 'text', 'fremd', 'bew', 'pop', 'rang'];
+// The last three: bew = [stars out of five, votes, name of the rating source] or null, pop = [count, label] or null,
+// rang = the number that orders "empfohlen" (crawler/lib/bewertung.mjs), 0 for entries without rating and popularity.
 
 // utm_* parameters only count clicks for the source; the picture is the same without them
 const ohneTracking = (url) => url.replace(/([?&])utm_[a-z]+=[^&#]*/gi, '$1').replace(/[?&]+(?=#|$)/, '').replace(/\?&+/, '?');
@@ -84,6 +87,9 @@ export function zeile(it, v = it.vorschau) {
     // entries without a picture show the start of their description in the card
     !v?.pfad && it.description ? it.description.slice(0, 170) : '',
     v?.pfad ? '' : ohneTracking(kleineFremdvorschau(it)),
+    sterne5(it.rating) === null ? null : [sterne5(it.rating), it.rating.count, it.rating.source.name],
+    it.popularity ? [it.popularity.value, it.popularity.label] : null,
+    it.rang ?? 0,
   ];
 }
 
@@ -97,14 +103,14 @@ export const suchfelder = (it) => [
   [formate(it).join(' '), 2],
 ];
 
-/** Mixed sample for the first screen: round-robin over the kinds, entries with a picture or text first. */
+/** Mixed sample for the first screen: round-robin over the kinds, entries with a picture or text first, the best of those first. */
 export function startauswahl(items, n = STARTGROESSE) {
   const proArt = new Map();
   for (const it of items) {
     if (!proArt.has(it.kind)) proArt.set(it.kind, []);
     proArt.get(it.kind).push(it);
   }
-  for (const liste of proArt.values()) liste.sort((a, b) => Number(Boolean(b.vorschau || b.description)) - Number(Boolean(a.vorschau || a.description)));
+  for (const liste of proArt.values()) liste.sort((a, b) => Number(Boolean(b.vorschau || b.description)) - Number(Boolean(a.vorschau || a.description)) || (b.rang ?? 0) - (a.rang ?? 0));
   const out = [];
   for (let i = 0; out.length < n; i++) {
     let gefunden = false;
@@ -141,14 +147,19 @@ async function main() {
     const v = vorschau[it.id];
     if (v?.pfad) it.vorschau = { pfad: v.pfad, b: v.b, h: v.h };
   }
+  rangwerte(items);
   items.sort(mix);
 
   const perKind = Object.fromEntries(Object.keys(KINDS).map((k) => [k, 0]));
   const perUnter = Object.fromEntries(Object.keys(KINDS).map((k) => [k, {}]));
   const perSource = {};
   const perFormat = {};
+  const mitBewertung = Object.fromEntries(Object.keys(KINDS).map((k) => [k, 0]));
+  const mitBeliebtheit = Object.fromEntries(Object.keys(KINDS).map((k) => [k, 0]));
   for (const it of items) {
     perKind[it.kind]++;
+    if (sterne5(it.rating) !== null) mitBewertung[it.kind]++;
+    if (it.popularity) mitBeliebtheit[it.kind]++;
     perUnter[it.kind][it.unter] = (perUnter[it.kind][it.unter] ?? 0) + 1;
     perSource[it.source.id] = (perSource[it.source.id] ?? 0) + 1;
     for (const f of formate(it)) perFormat[f] = (perFormat[f] ?? 0) + 1;
@@ -172,7 +183,7 @@ async function main() {
   for (const [pfad, inhalt] of dateien) await writeFile(`${ZIEL}/${pfad}`, JSON.stringify(inhalt));
   await writeFile(
     `${ZIEL}/stand.json`,
-    JSON.stringify({ crawledAt: katalog.crawledAt ?? null, total: items.length, zusammengefuehrt, perKind, perUnter, perFormat, sources, index }, null, 1),
+    JSON.stringify({ crawledAt: katalog.crawledAt ?? null, total: items.length, zusammengefuehrt, perKind, mitBewertung, mitBeliebtheit, perUnter, perFormat, sources, index }, null, 1),
   );
   const mitBild = items.filter((it) => it.vorschau).length;
   console.log(`Veröffentlicht: ${items.length} Einträge, ${mitBild} mit Vorschaubild, ${zusammengefuehrt} Doppelte zusammengeführt (ausgelassen: ${skipped.ungueltig} ungültig, ${skipped.kaputt} mit toten Links, ${skipped.gesperrt} gesperrt).`);

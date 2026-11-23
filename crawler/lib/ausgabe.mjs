@@ -1,6 +1,7 @@
 // Output files of publish, as a map path -> content, so tests and measurements can build them without disk.
 //
-//   index/<art>/kopf.json    the first KOPF rows of the kind in mixed order: the folder shows them first
+//   index/<art>/kopf.json    the KOPF best rows of the kind (order "empfohlen": rang, then mixed): the folder shows
+//                            them first, so a folder shows its best entries before the rest has loaded
 //   index/<art>/<nn>.json    all rows of the kind in parts of at most TEIL rows, ordered by subfolder, tags,
 //                            mix. Neighbouring rows are alike, so a search or a subfolder needs few parts.
 //   suche/k_<key>.json       search tiles (suchindex.mjs), refs point to rows in the parts
@@ -16,9 +17,11 @@ export const KOPF = 240;
 const mischwert = (it) => it.sig.slice(-5);
 const ordnung = (it) => `${it.unter}\u0000${it.tags.slice(0, 8).join(' ')}\u0000${mischwert(it)}`;
 const vergleich = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+/** Recommended order: higher rang first, then the mixed order. rang comes from crawler/lib/bewertung.mjs (missing = 0). */
+export const empfohlen = (a, b) => (b.rang ?? 0) - (a.rang ?? 0) || vergleich(mischwert(a), mischwert(b)) || vergleich(a.id, b.id);
 
 /**
- * items: published entries in mixed order, each with kind, unter, sig, tags. zeile(it) gives the compact row for
+ * items: published entries in mixed order, each with kind, unter, sig, tags, and rang when ranked. zeile(it) gives the compact row for
  * the fields in felder; suchfelder(it) gives [[text, klasse], ...] for the search index.
  * Returns { dateien: Map path -> JSON-able, index: the block for stand.json, teilVon: Map id -> part number }.
  */
@@ -32,7 +35,7 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
   let ref = 0;
   for (const [art, liste] of proArt) {
     if (!liste.length) continue;
-    dateien.set(`index/${art}/kopf.json`, { felder, zeilen: liste.slice(0, kopf).map(zeile) });
+    dateien.set(`index/${art}/kopf.json`, { felder, zeilen: [...liste].sort(empfohlen).slice(0, kopf).map(zeile) });
     const sortiert = liste.map((it) => [ordnung(it), it]).sort((a, b) => vergleich(a[0], b[0])).map((e) => e[1]);
     const unter = [...new Set(sortiert.map((it) => it.unter))];
     const nr = new Map(unter.map((u, i) => [u, i]));

@@ -1,6 +1,6 @@
 // Catalogue data in the browser. What loads when (file layout: crawler/lib/ausgabe.mjs):
 //   stand.json + start.json            at once: counts, which parts and tiles exist, a mixed sample
-//   index/<art>/kopf.json              the first rows of a kind in mixed order: a folder can show them at once
+//   index/<art>/kopf.json              the best rows of a kind (order "empfohlen"): a folder can show them at once
 //   index/<art>/<nn>.json              parts of 500 rows, ordered by subfolder: a subfolder or a search loads few
 //   suche/k_<key>.json                 search tiles, loaded for the words of a query; the hits are row numbers
 //   karten/<xx>.json                   one shard per opened detail sheet; it names the index part of its entry
@@ -35,7 +35,13 @@ export const LIZENZGRUPPEN = {
   gleich: 'Gleiche Bedingungen (SA, GPL)',
 };
 
+// empfohlen is the default: best rated first, then most popular (per source), then mixed. Only the head of a
+// folder is needed for it, because the head holds the best rows. bewertung puts rated entries first (best by
+// Bayesian mean, see crawler/lib/bewertung.mjs), the rest follows mixed; it needs every row of the folder.
+export const STANDARD_SORT = 'empfohlen';
 export const SORTIERUNGEN = {
+  empfohlen: 'Empfohlen',
+  bewertung: 'Beste Bewertung',
   gemischt: 'Gemischt',
   neu: 'Neueste zuerst',
   name: 'Name A bis Z',
@@ -66,6 +72,7 @@ async function pool(aufgaben, parallel) {
 }
 
 const mix = (a, b) => (a.m < b.m ? -1 : a.m > b.m ? 1 : a.id < b.id ? -1 : 1);
+const empfohlen = (a, b) => b.rang - a.rang || mix(a, b);
 
 /** One row as an object. art, quellname and gruppe are not in the files (smaller rows), they are added here. */
 function zeileBauen(k, felder, z, art) {
@@ -75,6 +82,12 @@ function zeileBauen(k, felder, z, art) {
   o.quellname = k.quellnamen.get(o.quelle) ?? o.quelle;
   o.gruppe = k.gruppen[o.lizenz] ?? '';
   o.m = o.sig.slice(-5); // position in the mixed order
+  // rating and popularity as the display uses them (the raw row fields bew and pop are dropped)
+  o.bewertung = o.bew ? { sterne: o.bew[0], anzahl: o.bew[1], quelle: o.bew[2] } : undefined;
+  o.beliebtheit = o.pop ? { wert: o.pop[0], label: o.pop[1] } : undefined;
+  o.rang ??= 0;
+  delete o.bew;
+  delete o.pop;
   return o;
 }
 
@@ -252,7 +265,8 @@ export function bedarf(f, wurzelAlle = false) {
   const q = f.q?.trim();
   if (q) return `s|${f.art ?? ''}|${f.art ? f.unter ?? '' : ''}|${q}`;
   if (f.art && f.unter) return `${f.art}|${f.unter}`;
-  const voll = (f.lizenz && f.lizenz !== 'alle') || f.format || f.quelle || (f.sort && f.sort !== 'gemischt') ? '!' : '';
+  // the head of a folder is its best rows (empfohlen); every other order needs all rows to be right
+  const voll = (f.lizenz && f.lizenz !== 'alle') || f.format || f.quelle || (f.sort && f.sort !== STANDARD_SORT) ? '!' : '';
   if (f.art) return f.art + voll;
   return voll ? 'alle!' : wurzelAlle ? 'alle' : 'start';
 }
@@ -318,24 +332,35 @@ export async function ladeAlle(k) {
 
 /* ---------------- Filtering ---------------- */
 
-/** The loaded rows of a kind in mixed order (sorted again only when rows were added). */
+/** The loaded rows of a kind in the recommended order (sorted again only when rows were added). */
 function geordnet(k, art) {
   const liste = k.proArt.get(art) ?? [];
   const m = k.sortiert.get(art);
   if (m?.n === liste.length) return m.liste;
-  const neu = [...liste].sort(mix);
+  const neu = [...liste].sort(empfohlen);
   k.sortiert.set(art, { n: liste.length, liste: neu });
   return neu;
 }
 
+/**
+ * Every loaded row of every kind. rang only compares within a kind (pictures, icons and fonts have none), so the
+ * kinds are interleaved by position: the best of each kind, then the second best of each, and so on; the mixed
+ * order decides within one position. That is the same idea as the start sample.
+ */
 function alleGeordnet(k) {
-  const n = [...k.proArt.values()].reduce((s, l) => s + l.length, 0);
+  const n = [...k.proArt.keys()].reduce((s, art) => s + k.proArt.get(art).length, 0);
   if (k.alleMerk?.n === n) return k.alleMerk.liste;
-  k.alleMerk = { n, liste: [...k.proArt.values()].flat().sort(mix) };
+  const mitPlatz = [];
+  for (const art of k.proArt.keys()) geordnet(k, art).forEach((o, i) => mitPlatz.push([i, o]));
+  mitPlatz.sort((a, b) => a[0] - b[0] || mix(a[1], b[1]));
+  k.alleMerk = { n, liste: mitPlatz.map((e) => e[1]) };
   return k.alleMerk.liste;
 }
 
 const vergleiche = {
+  empfohlen,
+  gemischt: mix,
+  bewertung: (a, b) => Number(Boolean(b.bewertung)) - Number(Boolean(a.bewertung)) || (a.bewertung ? empfohlen(a, b) : mix(a, b)),
   neu: (a, b) => (a.neu < b.neu ? 1 : a.neu > b.neu ? -1 : 0),
   name: (a, b) => a.titel.localeCompare(b.titel, 'de'),
   quelle: (a, b) => a.quellname.localeCompare(b.quellname, 'de') || a.titel.localeCompare(b.titel, 'de'),
@@ -352,7 +377,9 @@ export function filtern(k, { q, art, unter, lizenz, format, quelle, sort }, wurz
   if (lizenz && lizenz !== 'alle') liste = liste.filter((o) => o.gruppe === lizenz);
   if (format) liste = liste.filter((o) => o.formate.split(' ').includes(format));
   if (quelle) liste = liste.filter((o) => o.quelle === quelle);
-  if (vergleiche[sort]) liste = [...liste].sort(vergleiche[sort]);
+  // the base order is already "empfohlen"; the start sample and search hits (ranked by relevance) keep theirs unless the
+  // visitor picks another order
+  if (sort && sort !== STANDARD_SORT && vergleiche[sort]) liste = [...liste].sort(vergleiche[sort]);
   return { liste, auswahl: was === 'start' };
 }
 

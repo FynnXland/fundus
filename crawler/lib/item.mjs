@@ -25,6 +25,8 @@ export function makeItem(source, raw, now = new Date().toISOString()) {
     meta: raw.meta,
     hashes: raw.hashes,
     collection: raw.collection,
+    rating: raw.rating,
+    popularity: raw.popularity,
     fetchedAt: now,
   });
   item.attribution = attributionText({ title: item.title, creator: item.creator, sourceUrl: item.source.url, license });

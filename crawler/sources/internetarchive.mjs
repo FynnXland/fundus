@@ -25,6 +25,7 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { getJson, setHostGap } from '../lib/http.mjs';
+import { bewertung, beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem } from '../lib/item.mjs';
 
 const SEARCH = 'https://archive.org/advancedsearch.php';
@@ -85,9 +86,10 @@ export function pickMp3(files = []) {
 
 /**
  * @param {object} data  response of https://archive.org/metadata/{identifier}
- * @param {{ kind?: 'musik' | 'sound' }} [opts]
+ * @param {{ kind?: 'musik' | 'sound', stats?: { avg_rating?: number, num_reviews?: number, downloads?: number } }} [opts]
+ *   stats: the search hit of the item; avg_rating (1 to 5), num_reviews and downloads come with the search answer
  */
-export function parseItem(data, { kind = 'musik' } = {}) {
+export function parseItem(data, { kind = 'musik', stats } = {}) {
   const m = data?.metadata;
   if (!m?.identifier || !/^[A-Za-z0-9._-]+$/.test(m.identifier)) return null;
   const license = first(m.licenseurl);
@@ -127,14 +129,26 @@ export function parseItem(data, { kind = 'musik' } = {}) {
     downloads,
     meta: Object.keys(meta).length ? meta : undefined,
     hashes: Object.keys(hashes).length ? hashes : undefined,
+    ...bewertungVon(id, stats),
   });
+}
+
+/** Rating and popularity of an item from its search hit (fields avg_rating, num_reviews, downloads), or nothing. */
+export function bewertungVon(id, stats) {
+  if (!stats) return {};
+  const url = `https://archive.org/details/${id}`;
+  return {
+    // reviews are 1 to 5 stars; an item without reviews has neither field
+    rating: bewertung({ value: stats.avg_rating, min: 1, max: 5, count: stats.num_reviews, name: source.name, url: `${url}#reviews` }),
+    popularity: beliebtheit({ value: stats.downloads, label: 'Downloads', name: source.name, url }),
+  };
 }
 
 /** @param {{ sort?: string }} [opts]  default sort stays "downloads desc" for the old three-argument call */
 export function searchUrl(collection, rows, page, { sort = 'downloads desc' } = {}) {
   const licenses = LICENSE_URLS.map((u) => `licenseurl:"${u}"`).join(' OR ');
   const p = new URLSearchParams({ q: `mediatype:audio AND collection:"${collection}" AND (${licenses})` });
-  for (const f of ['identifier', 'addeddate']) p.append('fl[]', f);
+  for (const f of ['identifier', 'addeddate', 'avg_rating', 'num_reviews', 'downloads']) p.append('fl[]', f);
   p.append('sort[]', sort);
   p.set('rows', String(rows));
   p.set('page', String(page));
@@ -325,7 +339,7 @@ source.crawl = async function crawl(cfg = {}, log = () => {}) {
             break;
           }
           handled++;
-          const it = parseItem(data, { kind: c.art });
+          const it = parseItem(data, { kind: c.art, stats: d });
           if (it) out.set(it.id, it);
         }
         state = applyItems(state, c.id, handled);

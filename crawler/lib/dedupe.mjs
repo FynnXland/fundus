@@ -145,7 +145,8 @@ export function inhaltsDubletten(items, vorschau = {}, maxAbstand = 2) {
   let zusammengefuehrt = 0;
   for (const gruppe of gruppen.values()) {
     if (gruppe.length === 1) { out.push(gruppe[0]); continue; }
-    gruppe.sort((a, b) => rang(a) - rang(b));
+    // same skill in several collections: the collection with more GitHub stars wins
+    gruppe.sort((a, b) => rang(a) - rang(b) || (b.popularity?.value ?? 0) - (a.popularity?.value ?? 0));
     const [sieger, ...rest] = gruppe;
     zusammengefuehrt += rest.length;
     out.push({

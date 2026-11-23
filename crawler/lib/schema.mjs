@@ -15,8 +15,14 @@
 //   meta?:     free-form facts from the source (stars, duration, resolution …), only real values
 //   hashes?:   { sha1?, md5?, sha256? } of the main file, when the source publishes them (used for dedupe)
 //   collection?: { id, name, url? } a set the entry belongs to (icon set, skill collection, asset pack)
+//   rating?:   { value, min, max, count, source: { name, url } }   an average on a scale, as the source shows it;
+//              stars out of five = 5 * value / max, two decimals; never present with count 0
+//   popularity?: { value, label, source: { name, url } }          a count without a scale (GitHub-Sterne, Downloads,
+//              Favoriten, Likes); never turned into stars. Both fields: crawler/lib/bewertung.mjs
 //   fetchedAt: ISO date of the crawl
 // }
+
+import { pruefeBewertung } from './bewertung.mjs';
 
 export const KINDS = {
   bild: { label: 'Bilder', code: 'BLD' },
@@ -79,6 +85,7 @@ export function validateItem(item) {
   need(Array.isArray(item.downloads) && item.downloads.length > 0, 'downloads leer');
   for (const d of item.downloads ?? []) need(isHttpUrl(d.url) && d.label, `download ungültig: ${d.url}`);
   need(Array.isArray(item.tags), 'tags kein Array');
+  errors.push(...pruefeBewertung(item));
   return errors;
 }
 

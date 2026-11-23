@@ -81,6 +81,17 @@ Noch offen aus den Stand-Dateien: Videoprobe in der Detailansicht (`PREVIEW_TYPE
 - `check-links.mjs`: für die Icon-Quellen nur die Vorschau bei raw.githubusercontent.com prüfen, nicht die
   github.com-Landeseiten (sonst massenhaft 429). Noch nicht umgesetzt.
 
+## Einbindung 23.11.2026 spät: Bewertungen und Skills (fundus-bewertung)
+
+- Echte Bewertungen: Internet Archive (174 Musikstücke) und Blender Extensions (998, aus den Listenseiten, abschaltbar mit
+  `blender.bewertungen: false`). Beliebtheit: GitHub-Sterne, Downloads (Poly Haven, ambientCG, Fuel, IA, Blender).
+- Standardsortierung `empfohlen` (Bayes-Mittel, dann Beliebtheit je Quelle normalisiert), Anzeige: Sterne-Balken mit
+  Tooltip, Beliebtheit als Zahl, bei Skills „der Sammlung“.
+- Skills: 44 Sammlungen in `github.skillRepos`, Ausschlussliste. Ohne `GITHUB_TOKEN` bricht der Lauf nach rund 55
+  Anfragen ab: 1.430 Skills, nur 343 mit Sternen. Mit Token neu crawlen.
+- Offen: Kopf der Skills zeigt eine Sammlung am Stück (gleiche Sterne); im Kopf reihum nach Sammlung mischen.
+- Katalog: 59.971 Objekte.
+
 ## Wenn ein Unterchat seinen Bericht schickt: einbinden
 
 1. Bericht und `docs/stand/<name>.md` lesen, neue Dateien ansehen.

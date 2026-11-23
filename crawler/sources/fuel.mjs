@@ -17,6 +17,7 @@
 // - The model files are SDF plus OBJ, DAE or STL meshes, which the site's viewer (GLTFLoader only) cannot show,
 //   so the preview is the model's own rendered thumbnail.
 import { politeFetch, setHostGap } from '../lib/http.mjs';
+import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem, q } from '../lib/item.mjs';
 import { normalizeLicense } from '../lib/licenses.mjs';
 import { advanceStrand, emptyStrand, loadJson, prepareStrand, saveJson } from './stand-helfer.mjs';
@@ -79,6 +80,7 @@ export function parseModel(row) {
     downloads: [{ label: 'Gazebo-Modell als ZIP (SDF, Meshes, Texturen)', url: `${base}.zip`, format: 'zip', size: Number(row.filesize) || undefined }],
     meta: Object.keys(meta).length ? meta : undefined,
     collection: undefined,
+    popularity: beliebtheit({ value: row.downloads, label: 'Downloads', name: source.name, url: `${APP}/${seg(row.owner)}/fuel/models/${seg(row.name)}` }),
   });
 }
 

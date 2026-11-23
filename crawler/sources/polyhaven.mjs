@@ -4,6 +4,7 @@
 // Models consist of several files (glTF + bin + textures), so the downloads are "packages": the browser
 // fetches each file from dl.polyhaven.org (CORS allowed) and zips them locally.
 import { getJson, setHostGap } from '../lib/http.mjs';
+import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem } from '../lib/item.mjs';
 
 const API = 'https://api.polyhaven.com';
@@ -95,6 +96,8 @@ export function parseAsset(id, info, files) {
     meta: { ...meta, art: type === 'hdri' ? 'HDRI' : type === 'textur' ? 'Textur' : '3D-Modell' },
     // MD5 of the main file as published by Poly Haven, for the duplicate check
     hashes: downloads[0]?.md5 ? { md5: downloads[0].md5 } : undefined,
+    // download_count comes with the listing, no extra request
+    popularity: beliebtheit({ value: info.download_count, label: 'Downloads', name: source.name, url: `https://polyhaven.com/a/${id}` }),
   });
 }
 

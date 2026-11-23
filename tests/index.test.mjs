@@ -210,14 +210,19 @@ test('Filter, die alle Zeilen brauchen, bleiben auch mit Rückruf vollständig',
   assert.ok(hat(k, was));
 });
 
-test('Alle Ordner mit Rückruf: Köpfe zuerst, Reihenfolge gemischt über alle Arten', async () => {
+test('Alle Ordner mit Rückruf: Köpfe zuerst, die Arten nach Platz gemischt (je Art empfohlen, hier ohne Rang also gemischt)', async () => {
   const k = await ladeKatalog();
   const fertig = new Promise((ok) => beimNachladen(k, ok));
   await hole(k, 'alle');
   assert.deepEqual(kopfDateien().sort(), ['index/bild/kopf.json', 'index/musik/kopf.json']);
   const kopfListe = filtern(k, {}, true).liste;
   assert.equal(kopfListe.length, KOPF + 100);
-  assert.deepEqual(kopfListe.slice(0, 20).map((o) => o.id), ITEMS.slice(0, 20).map((o) => o.id));
+  // place 0 of both kinds, then place 1 of both, ...; within a place the mixed order
+  const platz = (art) => ITEMS.filter((it) => it.kind === art).map((it) => it.id);
+  const erwartet = [...platz('bild').slice(0, 10).map((id, i) => [i, id]), ...platz('musik').slice(0, 10).map((id, i) => [i, id])]
+    .sort((a, b) => a[0] - b[0] || (ITEMS.find((it) => it.id === a[1]).sig.slice(-5) < ITEMS.find((it) => it.id === b[1]).sig.slice(-5) ? -1 : 1))
+    .slice(0, 20).map((e) => e[1]);
+  assert.deepEqual(kopfListe.slice(0, 20).map((o) => o.id), erwartet);
   await fertig;
   assert.equal(filtern(k, {}, true).liste.length, 1300);
 });

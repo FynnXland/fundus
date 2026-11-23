@@ -6,6 +6,7 @@
 //   the repository licence. Skills without a recognisable open licence are skipped.
 // Without GITHUB_TOKEN: search 10/min, core API 60/h. With a token: 30/min and 5000/h.
 import { getJson, politeFetch, setHostGap } from '../lib/http.mjs';
+import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem } from '../lib/item.mjs';
 import { normalizeLicense } from '../lib/licenses.mjs';
 import { createHash } from 'node:crypto';
@@ -62,6 +63,7 @@ export function parseRepo(repo, kind) {
       zuletzt: repo.pushed_at?.slice(0, 10),
       repository: repo.full_name,
     },
+    popularity: beliebtheit({ value: repo.stargazers_count, label: 'GitHub-Sterne', name: 'GitHub', url: repo.html_url }),
   });
 }
 
@@ -122,6 +124,8 @@ export function skillItem({ repo, dir, front, license, files, md }) {
     meta: { sammlung: repo.full_name, dateien: String(files.length) },
     collection: { id: repo.full_name, name: repo.full_name, url: repo.html_url },
     hashes: md ? { sha256: skillHash(md) } : undefined,
+    // a skill has no stars of its own: these are the stars of the collection it lives in (repository search answer)
+    popularity: beliebtheit({ value: repo.stargazers_count, label: 'GitHub-Sterne', name: 'GitHub', url: repo.html_url }),
   });
 }
 
@@ -148,6 +152,7 @@ async function skillsOf(repo, cfg, log) {
     log(`  github Baum ${repo.full_name}: ${err.message}`);
     return [];
   }
+  if (tree.truncated) log(`  github ${repo.full_name}: Baum abgeschnitten (sehr großes Repo), Skills können fehlen`);
   const blobs = (tree.tree ?? []).filter((t) => t.type === 'blob');
   const skillDirs = blobs
     .filter((b) => /(^|\/)SKILL\.md$/.test(b.path))
@@ -171,6 +176,19 @@ async function skillsOf(repo, cfg, log) {
     if (it) out.push(it);
   }
   return out;
+}
+
+/**
+ * Which repositories are read for skills: the named collections (cfg.skillRepos) first, then the found ones by stars,
+ * at most cfg.skillReposMax of those. The most starred repos win the places, not the ones the first query listed.
+ * cfg.skillAusschliessen names repos that only ship a few skills next to something else (apps, tools); they are not
+ * taken from the search, only when listed in skillRepos.
+ */
+export function waehleSkillRepos(repos, cfg) {
+  const raus = new Set((cfg.skillAusschliessen ?? []).map((n) => n.toLowerCase()));
+  const genannt = (cfg.skillRepos ?? []).map((n) => repos.find((r) => r.full_name.toLowerCase() === n.toLowerCase())).filter(Boolean);
+  const gefunden = repos.filter((r) => !genannt.includes(r) && !raus.has(r.full_name.toLowerCase())).sort((a, b) => (b.stargazers_count ?? 0) - (a.stargazers_count ?? 0));
+  return [...genannt, ...gefunden.slice(0, cfg.skillReposMax ?? 12)];
 }
 
 source.crawl = async function crawl(cfg, log) {
@@ -197,7 +215,7 @@ source.crawl = async function crawl(cfg, log) {
   for (const query of cfg.skillSuchen ?? []) {
     for (const r of await search(query, per, log)) if (!r.fork && !r.archived && !repos.has(r.full_name)) repos.set(r.full_name, r);
   }
-  const chosen = [...repos.values()].slice(0, (cfg.skillRepos?.length ?? 0) + (cfg.skillReposMax ?? 12));
+  const chosen = waehleSkillRepos([...repos.values()], cfg);
   for (const repo of chosen) out.push(...(await skillsOf(repo, cfg, log)));
   return out;
 };

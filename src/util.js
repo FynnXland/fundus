@@ -64,7 +64,8 @@ export function sterneHtml(b, { gross = false } = {}) {
 /** "12,3 Tsd. GitHub-Sterne"; the title names the source. */
 export function beliebtheitHtml(p) {
   if (!p || !(p.wert > 0)) return '';
-  const text = `${numFmt.format(p.wert)} ${p.label ?? ''}${p.quelle ? ` auf ${p.quelle}` : ''}`.trim();
+  // a skill has no stars of its own: they belong to the collection it lives in
+  const text = `${numFmt.format(p.wert)} ${p.label ?? ''}${p.sammlung ? ' der Sammlung' : ''}${p.quelle ? ` auf ${p.quelle}` : ''}`.trim();
   return `<span class="beliebt" title="${esc(text)}">${esc(kurzFmt.format(p.wert))} ${esc(p.label ?? '')}</span>`;
 }
 

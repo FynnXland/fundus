@@ -1,6 +1,7 @@
 // ambientCG: CC0 materials and HDRIs. A one-person project, so the crawler asks for one page per type
 // and caches nothing else. Downloads are ZIP files at the source.
 import { getJson, setHostGap } from '../lib/http.mjs';
+import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem, q } from '../lib/item.mjs';
 
 const API = 'https://ambientcg.com/api/v2/full_json';
@@ -48,6 +49,8 @@ export function parseAsset(a) {
     preview: { type: 'image', thumb, url: img['1024-PNG'] || thumb },
     downloads,
     meta: { art: art[1], kategorie: a.displayCategory },
+    // downloadCount is part of the listing answer
+    popularity: beliebtheit({ value: a.downloadCount, label: 'Downloads', name: source.name, url: a.shortLink || `https://ambientcg.com/view?id=${a.assetId}` }),
   });
 }
 

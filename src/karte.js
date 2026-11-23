@@ -126,7 +126,7 @@ function bewertungsZeile(it) {
   const quelle = it.rating?.source ?? it.popularity?.source;
   const original = bewertung && it.rating.max !== 5 ? `<span class="info__klein">Original: ${esc(String(it.rating.value).replace('.', ','))} von ${esc(String(it.rating.max))}</span>` : '';
   const stimmen = bewertung ? `<span class="info__klein">${esc(bewertung.anzahl.toLocaleString('de-DE'))} ${bewertung.anzahl === 1 ? 'Bewertung' : 'Bewertungen'} auf ${quelle?.url ? `<a href="${esc(safeUrl(quelle.url))}" rel="noopener noreferrer" target="_blank">${esc(quelle.name)}</a>` : esc(quelle?.name ?? '')}</span>` : '';
-  return `<div class="info__bewertung">${sterneHtml(bewertung, { gross: true })}${stimmen}${original}${beliebtheitHtml(beliebtheit)}</div>`;
+  return `<div class="info__bewertung">${sterneHtml(bewertung, { gross: true })}${stimmen}${original}${beliebtheitHtml(beliebtheit && { ...beliebtheit, sammlung: it.kind === 'skill' })}</div>`;
 }
 
 function infoHtml(it, katalog, mitVorschau) {

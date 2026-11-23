@@ -1,5 +1,5 @@
 import './styles.css';
-import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN } from './katalog.js';
+import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN, STANDARD_SORT } from './katalog.js';
 import { vorschau, hoerprobe, alleAnhalten } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
@@ -16,7 +16,7 @@ const vorschauschalter = document.getElementById('vorschauschalter');
 const zustand = {
   katalog: null,
   fehler: null,
-  filter: { q: '', art: '', unter: '', lizenz: 'alle', format: '', quelle: '', sort: 'gemischt' },
+  filter: { q: '', art: '', unter: '', lizenz: 'alle', format: '', quelle: '', sort: STANDARD_SORT },
   ansicht: store.get('fundus.ansicht') === 'liste' ? 'liste' : 'raster',
   sichtbar: SEITENGROESSE,
   katalogHash: '#/',
@@ -89,7 +89,7 @@ async function route() {
         lizenz: params.get('lizenz') ?? 'alle',
         format: params.get('format') ?? '',
         quelle: params.get('quelle') ?? '',
-        sort: params.get('sort') ?? 'gemischt',
+        sort: params.get('sort') ?? STANDARD_SORT,
       };
       zustand.katalogHash = location.hash || '#/';
     }
@@ -148,7 +148,7 @@ async function katalogLaden() {
 }
 
 /* ---------------- Katalog ---------------- */
-const SORT_TEXT = { gemischt: 'Gemischt sortiert', neu: 'Neueste zuerst', name: 'Name A bis Z', quelle: 'Nach Quelle sortiert' };
+const SORT_TEXT = { empfohlen: 'Empfohlen', bewertung: 'Beste Bewertung', gemischt: 'Gemischt sortiert', neu: 'Neueste zuerst', name: 'Name A bis Z', quelle: 'Nach Quelle sortiert' };
 
 function katalogBauen() {
   document.title = 'Fundus · freie Assets';
@@ -248,7 +248,7 @@ function filterAbgleichen() {
   if (!imKatalog()) return;
   main.querySelectorAll('[data-lizenz]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lizenz === (f.lizenz in LIZENZGRUPPEN ? f.lizenz : 'alle'))));
   main.querySelectorAll('[data-ansicht]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ansicht === zustand.ansicht)));
-  main.querySelector('#sortwahl').value = f.sort in SORTIERUNGEN ? f.sort : 'gemischt';
+  main.querySelector('#sortwahl').value = f.sort in SORTIERUNGEN ? f.sort : STANDARD_SORT;
   const k = zustand.katalog;
   if (!k) return;
   const qw = main.querySelector('#quellwahl');
@@ -266,7 +266,7 @@ function filterSetzen(teil, ersetzen = false) {
   const f = { ...zustand.filter, ...teil };
   if (teil.art !== undefined && teil.unter === undefined) f.unter = '';
   const p = new URLSearchParams();
-  for (const [k, v] of Object.entries(f)) if (v && !(k === 'lizenz' && v === 'alle') && !(k === 'sort' && v === 'gemischt')) p.set(k, v);
+  for (const [k, v] of Object.entries(f)) if (v && !(k === 'lizenz' && v === 'alle') && !(k === 'sort' && v === STANDARD_SORT)) p.set(k, v);
   const ziel = `#/${p.toString() ? `?${p}` : ''}`;
   zustand.sichtbar = SEITENGROESSE;
   if (ersetzen) {
@@ -351,7 +351,7 @@ function karte(o, mitVorschau) {
       ${flaeche}
       <span class="karte__titel">${esc(o.titel)}</span>
       <span class="karte__meta"><span class="mono">${esc(o.lizenz)}</span> · ${esc(o.quellname)}</span>
-      ${o.bewertung ? sterneHtml(o.bewertung) : o.beliebtheit ? beliebtheitHtml(o.beliebtheit) : ''}
+      ${o.bewertung ? sterneHtml(o.bewertung) : o.beliebtheit ? beliebtheitHtml({ ...o.beliebtheit, quelle: o.quellname, sammlung: o.art === 'skill' }) : ''}
     </a>${hoeren}
   </li>`;
 }

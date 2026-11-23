@@ -56,6 +56,9 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
   - SMK: rechtlich unproblematisch (Public Domain), technisch zu langsam (Bildserver rendert in 21 bis 84 s).
   - Internet Archive `computoser` (computererzeugte Musik, CC BY-SA 4.0): ob daran überhaupt ein Urheberrecht
     besteht, ist offen.
+- Bewertungen: Fundus zeigt nur Bewertungen der Quellseiten (Internet Archive aus der Such-API, Blender Extensions aus den
+  öffentlichen Listenseiten `/add-ons/?page=N`, robots.txt erlaubt `/`, Content-Signal `search=yes, ai-train=no, use=reference`;
+  Fundus trainiert nichts und verlinkt die Quelle). Abschaltbar mit `"blender": { "bewertungen": false }`.
 - Mini-Vorschaubilder: eigene Kopie auf dem Server, siehe Matrix. Bei Meldungen das Vorschaubild mit entfernen
   (passiert automatisch beim nächsten `npm run vorschau`, sobald der Eintrag gesperrt ist).
 
