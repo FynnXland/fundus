@@ -138,3 +138,22 @@ Linkprüfung: erst 1.698 Einträge geprüft (1.594 ok, 234 unklar, 0 tot). Die n
   bewusst ungetrackt.
 - Fehler in der Browser-Konsole „menueListenFuellen“ stammen von einer alten, längst ersetzten Seitenversion im Cache
   der Vorschau, nicht vom aktuellen Code.
+
+## Hosting auf fynn.land (Absprache mit dem fynn.land-Hauptchat, 23.11.2026)
+
+Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklichem Ja.
+- Empfehlung: eigene Subdomain `fundus.fynn.land` als eigener Cloudflare Worker (wie dicehoc, studienverlaufsplan),
+  nicht Pages und nicht als Pfad. Vite-`base` bleibt `/`. Erster Deploy legt die Domain über
+  `routes: [{ pattern: "fundus.fynn.land", custom_domain: true }]` an.
+- Worker mit Static Assets plus Script: `/mcp` im selben Worker (`assets.run_worker_first: ["/mcp"]`), Vorschaubilder
+  über ein R2-Binding vom selben Origin (CSP bleibt `'self'`, nur ein Host im Datenschutz). `observability` aus.
+  `/mcp` braucht Ratenlimits und den Not-Aus GUARD wie fynnland (`worker/guard.mjs`, `docs/SICHERHEITSPAKET.md`,
+  `docs/KOSTEN-UND-EINNAHMEN.md` im fynnland-Repo).
+- Limits Workers Static Assets: 20.000 Dateien je Version (Free), 100.000 (Paid), 25 MiB je Datei. Index 486 Dateien,
+  Vorschaubilder gehören nach R2.
+- Fynn richtet selbst ein: R2-Bucket (braucht Zahlungsmittel), API-Token als Repo-Secret für den Deploy.
+- Eintrag auf fynn.land: Paket `site/content/apps/fundus/` baut der fynn.land-Chat. Fundus liefert DE+EN: Name,
+  Tagline, 4–6 about-Zeilen, 3–4 Tags, page.md/page.en.md, tile.svg (weiß auf transparent), background.webp
+  (1920×1200, < 400 KB). Bereiche: Spiele, Programme, Apps, Für Claude Code; neuer Tab nur durch Fynn.
+- Rechtstexte: fynn.land/impressum.html und /datenschutz.html gibt es; entweder dort ergänzen oder eigene Seiten wie
+  dicehoc. Offener Rechtspunkt: Fundus liefert eigene Vorschaubilder fremder Werke selbst aus, vor dem Start klären.
