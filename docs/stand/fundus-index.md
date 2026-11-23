@@ -1,7 +1,6 @@
 # fundus-index: Index für 100.000+ Einträge
 
-Stand 23.11.2026. Fertig und eingespielt, bis auf den kleinen Patch in `src/main.js` (unten), den nur der Orchestrator
-einspielen darf. Ohne den Patch läuft die Seite vollständig, nur ohne den Geschwindigkeitsgewinn für Ordner.
+Stand 23.11.2026. Fertig und eingespielt, auch der Patch in `src/main.js` (unten, erledigt am 23.11.2026).
 
 ## Dateien
 
@@ -33,9 +32,10 @@ beim nächsten `npm run daten` von selbst; eine Art ohne Einträge bekommt keine
 - Suche: die Kacheln der Suchwörter, dann nur die Teile, in denen Treffer liegen.
 - Filter, die jede Zeile brauchen (Lizenz, Format, Quelle, andere Sortierung): laden den Ordner vollständig.
 
-## Patch für `src/main.js` (nur Orchestrator)
+## Patch für `src/main.js` (erledigt)
 
-Ohne `beimNachladen` wartet `hole()`, bis ein Ordner vollständig da ist (richtig, aber langsamer). Mit dem Patch zeigt
+Eingespielt: Import, `beimNachladen`, Gesamtzahl über dem Raster und `ladetext()` für die Ladeanzeige. Zur Erinnerung,
+was er bewirkt: Ohne `beimNachladen` wartet `hole()`, bis ein Ordner vollständig da ist (richtig, aber langsamer). Mit dem Patch zeigt
 ein Ordner nach dem Kopf schon etwas.
 
 1. Import erweitern: `import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN } from './katalog.js';`
