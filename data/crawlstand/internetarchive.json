@@ -1,0 +1,32 @@
+{
+ "version": 1,
+ "sammlungen": {
+  "netlabels": {
+   "art": "musik",
+   "richtung": "asc",
+   "offset": 198,
+   "fertig": false,
+   "runde": 1,
+   "zuletzt": "2026-11-23T13:23:38.522Z",
+   "treffer": 5887
+  },
+  "freemusicarchive": {
+   "art": "musik",
+   "richtung": "asc",
+   "offset": 198,
+   "fertig": false,
+   "runde": 1,
+   "zuletzt": "2026-11-23T13:27:02.502Z",
+   "treffer": 286
+  },
+  "radio-aporee-maps": {
+   "art": "sound",
+   "richtung": "asc",
+   "offset": 198,
+   "fertig": false,
+   "runde": 1,
+   "zuletzt": "2026-11-23T13:30:24.160Z",
+   "treffer": 58714
+  }
+ }
+}

@@ -107,11 +107,51 @@
     "maxMinuten": 40
   },
   "wikimedia": {
-    "kategorien": [
-      "Category:Featured_pictures_on_Wikimedia_Commons",
-      "Category:Valued_images_sorted_by_promotion_date"
+    "gruppen": [
+      {
+        "id": "exzellent",
+        "art": "bild",
+        "kategorie": "Category:Featured_pictures_on_Wikimedia_Commons"
+      },
+      {
+        "id": "wertvoll",
+        "art": "bild",
+        "kategorie": "Category:Valued_images_sorted_by_promotion_date"
+      },
+      {
+        "id": "qualitaet",
+        "art": "bild",
+        "kategorie": "Category:Quality_images"
+      },
+      {
+        "id": "clipart",
+        "art": "grafik",
+        "kategorie": "Category:PD_OpenClipart"
+      },
+      {
+        "id": "clipart-openclipart",
+        "art": "grafik",
+        "kategorie": "Category:Images_from_openclipart.org"
+      },
+      {
+        "id": "kacheltexturen",
+        "art": "textur",
+        "kategorie": "Category:Tileable_textures"
+      },
+      {
+        "id": "nahtlose-muster",
+        "art": "textur",
+        "kategorie": "Category:Seamless_patterns"
+      },
+      {
+        "id": "3d",
+        "art": "3d",
+        "suche": "filetype:3d -intitle:Noto"
+      }
     ],
-    "limit": 3000
+    "budget": 300,
+    "maxMinuten": 40,
+    "wiederholenNachTagen": 14
   },
   "polyhaven": {
     "models": 2000,
@@ -255,10 +295,22 @@
   },
   "internetarchive": {
     "sammlungen": [
-      "netlabels"
+      {
+        "id": "netlabels",
+        "art": "musik"
+      },
+      {
+        "id": "freemusicarchive",
+        "art": "musik"
+      },
+      {
+        "id": "radio-aporee-maps",
+        "art": "sound"
+      }
     ],
-    "limit": 400,
-    "maxSeiten": 8
+    "budget": 600,
+    "maxMinuten": 40,
+    "wiederholenNachTagen": 30
   },
   "smithsonian": {
     "bilder": [
@@ -277,5 +329,62 @@
     "proSuche": 100,
     "seiten": 1,
     "budget": 60
+  },
+  "commonsaudio": {
+    "budget": 300,
+    "tiefe": 5,
+    "maxMinuten": 40,
+    "wiederholenNachTagen": 30
+  },
+  "wikimediavideo": {
+    "begriffe": [
+      "drone footage",
+      "aerial view",
+      "timelapse",
+      "slow motion",
+      "waterfall",
+      "ocean waves",
+      "river",
+      "forest",
+      "clouds",
+      "sunset",
+      "snow",
+      "thunderstorm",
+      "volcano",
+      "aurora",
+      "fireworks",
+      "fire",
+      "city traffic",
+      "night city",
+      "train",
+      "aircraft",
+      "birds",
+      "wildlife",
+      "insects",
+      "underwater",
+      "space",
+      "rocket launch",
+      "microscopy",
+      "3d animation",
+      "newsreel"
+    ],
+    "budget": 100,
+    "maxDauer": 600,
+    "maxMinuten": 30
+  },
+  "blender": {},
+  "godot": {
+    "budget": 400,
+    "maxMinuten": 30
+  },
+  "opengameart": {},
+  "openclipart": {},
+  "khronos": {},
+  "cleveland": {
+    "budget": 25,
+    "proSeite": 200
+  },
+  "wellcome": {
+    "budget": 40
   }
 }

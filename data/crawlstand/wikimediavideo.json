@@ -1,0 +1,153 @@
+{
+ "version": 1,
+ "zyklus": 1,
+ "zyklusStart": "2026-11-23",
+ "begriffe": {
+  "drone footage": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:47:10.718Z"
+  },
+  "aerial view": {
+   "offset": 100,
+   "fertig": true,
+   "zuletzt": "2026-11-23T13:39:02.644Z",
+   "fehler": "cirrussearch-too-busy-error"
+  },
+  "timelapse": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:48:03.005Z"
+  },
+  "slow motion": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:48:05.690Z"
+  },
+  "waterfall": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:48:09.311Z"
+  },
+  "ocean waves": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:49:02.947Z"
+  },
+  "river": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:49:05.939Z"
+  },
+  "forest": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:49:09.538Z"
+  },
+  "clouds": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:50:03.043Z"
+  },
+  "sunset": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:50:06.885Z"
+  },
+  "snow": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:50:10.067Z"
+  },
+  "thunderstorm": {
+   "offset": 200,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:51:01.795Z"
+  },
+  "volcano": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:42:02.254Z"
+  },
+  "aurora": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:42:06.284Z"
+  },
+  "fireworks": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:42:09.642Z"
+  },
+  "fire": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:43:01.315Z"
+  },
+  "city traffic": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:43:04.640Z"
+  },
+  "night city": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:43:08.312Z"
+  },
+  "train": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:44:03.534Z"
+  },
+  "aircraft": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:44:06.210Z"
+  },
+  "birds": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:44:09.635Z"
+  },
+  "wildlife": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:45:01.713Z"
+  },
+  "insects": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:45:05.118Z"
+  },
+  "underwater": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:45:08.923Z"
+  },
+  "space": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:46:02.907Z"
+  },
+  "rocket launch": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:46:05.625Z"
+  },
+  "microscopy": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:46:08.914Z"
+  },
+  "3d animation": {
+   "offset": 150,
+   "fertig": false,
+   "zuletzt": "2026-11-23T13:47:03.969Z"
+  },
+  "newsreel": {
+   "offset": 100,
+   "fertig": true,
+   "zuletzt": "2026-11-23T13:47:07.396Z"
+  }
+ }
+}

@@ -9,13 +9,19 @@ const wert = (v, was) => (v ? esc(v) : luecke(was));
 // Hosts that previews load from, per source. Shown in the privacy policy and kept next to the adapters.
 const VORSCHAU_HOSTS = [
   ['Openverse', 'api.openverse.org (Vorschaubilder) sowie die Server der dort verzeichneten Anbieter, etwa live.staticflickr.com und cdn.freesound.org'],
-  ['Wikimedia Commons', 'upload.wikimedia.org'],
+  ['Wikimedia Commons (Bilder, Audio, Video)', 'upload.wikimedia.org, thumb.wikimedia.org'],
   ['Poly Haven', 'cdn.polyhaven.org, dl.polyhaven.org'],
   ['ambientCG', 'acg-media.struffelproductions.com'],
   ['Fontsource', 'cdn.jsdelivr.net'],
   ['Iconify', 'api.iconify.design'],
   ['Smithsonian Open Access', 'ids.si.edu, 3d-api.si.edu, smithsonian-open-access.s3-us-west-2.amazonaws.com'],
   ['Internet Archive', 'archive.org und die Download-Server, auf die es weiterleitet (dn….ca.archive.org, ia….us.archive.org)'],
+  ['Cleveland Museum of Art', 'openaccess-cdn.clevelandart.org'],
+  ['Wellcome Collection', 'iiif.wellcomecollection.org'],
+  ['Khronos glTF Sample Assets', 'raw.githubusercontent.com'],
+  ['Godot Asset Library', 'raw.githubusercontent.com, user-images.githubusercontent.com, media.githubusercontent.com, github.com, gitlab.com, codeberg.org'],
+  ['OpenGameArt.org', 'opengameart.org'],
+  ['Openclipart', 'openclipart.org'],
 ];
 
 function quellen({ katalog, fehler }) {
@@ -103,9 +109,12 @@ function datenschutz() {
 
 function melden({ katalog, params }) {
   const id = params.get('id');
-  const it = id ? katalog?.byId.get(id) : null;
+  // byId holds index rows (titel, quellname), not full entries; the row has no source address, the card link does
+  const zeile = id ? katalog?.byId.get(id) : null;
+  const it = zeile ? { id: zeile.id, sig: zeile.sig, title: zeile.titel ?? zeile.title, source: { name: zeile.quellname ?? zeile.source?.name } } : null;
+  const karte = it ? `${location.origin}${location.pathname}#/karte/${encodeURIComponent(it.id)}` : '';
   const betreff = it ? `Fundus-Meldung ${it.sig}: ${it.title}` : 'Fundus-Meldung';
-  const text = it ? `Eintrag: ${it.title}\nSignatur: ${it.sig}\nKennung: ${it.id}\nUrsprung: ${it.source.url}\n\nWas stimmt nicht?\n` : 'Welcher Eintrag (Titel oder Signatur)?\n\nWas stimmt nicht?\n';
+  const text = it ? `Eintrag: ${it.title}\nSignatur: ${it.sig}\nKennung: ${it.id}\nQuelle: ${it.source.name}\nKarte: ${karte}\n\nWas stimmt nicht?\n` : 'Welcher Eintrag (Titel oder Signatur)?\n\nWas stimmt nicht?\n';
   const mail = BETREIBER.email
     ? `<p><a class="knopf knopf--haupt" href="mailto:${esc(BETREIBER.email)}?subject=${encodeURIComponent(betreff)}&amp;body=${encodeURIComponent(text)}">E-Mail mit diesen Angaben schreiben</a></p>`
     : `<p>${luecke('Kontaktadresse für Meldungen')}</p>`;

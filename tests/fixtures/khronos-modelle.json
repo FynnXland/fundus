@@ -1,0 +1,662 @@
+{
+ "index": [
+  {
+   "label": "Avocado",
+   "name": "Avocado",
+   "screenshot": "screenshot/screenshot.jpg",
+   "tags": [
+    "core",
+    "testing"
+   ],
+   "variants": {
+    "glTF": "Avocado.gltf",
+    "glTF-Binary": "Avocado.glb",
+    "glTF-Draco": "Avocado.gltf",
+    "glTF-Quantized": "Avocado.gltf"
+   }
+  },
+  {
+   "label": "NodeVisibilityTest",
+   "name": "NodeVisibilityTest",
+   "screenshot": "screenshot/screenshot.png",
+   "tags": [
+    "testing"
+   ],
+   "variants": {
+    "glTF": "NodeVisibilityTest.gltf",
+    "glTF-Binary": "NodeVisibilityTest.glb"
+   }
+  },
+  {
+   "label": "A Beautiful Game",
+   "name": "ABeautifulGame",
+   "screenshot": "screenshot/screenshot.jpg",
+   "tags": [
+    "showcase",
+    "video",
+    "extension"
+   ],
+   "variants": {
+    "glTF": "ABeautifulGame.gltf",
+    "glTF-Binary": "ABeautifulGame.glb",
+    "glTF-Binary-KTX-ETC1S-Draco": "ABeautifulGame.glb"
+   }
+  },
+  {
+   "label": "Damaged Helmet",
+   "name": "DamagedHelmet",
+   "screenshot": "screenshot/screenshot.png",
+   "tags": [
+    "core",
+    "showcase",
+    "testing",
+    "video"
+   ],
+   "variants": {
+    "glTF": "DamagedHelmet.gltf",
+    "glTF-Binary": "DamagedHelmet.glb",
+    "glTF-Embedded": "DamagedHelmet.gltf"
+   }
+  },
+  {
+   "label": "BrainStem",
+   "name": "BrainStem",
+   "screenshot": "screenshot/screenshot.gif",
+   "tags": [
+    "core",
+    "testing"
+   ],
+   "variants": {
+    "glTF": "BrainStem.gltf",
+    "glTF-Binary": "BrainStem.glb",
+    "glTF-Draco": "BrainStem.gltf",
+    "glTF-Embedded": "BrainStem.gltf",
+    "glTF-Meshopt": "BrainStem.gltf",
+    "glTF-Meshopt-EXT": "BrainStem.gltf"
+   }
+  },
+  {
+   "label": "Toy Car",
+   "name": "ToyCar",
+   "screenshot": "screenshot/screenshot.jpg",
+   "tags": [
+    "showcase",
+    "video",
+    "extension"
+   ],
+   "variants": {
+    "glTF": "ToyCar.gltf",
+    "glTF-Binary": "ToyCar.glb"
+   }
+  }
+ ],
+ "meta": {
+  "Avocado": {
+   "version": 2,
+   "legal": [
+    {
+     "license": "CC0-1.0",
+     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+     "artist": "Microsoft",
+     "year": "2017",
+     "owner": "Public",
+     "what": "Everything",
+     "text": "Creative Commons Zero v1.0 Universal",
+     "spdx": "CC0-1.0",
+     "icon": "https://licensebuttons.net/p/zero/1.0/88x31.png"
+    }
+   ],
+   "tags": [
+    "core",
+    "testing"
+   ],
+   "screenshot": "screenshot/screenshot.jpg",
+   "name": "Avocado",
+   "path": "./Models/Avocado",
+   "summary": "A natural object created with Core glTF 2.0",
+   "createReadme": true
+  },
+  "NodeVisibilityTest": {
+   "version": 2,
+   "legal": [
+    {
+     "license": "CC0-1.0",
+     "year": "2025",
+     "artist": "Marco Hutter (https://github.com/javagl/)",
+     "what": "Everything",
+     "owner": "Public",
+     "spdx": "CC0-1.0",
+     "icon": "https://licensebuttons.net/p/zero/1.0/88x31.png",
+     "text": "Creative Commons Zero v1.0 Universal",
+     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
+    }
+   ],
+   "tags": [
+    "testing"
+   ],
+   "screenshot": "screenshot/screenshot.png",
+   "name": "NodeVisibilityTest",
+   "path": "./Models/NodeVisibilityTest",
+   "summary": "A test for the KHR_node_visibility extension",
+   "createReadme": true
+  },
+  "ABeautifulGame": {
+   "version": 2,
+   "legal": [
+    {
+     "license": "CC-BY-4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/legalcode",
+     "artist": "MaterialX Project",
+     "year": "2020",
+     "owner": "ASWF",
+     "what": "Original model",
+     "text": "Creative Commons Attribution 4.0 International",
+     "spdx": "CC-BY-4.0",
+     "icon": "https://licensebuttons.net/l/by/4.0/88x31.png"
+    },
+    {
+     "license": "CC-BY-4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/legalcode",
+     "artist": "Ed Mackey",
+     "year": "2022",
+     "owner": "Ed Mackey",
+     "what": "Conversion to glTF",
+     "text": "Creative Commons Attribution 4.0 International",
+     "spdx": "CC-BY-4.0",
+     "icon": "https://licensebuttons.net/l/by/4.0/88x31.png"
+    }
+   ],
+   "tags": [
+    "showcase",
+    "video",
+    "extension"
+   ],
+   "screenshot": "screenshot/screenshot.jpg",
+   "name": "A Beautiful Game",
+   "path": "./Models/ABeautifulGame",
+   "summary": "Chess set using transmission and volume.",
+   "createReadme": true
+  },
+  "DamagedHelmet": {
+   "version": 2,
+   "legal": [
+    {
+     "license": "CC-BY-4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/legalcode",
+     "artist": "ctxwing",
+     "year": "2018",
+     "owner": "ctxwing",
+     "what": "Rebuild and conversion to glTF",
+     "text": "Creative Commons Attribution 4.0 International",
+     "spdx": "CC-BY-4.0",
+     "icon": "https://licensebuttons.net/l/by/4.0/88x31.png"
+    },
+    {
+     "license": "CC-BY-NC-4.0",
+     "licenseUrl": "https://creativecommons.org/licenses/by-nc/4.0/legalcode",
+     "artist": "theblueturtle_",
+     "year": "2016",
+     "owner": "theblueturtle_",
+     "what": "Earlier version of model",
+     "text": "Creative Commons Attribution Non Commercial 4.0 International",
+     "spdx": "CC-BY-NC-4.0",
+     "icon": "https://licensebuttons.net/l/by-nc/4.0/88x31.png"
+    }
+   ],
+   "tags": [
+    "core",
+    "showcase",
+    "testing",
+    "video"
+   ],
+   "screenshot": "screenshot/screenshot.png",
+   "name": "Damaged Helmet",
+   "path": "./Models/DamagedHelmet",
+   "summary": "Flight helmet with damage",
+   "createReadme": true
+  },
+  "BrainStem": {
+   "version": 2,
+   "legal": [
+    {
+     "license": "LicenseRef-Poser-EULA",
+     "licenseUrl": "../../LICENSES/LicenseRef-Poser-EULA.txt",
+     "artist": "Keith Hunter",
+     "year": "2017",
+     "owner": "Smith Micro Software, Inc.",
+     "what": "Everything",
+     "text": "Poser EULA",
+     "icon": ""
+    }
+   ],
+   "tags": [
+    "core",
+    "testing"
+   ],
+   "screenshot": "screenshot/screenshot.gif",
+   "name": "BrainStem",
+   "path": "./Models/BrainStem",
+   "summary": "Animations. Skins.",
+   "createReadme": true
+  },
+  "ToyCar": {
+   "version": 2,
+   "legal": [
+    {
+     "license": "CC0-1.0",
+     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+     "artist": "Guido Odendahl",
+     "year": "2020",
+     "owner": "Public",
+     "what": "Initial car model",
+     "text": "Creative Commons Zero v1.0 Universal",
+     "spdx": "CC0-1.0",
+     "icon": "https://licensebuttons.net/p/zero/1.0/88x31.png"
+    },
+    {
+     "license": "CC0-1.0",
+     "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+     "artist": "Eric Chadwick",
+     "year": "2020",
+     "owner": "Public",
+     "what": "Extensions and scene composition",
+     "text": "Creative Commons Zero v1.0 Universal",
+     "spdx": "CC0-1.0",
+     "icon": "https://licensebuttons.net/p/zero/1.0/88x31.png"
+    }
+   ],
+   "tags": [
+    "showcase",
+    "video",
+    "extension"
+   ],
+   "screenshot": "screenshot/screenshot.jpg",
+   "name": "Toy Car",
+   "path": "./Models/ToyCar",
+   "summary": "Toy car example using transmission, clearcoat, and sheen.",
+   "createReadme": true
+  }
+ },
+ "gltf": {
+  "Avocado": {},
+  "NodeVisibilityTest": {
+   "extensionsUsed": [
+    "KHR_node_visibility"
+   ]
+  },
+  "ABeautifulGame": {
+   "extensionsUsed": [
+    "KHR_materials_transmission",
+    "KHR_materials_volume"
+   ]
+  },
+  "DamagedHelmet": {},
+  "BrainStem": {},
+  "ToyCar": {
+   "extensionsUsed": [
+    "KHR_texture_transform",
+    "KHR_materials_clearcoat",
+    "KHR_materials_transmission",
+    "KHR_materials_sheen"
+   ]
+  }
+ },
+ "tree": [
+  {
+   "path": "Models/Avocado/glTF-Binary/Avocado.glb",
+   "size": 8110040
+  },
+  {
+   "path": "Models/Avocado/glTF/Avocado.bin",
+   "size": 23580
+  },
+  {
+   "path": "Models/Avocado/glTF/Avocado.gltf",
+   "size": 2413
+  },
+  {
+   "path": "Models/Avocado/glTF/Avocado_baseColor.png",
+   "size": 3158729
+  },
+  {
+   "path": "Models/Avocado/glTF/Avocado_normal.png",
+   "size": 3271114
+  },
+  {
+   "path": "Models/Avocado/glTF/Avocado_roughnessMetallic.png",
+   "size": 1655059
+  },
+  {
+   "path": "Models/Avocado/screenshot/screenshot.jpg",
+   "size": 3414
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF-Binary/NodeVisibilityTest.glb",
+   "size": 25904
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/NodeVisibilityTest.gltf",
+   "size": 13417
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/buffer0.bin",
+   "size": 1248
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image0.png",
+   "size": 2145
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image1.png",
+   "size": 2275
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image2.png",
+   "size": 2449
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image3.png",
+   "size": 2567
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image4.png",
+   "size": 191
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image5.png",
+   "size": 2586
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image6.png",
+   "size": 2586
+  },
+  {
+   "path": "Models/NodeVisibilityTest/glTF/image7.png",
+   "size": 191
+  },
+  {
+   "path": "Models/NodeVisibilityTest/screenshot/NoProperDefaults.png",
+   "size": 25681
+  },
+  {
+   "path": "Models/NodeVisibilityTest/screenshot/NoProperHierarchy.png",
+   "size": 32131
+  },
+  {
+   "path": "Models/NodeVisibilityTest/screenshot/NotSupported.png",
+   "size": 17407
+  },
+  {
+   "path": "Models/NodeVisibilityTest/screenshot/screenshot.png",
+   "size": 26234
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF-Binary/ABeautifulGame.glb",
+   "size": 42977928
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/ABeautifulGame.bin",
+   "size": 10829440
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/ABeautifulGame.gltf",
+   "size": 46214
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Bishop_black_ORM.jpg",
+   "size": 630950
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Bishop_black_base_color.jpg",
+   "size": 403990
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Bishop_black_normal.jpg",
+   "size": 850400
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Bishop_white_ORM.jpg",
+   "size": 622771
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Bishop_white_base_color.jpg",
+   "size": 361127
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Bishop_white_normal.jpg",
+   "size": 673915
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Castle_ORM.jpg",
+   "size": 1371413
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Castle_black_base_color.jpg",
+   "size": 394527
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Castle_normal.jpg",
+   "size": 491396
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Castle_white_base_color.jpg",
+   "size": 334252
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Chessboard_ORM.jpg",
+   "size": 582751
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Chessboard_base_color.jpg",
+   "size": 529405
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Chessboard_normal.jpg",
+   "size": 727372
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/King_black_ORM.jpg",
+   "size": 782417
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/King_black_base_color.jpg",
+   "size": 366216
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/King_black_normal.jpg",
+   "size": 764089
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/King_white_ORM.jpg",
+   "size": 822486
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/King_white_base_color.jpg",
+   "size": 395138
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/King_white_normal.jpg",
+   "size": 961725
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Knight_ORM.jpg",
+   "size": 350946
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Knight_black_base_color.jpg",
+   "size": 244999
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Knight_normal.jpg",
+   "size": 215780
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Knight_white_base_color.jpg",
+   "size": 395645
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Pawn_ORM.jpg",
+   "size": 792174
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Pawn_black_base_color.jpg",
+   "size": 315179
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Pawn_normal.jpg",
+   "size": 750313
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Pawn_white_base_color.jpg",
+   "size": 303807
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Queen_black_ORM.jpg",
+   "size": 741172
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Queen_black_base_color.jpg",
+   "size": 295346
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Queen_black_normal.jpg",
+   "size": 777060
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Queen_white_ORM.jpg",
+   "size": 709227
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Queen_white_base_color.jpg",
+   "size": 309191
+  },
+  {
+   "path": "Models/ABeautifulGame/glTF/Queen_white_normal.jpg",
+   "size": 662916
+  },
+  {
+   "path": "Models/ABeautifulGame/screenshot/screenshot-babylonjs.jpg",
+   "size": 448248
+  },
+  {
+   "path": "Models/ABeautifulGame/screenshot/screenshot-threejs.jpg",
+   "size": 419052
+  },
+  {
+   "path": "Models/ABeautifulGame/screenshot/screenshot.jpg",
+   "size": 37625
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF-Binary/DamagedHelmet.glb",
+   "size": 3773916
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF-Embedded/DamagedHelmet.gltf",
+   "size": 5033556
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/DamagedHelmet.bin",
+   "size": 558504
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/DamagedHelmet.gltf",
+   "size": 4537
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/Default_AO.jpg",
+   "size": 361678
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/Default_albedo.jpg",
+   "size": 935629
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/Default_emissive.jpg",
+   "size": 97499
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/Default_metalRoughness.jpg",
+   "size": 1300661
+  },
+  {
+   "path": "Models/DamagedHelmet/glTF/Default_normal.jpg",
+   "size": 517757
+  },
+  {
+   "path": "Models/DamagedHelmet/screenshot/screenshot.png",
+   "size": 28386
+  },
+  {
+   "path": "Models/BrainStem/glTF-Binary/BrainStem.glb",
+   "size": 3194848
+  },
+  {
+   "path": "Models/BrainStem/glTF-Embedded/BrainStem.gltf",
+   "size": 4372640
+  },
+  {
+   "path": "Models/BrainStem/glTF/BrainStem.gltf",
+   "size": 232477
+  },
+  {
+   "path": "Models/BrainStem/glTF/BrainStem0.bin",
+   "size": 3105104
+  },
+  {
+   "path": "Models/BrainStem/screenshot/screenshot.gif",
+   "size": 944494
+  },
+  {
+   "path": "Models/ToyCar/glTF-Binary/ToyCar.glb",
+   "size": 5422412
+  },
+  {
+   "path": "Models/ToyCar/glTF/Fabric_baseColor.png",
+   "size": 412812
+  },
+  {
+   "path": "Models/ToyCar/glTF/Fabric_normal.png",
+   "size": 294759
+  },
+  {
+   "path": "Models/ToyCar/glTF/Fabric_occlusion.png",
+   "size": 191518
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar.bin",
+   "size": 3664368
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar.gltf",
+   "size": 17626
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar_basecolor.png",
+   "size": 196648
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar_clearcoat.png",
+   "size": 15362
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar_emissive.png",
+   "size": 83739
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar_normal.png",
+   "size": 98429
+  },
+  {
+   "path": "Models/ToyCar/glTF/ToyCar_occlusion_roughness_metallic.png",
+   "size": 457137
+  },
+  {
+   "path": "Models/ToyCar/screenshot/screenshot.jpg",
+   "size": 25873
+  },
+  {
+   "path": "Models/ToyCar/screenshot/screenshot_large.jpg",
+   "size": 671915
+  }
+ ]
+}

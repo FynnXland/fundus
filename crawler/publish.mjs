@@ -1,9 +1,12 @@
 // Builds the files the website loads. The catalogue is too big for one file, so the output is split:
 //   public/data/stand.json            counts per kind, subcategory, format and source, crawl date
 //   public/data/start.json            a mixed sample for the first screen ("Alle Objekte")
-//   public/data/index/<art>.json      one compact row per entry of that kind: grid, search, filters
+//   public/data/index/<art>/kopf.json the first rows of a kind in mixed order (the folder shows them first)
+//   public/data/index/<art>/<nn>.json all rows of a kind in parts of 500, ordered by subfolder and tags
+//   public/data/suche/k_<key>.json    search tiles: term -> row numbers (crawler/lib/suchindex.mjs)
 //   public/data/karten/<xx>.json      full entries, 256 shards by the first two hex digits of sha1(id);
 //                                     the detail sheet loads one shard
+// Which parts and tiles exist is listed in stand.json under "index" (crawler/lib/ausgabe.mjs).
 // Before writing: drop invalid, broken and blocked entries, merge duplicates (same address, same checksum,
 // same picture), add subcategory and mini preview.
 
@@ -14,9 +17,12 @@ import { dedupe, inhaltsDubletten } from './lib/dedupe.mjs';
 import { unterkategorie } from './lib/taxonomy.mjs';
 import { ladeKatalog } from './lib/store.mjs';
 import { SOURCES } from './sources/index.mjs';
+import { baueAusgabe } from './lib/ausgabe.mjs';
 
 export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, 2);
 export const STARTGROESSE = 240;
+// output folder; --ziel <ordner> writes elsewhere (measurements, tests)
+const ZIEL = process.argv.includes('--ziel') ? process.argv[process.argv.indexOf('--ziel') + 1] : 'public/data';
 
 export function publishable(katalog, status, gesperrt = {}) {
   const out = [];
@@ -34,8 +40,15 @@ export function publishable(katalog, status, gesperrt = {}) {
 const lizenzgruppe = (l) => (!l.attribution ? 'frei' : l.shareAlike ? 'gleich' : 'nennung');
 export const formate = (it) => [...new Set(it.downloads.flatMap((d) => (d.paket ? d.paket.files.map((f) => f.path.split('.').pop()) : [d.format])).filter((f) => f && f.length <= 5).map((f) => f.toLowerCase()).map((f) => ({ jpeg: 'jpg', tiff: 'tif', 'svg+xml': 'svg' })[f] ?? f))];
 
-/** The compact row of the index files. Field order is fixed in FELDER. */
-export const FELDER = ['id', 'sig', 'art', 'unter', 'titel', 'urheber', 'quelle', 'quellname', 'lizenz', 'gruppe', 'formate', 'tags', 'vorschau', 'vb', 'vh', 'neu', 'audio', 'sammlung', 'auch', 'text', 'fremd'];
+/**
+ * The compact row of the index files. Field order is fixed in FELDER. Not in the row, the site adds them on
+ * loading: art (the file belongs to one kind; start.json carries it as first field), quellname (from
+ * stand.sources) and gruppe (from stand.index.lizenzgruppen).
+ */
+export const FELDER = ['id', 'sig', 'unter', 'titel', 'urheber', 'quelle', 'lizenz', 'formate', 'tags', 'vorschau', 'vb', 'vh', 'neu', 'audio', 'sammlung', 'auch', 'text', 'fremd'];
+
+// utm_* parameters only count clicks for the source; the picture is the same without them
+const ohneTracking = (url) => url.replace(/([?&])utm_[a-z]+=[^&#]*/gi, '$1').replace(/[?&]+(?=#|$)/, '').replace(/\?&+/, '?');
 
 /**
  * Small picture at the source for cards that have no mini preview of our own yet. The site loads it only
@@ -50,18 +63,15 @@ export function kleineFremdvorschau(it) {
   if (it.source.id === 'wikimedia') return t.replace(/\/\d+px-/, '/330px-');
   return t;
 }
-export function zeile(it, v) {
+export function zeile(it, v = it.vorschau) {
   return [
     it.id,
     it.sig,
-    it.kind,
     it.unter,
     it.title,
     it.creator.name,
     it.source.id,
-    it.source.name,
     it.license.name,
-    lizenzgruppe(it.license),
     formate(it).join(' '),
     it.tags.slice(0, 8).join(' '),
     v?.pfad ?? '',
@@ -73,9 +83,19 @@ export function zeile(it, v) {
     it.auch?.length ?? 0,
     // entries without a picture show the start of their description in the card
     !v?.pfad && it.description ? it.description.slice(0, 170) : '',
-    v?.pfad ? '' : kleineFremdvorschau(it),
+    v?.pfad ? '' : ohneTracking(kleineFremdvorschau(it)),
   ];
 }
+
+/** What the search index knows of an entry: the fields the old in-browser index searched, by weight class. */
+export const suchfelder = (it) => [
+  [it.title, 0],
+  [it.tags.slice(0, 8).join(' '), 1],
+  [it.unter, 1],
+  [it.creator.name, 2],
+  [it.source.name, 2],
+  [formate(it).join(' '), 2],
+];
 
 /** Mixed sample for the first screen: round-robin over the kinds, entries with a picture or text first. */
 export function startauswahl(items, n = STARTGROESSE) {
@@ -127,34 +147,32 @@ async function main() {
   const perUnter = Object.fromEntries(Object.keys(KINDS).map((k) => [k, {}]));
   const perSource = {};
   const perFormat = {};
-  const proArt = Object.fromEntries(Object.keys(KINDS).map((k) => [k, []]));
   for (const it of items) {
     perKind[it.kind]++;
     perUnter[it.kind][it.unter] = (perUnter[it.kind][it.unter] ?? 0) + 1;
     perSource[it.source.id] = (perSource[it.source.id] ?? 0) + 1;
     for (const f of formate(it)) perFormat[f] = (perFormat[f] ?? 0) + 1;
-    proArt[it.kind].push(it);
   }
   const sources = SOURCES.map((s) => ({ id: s.id, name: s.name, url: s.url, kinds: s.kinds, terms: s.terms, hinweis: s.hinweis, count: perSource[s.id] ?? 0 }));
 
+  // index parts, search tiles and the block for stand.json (crawler/lib/ausgabe.mjs)
+  const { dateien, index, teilVon } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe });
   const shards = new Map();
   for (const it of items) {
+    it.indexTeil = teilVon.get(it.id); // the detail sheet loads this part for "similar entries"
     const k = shardVon(it.id);
     if (!shards.has(k)) shards.set(k, {});
     shards.get(k)[it.id] = it;
   }
+  dateien.set('start.json', { felder: ['art', ...FELDER], zeilen: startauswahl(items).sort(mix).map((it) => [it.kind, ...zeile(it)]) });
+  for (const [k, inhalt] of shards) dateien.set(`karten/${k}.json`, inhalt);
 
-  await rm('public/data', { recursive: true, force: true });
-  await mkdir('public/data/karten', { recursive: true });
-  await mkdir('public/data/index', { recursive: true });
-  for (const [art, liste] of Object.entries(proArt)) {
-    if (liste.length) await writeFile(`public/data/index/${art}.json`, JSON.stringify({ felder: FELDER, zeilen: liste.map((it) => zeile(it, it.vorschau)) }));
-  }
-  await writeFile('public/data/start.json', JSON.stringify({ felder: FELDER, zeilen: startauswahl(items).sort(mix).map((it) => zeile(it, it.vorschau)) }));
-  for (const [k, inhalt] of shards) await writeFile(`public/data/karten/${k}.json`, JSON.stringify(inhalt));
+  await rm(ZIEL, { recursive: true, force: true });
+  for (const ordner of new Set([...dateien.keys()].map((d) => d.split('/').slice(0, -1).join('/')))) await mkdir(`${ZIEL}/${ordner}`, { recursive: true });
+  for (const [pfad, inhalt] of dateien) await writeFile(`${ZIEL}/${pfad}`, JSON.stringify(inhalt));
   await writeFile(
-    'public/data/stand.json',
-    JSON.stringify({ crawledAt: katalog.crawledAt ?? null, total: items.length, zusammengefuehrt, perKind, perUnter, perFormat, sources }, null, 1),
+    `${ZIEL}/stand.json`,
+    JSON.stringify({ crawledAt: katalog.crawledAt ?? null, total: items.length, zusammengefuehrt, perKind, perUnter, perFormat, sources, index }, null, 1),
   );
   const mitBild = items.filter((it) => it.vorschau).length;
   console.log(`Veröffentlicht: ${items.length} Einträge, ${mitBild} mit Vorschaubild, ${zusammengefuehrt} Doppelte zusammengeführt (ausgelassen: ${skipped.ungueltig} ungültig, ${skipped.kaputt} mit toten Links, ${skipped.gesperrt} gesperrt).`);

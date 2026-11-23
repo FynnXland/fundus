@@ -1,9 +1,15 @@
-// Catalogue data in the browser. The index is split by kind and loaded on demand:
-//   stand.json + start.json   at once (counts and a mixed sample for the first screen)
-//   index/<art>.json          when a folder is opened
-//   all index files           when a search or a filter spans every folder
-//   karten/<xx>.json          one shard per opened detail sheet
-import MiniSearch from 'minisearch';
+// Catalogue data in the browser. What loads when (file layout: crawler/lib/ausgabe.mjs):
+//   stand.json + start.json            at once: counts, which parts and tiles exist, a mixed sample
+//   index/<art>/kopf.json              the first rows of a kind in mixed order: a folder can show them at once
+//   index/<art>/<nn>.json              parts of 500 rows, ordered by subfolder: a subfolder or a search loads few
+//   suche/k_<key>.json                 search tiles, loaded for the words of a query; the hits are row numbers
+//   karten/<xx>.json                   one shard per opened detail sheet; it names the index part of its entry
+//
+// Two modes. Without beimNachladen() every need is complete before hole() resolves, so a filter always sees
+// all rows it needs. With beimNachladen(k, fn) a folder (or "alle") resolves after its head; the rest loads in
+// the background and fn(was) is called once when it is there. Anything that needs all rows to be right (a
+// licence, format or source filter, another sort order) stays complete in both modes.
+import { woerter, kachelnFuer, kachelDatei, suche, rangfolge } from '../crawler/lib/suchindex.mjs';
 
 export const ARTEN = {
   bild: { label: 'Bilder', einzahl: 'Bild' },
@@ -18,6 +24,8 @@ export const ARTEN = {
   skript: { label: 'Skripte & Add-ons', einzahl: 'Skript' },
   projekt: { label: 'Projekte', einzahl: 'Projekt' },
   skill: { label: 'Claude-Skills', einzahl: 'Claude-Skill' },
+  video: { label: 'Videos', einzahl: 'Video' },
+  shader: { label: 'Shader', einzahl: 'Shader' },
 };
 
 export const LIZENZGRUPPEN = {
@@ -34,61 +42,298 @@ export const SORTIERUNGEN = {
   quelle: 'Nach Quelle',
 };
 
+const VORDERGRUND = 6; // requests at once when the visitor waits
+const HINTERGRUND = 3; // requests at once while the visitor already sees something
+const MERKEN = 30; // searches kept
+
 async function holeJson(pfad) {
   const res = await fetch(pfad);
   if (!res.ok) throw new Error(`Katalogdaten nicht erreichbar (${pfad}: HTTP ${res.status})`);
   return res.json();
 }
 
-const alsObjekte = ({ felder, zeilen }) => zeilen.map((z) => Object.fromEntries(felder.map((f, i) => [f, z[i]])));
-const mix = (a, b) => (a.sig.slice(-5) < b.sig.slice(-5) ? -1 : 1);
+/** Runs the jobs with at most `parallel` at once; the first error stops the rest and is thrown. */
+async function pool(aufgaben, parallel) {
+  let i = 0;
+  let fehler = null;
+  const arbeiter = Array.from({ length: Math.min(parallel, aufgaben.length) }, async () => {
+    while (!fehler && i < aufgaben.length) {
+      try { await aufgaben[i++](); } catch (err) { fehler ??= err; }
+    }
+  });
+  await Promise.all(arbeiter);
+  if (fehler) throw fehler;
+}
 
-/** Loads counts and the start sample. Folders follow through ladeArt / ladeAlle. */
+const mix = (a, b) => (a.m < b.m ? -1 : a.m > b.m ? 1 : a.id < b.id ? -1 : 1);
+
+/** One row as an object. art, quellname and gruppe are not in the files (smaller rows), they are added here. */
+function zeileBauen(k, felder, z, art) {
+  const o = {};
+  for (let i = 0; i < felder.length; i++) o[felder[i]] = z[i];
+  o.art ??= art;
+  o.quellname = k.quellnamen.get(o.quelle) ?? o.quelle;
+  o.gruppe = k.gruppen[o.lizenz] ?? '';
+  o.m = o.sig.slice(-5); // position in the mixed order
+  return o;
+}
+
+/** Registers the rows of a file; a row that is already known (head, then part) keeps its object. */
+function aufnehmen(k, art, d) {
+  const liste = k.proArt.get(art);
+  const iId = d.felder.indexOf('id');
+  return d.zeilen.map((z) => {
+    let o = k.byId.get(z[iId]);
+    if (!o) {
+      o = zeileBauen(k, d.felder, z, art);
+      k.byId.set(o.id, o);
+      liste.push(o);
+    }
+    return o;
+  });
+}
+
+// The catalogue of this page. ladeKarte() loads the index part of the opened entry into it, so that
+// "similar entries" have rows to work with.
+let aktuell = null;
+
+/** Loads counts and the start sample. Folders follow through hole(). */
 export async function ladeKatalog() {
   const [stand, start] = await Promise.all([holeJson('/data/stand.json'), holeJson('/data/start.json')]);
-  const index = new MiniSearch({
-    fields: ['titel', 'tags', 'urheber', 'quellname', 'unter', 'formate'],
-    storeFields: [],
-    searchOptions: { boost: { titel: 3, tags: 2, unter: 2 }, prefix: true, fuzzy: 0.2, combineWith: 'AND' },
-  });
-  return { stand, start: alsObjekte(start), proArt: new Map(), laeuft: new Map(), byId: new Map(), index, alle: null };
-}
-
-export function ladeArt(k, art) {
-  if (k.proArt.has(art)) return Promise.resolve(k.proArt.get(art));
-  if (!k.stand.perKind?.[art]) { k.proArt.set(art, []); return Promise.resolve([]); }
-  if (!k.laeuft.has(art)) {
-    k.laeuft.set(
-      art,
-      holeJson(`/data/index/${art}.json`)
-        .then((d) => {
-          const liste = alsObjekte(d);
-          for (const o of liste) k.byId.set(o.id, o);
-          k.index.addAll(liste);
-          k.proArt.set(art, liste);
-          return liste;
-        })
-        .finally(() => k.laeuft.delete(art)),
-    );
+  const ix = stand.index;
+  if (!ix) throw new Error('Die Katalogdaten haben noch das alte Format (npm run daten erzeugt sie neu)');
+  const k = {
+    stand,
+    start: [],
+    arten: new Map(), // art -> { anzahl, kopfAnzahl, unter, start, ende, teile, kopf, fertig }
+    bloecke: [], // all parts in ref order, for the lookup row number -> part
+    proArt: new Map(), // art -> loaded rows
+    byId: new Map(),
+    quellnamen: new Map(stand.sources.map((s) => [s.id, s.name])),
+    gruppen: ix.lizenzgruppen,
+    schluessel: ix.kacheln,
+    kacheln: new Map(),
+    kachelLauf: new Map(),
+    suchen: new Map(), // was -> row numbers of the hits, ranked
+    laeuft: new Map(),
+    hinten: new Map(),
+    nachladen: null,
+    sortiert: new Map(),
+    alleMerk: null,
+  };
+  let ref = 0;
+  for (const e of ix.arten) {
+    const a = { art: e.art, anzahl: e.anzahl, kopfAnzahl: e.kopf, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [], kopf: false, kopfLauf: null, fertig: false };
+    let von = ref;
+    e.teile.forEach(([n, u0, u1], nr) => {
+      const t = { art: e.art, nr, anzahl: n, von: u0, bis: u1, start: von, zeilen: null, lauf: null };
+      von += n;
+      a.teile.push(t);
+      k.bloecke.push(t);
+    });
+    ref += e.anzahl;
+    k.arten.set(e.art, a);
+    k.proArt.set(e.art, []);
   }
-  return k.laeuft.get(art);
+  k.start = start.zeilen.map((z) => zeileBauen(k, start.felder, z, null));
+  aktuell = k;
+  return k;
 }
 
-export async function ladeAlle(k) {
-  if (k.alle) return k.alle;
-  await Promise.all(Object.keys(ARTEN).map((art) => ladeArt(k, art)));
-  k.alle = [...k.proArt.values()].flat().sort(mix);
-  return k.alle;
+/** From now on a folder shows its head at once and fn(was) is called when the rest has loaded. */
+export function beimNachladen(k, fn) {
+  k.nachladen = fn;
 }
 
-/** What a filter needs before it can be shown: 'start', one kind, or 'alle'. */
+/* ---------------- Loading ---------------- */
+
+function ladeKopf(k, art) {
+  const a = k.arten.get(art);
+  if (!a || a.kopf) return Promise.resolve();
+  a.kopfLauf ??= holeJson(`/data/index/${art}/kopf.json`)
+    .then((d) => {
+      aufnehmen(k, art, d);
+      a.kopf = true;
+      if (d.zeilen.length >= a.anzahl) a.fertig = true; // a small kind is only a head
+    })
+    .finally(() => { a.kopfLauf = null; });
+  return a.kopfLauf;
+}
+
+function ladeTeil(k, a, t) {
+  if (t.zeilen) return Promise.resolve();
+  t.lauf ??= holeJson(`/data/index/${a.art}/${String(t.nr).padStart(2, '0')}.json`)
+    .then((d) => {
+      t.zeilen = aufnehmen(k, a.art, d);
+      if (a.teile.every((x) => x.zeilen)) a.fertig = true;
+    })
+    .finally(() => { t.lauf = null; });
+  return t.lauf;
+}
+
+function ladeVollstaendig(k, arten, parallel) {
+  const aufgaben = [];
+  for (const a of arten) {
+    if (a.fertig) continue;
+    if (a.anzahl <= a.kopfAnzahl) aufgaben.push(() => ladeKopf(k, a.art));
+    else for (const t of a.teile) if (!t.zeilen) aufgaben.push(() => ladeTeil(k, a, t));
+  }
+  return pool(aufgaben, parallel);
+}
+
+const teileFuer = (a, unter) => {
+  const u = a.unter.indexOf(unter);
+  return u < 0 ? [] : a.teile.filter((t) => t.von <= u && u <= t.bis);
+};
+
+function ladeKachel(k, s) {
+  if (k.kacheln.has(s)) return Promise.resolve();
+  if (!k.kachelLauf.has(s)) {
+    k.kachelLauf.set(s, holeJson(`/data/suche/${kachelDatei(s)}`).then((d) => { k.kacheln.set(s, d); }).finally(() => k.kachelLauf.delete(s)));
+  }
+  return k.kachelLauf.get(s);
+}
+
+/** Tiles a word needs. One letter only matches exactly, so it needs the one tile that can hold it. */
+const kachelnNoetig = (wort, schluessel) => (wort.length > 1 ? kachelnFuer(wort, schluessel) : kachelnFuer(wort, schluessel).filter((s) => wort.startsWith(s)));
+
+function blockVon(k, ref) {
+  let lo = 0;
+  let hi = k.bloecke.length - 1;
+  while (lo < hi) {
+    const mitte = (lo + hi + 1) >> 1;
+    if (k.bloecke[mitte].start <= ref) lo = mitte; else hi = mitte - 1;
+  }
+  return k.bloecke[lo];
+}
+const zeileVonRef = (k, ref) => { const t = k.bloecke.length ? blockVon(k, ref) : null; return t?.zeilen?.[ref - t.start]; };
+
+async function sucheLaden(k, w, was) {
+  const ws = [...new Set(woerter(w.q))];
+  const noetig = new Set(ws.flatMap((x) => kachelnNoetig(x, k.schluessel)));
+  await pool([...noetig].map((s) => () => ladeKachel(k, s)), VORDERGRUND);
+  let refs = rangfolge(suche(w.q, k.kacheln, k.schluessel));
+  const a = w.art ? k.arten.get(w.art) : null;
+  if (w.art) refs = a ? refs.filter((r) => r >= a.start && r < a.ende) : [];
+  // only the parts that hold hits (and, in a subfolder, only those that can hold the subfolder)
+  const teile = new Map();
+  for (const r of refs) { const t = blockVon(k, r); teile.set(t, k.arten.get(t.art)); }
+  const unterIndex = a && w.unter ? a.unter.indexOf(w.unter) : -1;
+  const zuLaden = [...teile].filter(([t]) => !w.unter || (t.von <= unterIndex && unterIndex <= t.bis));
+  await pool(zuLaden.map(([t, art]) => () => ladeTeil(k, art, t)), VORDERGRUND);
+  k.suchen.set(was, refs);
+  if (k.suchen.size > MERKEN) k.suchen.delete(k.suchen.keys().next().value);
+}
+
+/* ---------------- What a filter needs ---------------- */
+
+// A need is a string:
+//   'start'                  the sample from start.json
+//   '<art>' / 'alle'         the folder / everything; with '!' only when complete (filters that need every row)
+//   '<art>|<unter>'          the parts of one subfolder
+//   's|<art>|<unter>|<q>'    a search, restricted to the folder and subfolder when they are given
+function zerlege(was) {
+  if (was === 'start') return { typ: 'start' };
+  if (was.startsWith('s|')) {
+    const [, art, unter, ...q] = was.split('|');
+    return { typ: 'suche', art, unter, q: q.join('|') };
+  }
+  if (was.includes('|')) {
+    const [art, unter] = was.split('|');
+    return { typ: 'unter', art, unter };
+  }
+  const voll = was.endsWith('!');
+  const name = voll ? was.slice(0, -1) : was;
+  return name === 'alle' ? { typ: 'alle', voll } : { typ: 'art', art: name, voll };
+}
+
+/** What a filter needs before it can be shown. */
 export function bedarf(f, wurzelAlle = false) {
-  if (f.art) return f.art;
-  if (f.q?.trim() || (f.lizenz && f.lizenz !== 'alle') || f.format || f.quelle || (f.sort && f.sort !== 'gemischt') || wurzelAlle) return 'alle';
-  return 'start';
+  const q = f.q?.trim();
+  if (q) return `s|${f.art ?? ''}|${f.art ? f.unter ?? '' : ''}|${q}`;
+  if (f.art && f.unter) return `${f.art}|${f.unter}`;
+  const voll = (f.lizenz && f.lizenz !== 'alle') || f.format || f.quelle || (f.sort && f.sort !== 'gemischt') ? '!' : '';
+  if (f.art) return f.art + voll;
+  return voll ? 'alle!' : wurzelAlle ? 'alle' : 'start';
 }
-export const hat = (k, was) => (was === 'start' ? true : was === 'alle' ? Boolean(k.alle) : k.proArt.has(was));
-export const hole = (k, was) => (was === 'start' ? Promise.resolve() : was === 'alle' ? ladeAlle(k) : ladeArt(k, was));
+
+const genug = (k, a, voll) => !a || a.fertig || (Boolean(k.nachladen) && !voll && a.kopf);
+
+export function hat(k, was) {
+  const w = zerlege(was);
+  switch (w.typ) {
+    case 'start': return true;
+    case 'suche': return k.suchen.has(was);
+    case 'unter': { const a = k.arten.get(w.art); return !a || a.fertig || teileFuer(a, w.unter).every((t) => t.zeilen); }
+    case 'art': return genug(k, k.arten.get(w.art), w.voll);
+    default: return [...k.arten.values()].every((a) => genug(k, a, w.voll));
+  }
+}
+
+function hintergrund(k, arten, was) {
+  if (k.hinten.has(was) || arten.every((a) => a.fertig)) return;
+  k.hinten.set(
+    was,
+    ladeVollstaendig(k, arten, HINTERGRUND)
+      .then(() => k.nachladen?.(was))
+      .catch(() => {}) // a failed rest stays a head; the next visit asks again
+      .finally(() => k.hinten.delete(was)),
+  );
+}
+
+async function holeEcht(k, was) {
+  const w = zerlege(was);
+  if (w.typ === 'suche') return sucheLaden(k, w, was);
+  if (w.typ === 'unter') {
+    const a = k.arten.get(w.art);
+    if (!a || a.fertig) return undefined;
+    return pool(teileFuer(a, w.unter).map((t) => () => ladeTeil(k, a, t)), VORDERGRUND);
+  }
+  const arten = w.typ === 'alle' ? [...k.arten.values()] : [k.arten.get(w.art)].filter(Boolean);
+  if (k.nachladen && !w.voll) {
+    await pool(arten.map((a) => () => ladeKopf(k, a.art)), VORDERGRUND);
+    hintergrund(k, arten, was);
+    return undefined;
+  }
+  return ladeVollstaendig(k, arten, VORDERGRUND);
+}
+
+export function hole(k, was) {
+  if (was === 'start') return Promise.resolve();
+  if (!k.laeuft.has(was)) k.laeuft.set(was, holeEcht(k, was).finally(() => k.laeuft.delete(was)));
+  return k.laeuft.get(was);
+}
+
+/** The head of a kind. */
+export async function ladeArt(k, art) {
+  await ladeKopf(k, art);
+  return geordnet(k, art);
+}
+
+/** Every row of every kind, mixed. */
+export async function ladeAlle(k) {
+  await ladeVollstaendig(k, [...k.arten.values()], VORDERGRUND);
+  return alleGeordnet(k);
+}
+
+/* ---------------- Filtering ---------------- */
+
+/** The loaded rows of a kind in mixed order (sorted again only when rows were added). */
+function geordnet(k, art) {
+  const liste = k.proArt.get(art) ?? [];
+  const m = k.sortiert.get(art);
+  if (m?.n === liste.length) return m.liste;
+  const neu = [...liste].sort(mix);
+  k.sortiert.set(art, { n: liste.length, liste: neu });
+  return neu;
+}
+
+function alleGeordnet(k) {
+  const n = [...k.proArt.values()].reduce((s, l) => s + l.length, 0);
+  if (k.alleMerk?.n === n) return k.alleMerk.liste;
+  k.alleMerk = { n, liste: [...k.proArt.values()].flat().sort(mix) };
+  return k.alleMerk.liste;
+}
 
 const vergleiche = {
   neu: (a, b) => (a.neu < b.neu ? 1 : a.neu > b.neu ? -1 : 0),
@@ -98,12 +343,11 @@ const vergleiche = {
 
 /** Filters what is loaded; call hole() first. Returns { liste, auswahl } where auswahl marks the start sample. */
 export function filtern(k, { q, art, unter, lizenz, format, quelle, sort }, wurzelAlle = false) {
-  const was = bedarf({ q, art, lizenz, format, quelle, sort }, wurzelAlle);
+  const was = bedarf({ q, art, unter, lizenz, format, quelle, sort }, wurzelAlle);
   let liste;
-  if (q?.trim()) liste = k.index.search(q.trim()).map((r) => k.byId.get(r.id)).filter(Boolean);
-  else if (art) liste = k.proArt.get(art) ?? [];
-  else liste = was === 'alle' ? k.alle ?? [] : k.start;
-  if (art && q?.trim()) liste = liste.filter((o) => o.art === art);
+  if (q?.trim()) liste = (k.suchen.get(was) ?? []).map((r) => zeileVonRef(k, r)).filter(Boolean);
+  else if (art) liste = geordnet(k, art);
+  else liste = was === 'start' ? k.start : alleGeordnet(k);
   if (art && unter) liste = liste.filter((o) => o.unter === unter);
   if (lizenz && lizenz !== 'alle') liste = liste.filter((o) => o.gruppe === lizenz);
   if (format) liste = liste.filter((o) => o.formate.split(' ').includes(format));
@@ -112,20 +356,28 @@ export function filtern(k, { q, art, unter, lizenz, format, quelle, sort }, wurz
   return { liste, auswahl: was === 'start' };
 }
 
+/* ---------------- Detail sheet ---------------- */
+
 const shards = new Map();
+/** The full entry. Its index part is loaded as well, so the sheet can list similar entries. */
 export async function ladeKarte(id) {
   const hash = new Uint8Array(await crypto.subtle.digest('SHA-1', new TextEncoder().encode(id)));
   const s = hash[0].toString(16).padStart(2, '0');
   if (!shards.has(s)) shards.set(s, holeJson(`/data/karten/${s}.json`));
+  let it;
   try {
-    return (await shards.get(s))[id] ?? null;
+    it = (await shards.get(s))[id] ?? null;
   } catch (err) {
     shards.delete(s);
     throw err;
   }
+  const a = it && aktuell?.arten.get(it.kind);
+  const t = a?.teile[it.indexTeil];
+  if (t) await ladeTeil(aktuell, a, t).catch(() => {});
+  return it;
 }
 
-/** Similar entries: same kind and subcategory, ranked by shared tags. The kind must be loaded. */
+/** Similar entries: same kind and subcategory, ranked by shared tags (among the loaded rows of the kind). */
 export function aehnliche(k, o, n = 8) {
   const tags = new Set(o.tags.split(' ').filter(Boolean));
   return (k.proArt.get(o.art) ?? [])
@@ -136,7 +388,7 @@ export function aehnliche(k, o, n = 8) {
     .map((e) => e.x);
 }
 
-/** More from the same collection, or by the same creator at the same source (within the loaded kind). */
+/** More from the same collection, or by the same creator at the same source (among the loaded rows of the kind). */
 export function mehrAusSammlung(k, o, n = 8) {
   const gleich = o.sammlung ? (x) => x.sammlung === o.sammlung : (x) => x.urheber === o.urheber && x.quelle === o.quelle && o.urheber !== 'unbekannt';
   return (k.proArt.get(o.art) ?? []).filter((x) => x.id !== o.id && gleich(x)).slice(0, n);

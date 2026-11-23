@@ -41,6 +41,21 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
 - Freesound direkt bleibt aus (API-Bedingungen § 1 und § 4 f: keine ähnlichen Datenbanken).
 - Smithsonian-Nutzungsbedingungen (si.edu/termsofuse) ließen sich automatisiert nicht abrufen (Cloudflare); CC0 ist über
   die API-Doku und den AWS-Registry-Eintrag belegt. Vor dem Einschalten mit Schlüssel einmal im Browser lesen.
+- OGA-BY 3.0 und 4.0 (OpenGameArt) sind seit 23.11.2026 zugelassen. Gelesen: die Lizenztexte
+  (static.opengameart.org/OGA-BY-3.0.txt, opengameart.org/sites/default/files/archive/oga-by-40.txt) und die FAQ. Die
+  Nutzungsrechte sind dieselben wie bei CC BY (vervielfältigen, bearbeiten, auch kommerziell), Namensnennung ist Pflicht.
+  Weggefallen ist nur das Verbot technischer Schutzmaßnahmen (DRM). Wird neben CC BY angeboten, nimmt der Adapter CC BY.
+- Gebaut, aber zurückgehalten (Entscheidung des Betreibers, Stand 23.11.2026):
+  - Rijksmuseum: `iiif.micr.io/robots.txt` enthält erst `Allow: /`, nach dem Cloudflare-Block dann `Disallow: /` für
+    alle. Bis zur Klärung gilt das Verbot.
+  - National Gallery of Art: CC0 ist für die Daten belegt. Für die Bilder heißt es nur „free of charge for any use“.
+    `api.nga.gov/robots.txt` bittet vor dem Crawlen um Kontakt.
+  - Godot Shaders: vollständige Übernahme (rund 2.260 Shader) über einen internen Endpunkt. Wegen des Datenbankrechts
+    (§ 87b UrhG, wesentlicher Teil) erst nach Rückfrage beim Betreiber der Seite.
+  - Europeana: Für den Betrieb ist ein Projektschlüssel nötig, ein persönlicher Schlüssel reicht laut Bedingungen nicht.
+  - SMK: rechtlich unproblematisch (Public Domain), technisch zu langsam (Bildserver rendert in 21 bis 84 s).
+  - Internet Archive `computoser` (computererzeugte Musik, CC BY-SA 4.0): ob daran überhaupt ein Urheberrecht
+    besteht, ist offen.
 - Mini-Vorschaubilder: eigene Kopie auf dem Server, siehe Matrix. Bei Meldungen das Vorschaubild mit entfernen
   (passiert automatisch beim nächsten `npm run vorschau`, sobald der Eintrag gesperrt ist).
 

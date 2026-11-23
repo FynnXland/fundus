@@ -84,6 +84,15 @@ export function normalizeLicense(raw, version) {
   }
   if (/creativecommons\.org\/publicdomain\/zero/.test(lower)) return ccRecord('cc0');
 
+  // OGA-BY (OpenGameArt): CC BY with the clause against technical protection measures (DRM) removed.
+  // Same grant as CC BY, commercial use and adaptations included, credit required (texts read 23.11.2026).
+  const oga = lower.match(/^oga[\s-]?by(?:[\s-]?(3\.0|4\.0))?$/);
+  if (oga) {
+    const v = oga[1] || (version === '3.0' ? '3.0' : '4.0');
+    const url = v === '3.0' ? 'http://static.opengameart.org/OGA-BY-3.0.txt' : 'https://opengameart.org/sites/default/files/archive/oga-by-40.txt';
+    return { id: `OGA-BY-${v}`, name: `OGA-BY ${v}`, url, attribution: true, shareAlike: false, family: 'cc' };
+  }
+
   // Anything with NC or ND is out, in every spelling.
   if (/(^|[\s_-])(nc|nd)([\s_-]|$)/i.test(s) || /noncommercial|non-commercial|noderiv/i.test(s)) return null;
 

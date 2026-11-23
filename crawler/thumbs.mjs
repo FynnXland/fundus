@@ -106,6 +106,8 @@ async function main() {
   for (const host of ['thumb.wikimedia.org', 'upload.wikimedia.org']) setHostGap(host, 700);
   for (const host of ['cdn.polyhaven.org', 'acg-media.struffelproductions.com', 'api.openverse.org', 'api.iconify.design', 'archive.org', 'ids.si.edu']) setHostGap(host, 250);
   setHostGap('cdn.jsdelivr.net', 120);
+  // opengameart.org/robots.txt asks for Crawl-delay: 10
+  setHostGap('opengameart.org', 10000);
 
   // The register can be committed while the image files are not (CI), so a missing file counts as new.
   // --quelle <id> and --max <n> limit a run (handy for a first look or for splitting a big backlog)
@@ -131,7 +133,8 @@ async function main() {
     const von = bildquelle(it);
     try {
       const istSchrift = it.preview.type === 'font' && !it.preview.thumb;
-      const res = await politeFetch(von, { timeout: 30000, retries: 2, headers: istSchrift ? {} : { Accept: 'image/avif,image/webp,image/*;q=0.8' } });
+      // the */* fallback matters: Openverse's thumb endpoint answers a pure image list with 406 Not Acceptable
+      const res = await politeFetch(von, { timeout: 30000, retries: 2, headers: istSchrift ? {} : { Accept: 'image/webp,image/*,*/*;q=0.8' } });
       if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { endgueltig: res.status === 404 || res.status === 410 });
       const buf = Buffer.from(await res.arrayBuffer());
       let v;

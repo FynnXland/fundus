@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Latest Openclipart</title>
+  <link href="https://openclipart.org/" rel="alternate"/>
+  <link href="https://openclipart.org/feed" rel="self"/>
+  <updated>2026-11-23T11:27:33Z</updated>
+  <id>https://openclipart.org/feed</id>
+  <subtitle>Latest clipart uploads on Openclipart</subtitle>
+  <entry>
+    <id>tag:openclipart.org,2026-11-23:detail/357851</id>
+    <title>Library</title>
+    <link href="https://openclipart.org/detail/357851/library" rel="alternate"/>
+    <updated>2026-11-23T11:27:33Z</updated>
+    <summary>I wanted to design a shop - special for Black Friday, but I ended up with a library somehow...
+
+The graphics used are: • listed in remix, • taken from public domain https://opengameart.org/content/glitch-furniture-svg</summary>    <author><name>maja135</name></author>
+        <category scheme="https://openclipart.org/tag/" term="remix+357698" label="remix+357698" />
+        <category scheme="https://openclipart.org/tag/" term="remix+299397" label="remix+299397" />
+        <category scheme="https://openclipart.org/tag/" term="remix+299983" label="remix+299983" />
+        <category scheme="https://openclipart.org/tag/" term="remix+210593" label="remix+210593" />
+        <category scheme="https://openclipart.org/tag/" term="remix+356373" label="remix+356373" />
+        <category scheme="https://openclipart.org/tag/" term="library" label="library" />
+        <category scheme="https://openclipart.org/tag/" term="books" label="books" />
+        <category scheme="https://openclipart.org/tag/" term="interior" label="interior" />
+        <link rel="enclosure" type="image/svg+xml" href="https://openclipart.org/download/357851/library.svg"/>    <link rel="enclosure" type="image/png" href="https://openclipart.org/image/800px/svg_to_png/357851/800px-library.png"/>  </entry>
+<entry>
+    <id>tag:openclipart.org,2026-11-23:detail/357850</id>
+    <title>Serpent Clash (simultaneous moves) - new rules </title>
+    <link href="https://openclipart.org/detail/357850/serpent-clash-simultaneous-moves-new-rules" rel="alternate"/>
+    <updated>2026-11-23T10:30:31Z</updated>
+    <summary>Serpent Clash (simultaneous moves) - new rules: eggs will be only one type</summary>    <author><name>ejsoon</name></author>
+        <category scheme="https://openclipart.org/tag/" term="animation" label="animation" />
+        <category scheme="https://openclipart.org/tag/" term="boardgame" label="boardgame" />
+        <link rel="enclosure" type="image/svg+xml" href="https://openclipart.org/download/357850/serpentclashanimate20261123182709.svg"/>    <link rel="enclosure" type="image/png" href="https://openclipart.org/image/800px/svg_to_png/357850/800px-serpentclashanimate20261123182709.png"/>  </entry>
+<entry>
+    <id>tag:openclipart.org,2026-11-23:detail/357849</id>
+    <title>serpent clash - new rules </title>
+    <link href="https://openclipart.org/detail/357849/serpent-clash-new-rules" rel="alternate"/>
+    <updated>2026-11-23T10:23:10Z</updated>
+    <summary>serpent clash - new rules: eggs will only one type.</summary>    <author><name>ejsoon</name></author>
+        <category scheme="https://openclipart.org/tag/" term="boardgame" label="boardgame" />
+        <category scheme="https://openclipart.org/tag/" term="animation" label="animation" />
+        <link rel="enclosure" type="image/svg+xml" href="https://openclipart.org/download/357849/serpentclashanimate20261123174625.svg"/>    <link rel="enclosure" type="image/png" href="https://openclipart.org/image/800px/svg_to_png/357849/800px-serpentclashanimate20261123174625.png"/>  </entry>
+</feed>

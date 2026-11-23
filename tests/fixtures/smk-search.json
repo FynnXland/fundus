@@ -1,0 +1,228 @@
+{
+ "offset": 0,
+ "rows": 4,
+ "found": 39548,
+ "items": [
+  {
+   "object_names": [
+    {
+     "name": "Chiaroscuro woodcut"
+    },
+    {
+     "name": "Print"
+    }
+   ],
+   "production": [
+    {
+     "creator": "Trento, Antonio da",
+     "creator_forename": "Antonio da",
+     "creator_surname": "Trento",
+     "creator_date_of_birth": "1527-01-01T00:00:00.000Z",
+     "creator_date_of_death": "1550-01-01T00:00:00.000Z",
+     "creator_nationality": "Italian",
+     "creator_gender": "MALE",
+     "creator_lref": "29997_person"
+    },
+    {
+     "creator": "Parmigianino",
+     "creator_surname": "Parmigianino",
+     "creator_date_of_birth": "1503-01-01T00:00:00.000Z",
+     "creator_date_of_death": "1540-01-01T00:00:00.000Z",
+     "creator_nationality": "Italian",
+     "creator_gender": "MALE",
+     "creator_history": "se: Mazzola, Francesco",
+     "creator_role": "after",
+     "creator_lref": "1709_person"
+    }
+   ],
+   "production_date": [
+    {
+     "start": "1500-01-01T00:00:00.000Z",
+     "end": "1550-01-01T00:00:00.000Z",
+     "period": "1500-1550"
+    }
+   ],
+   "techniques": [
+    "Chiaroscuro woodcut"
+   ],
+   "object_number": "KKS5261",
+   "frontend_url": "https://open.smk.dk/artwork/image/KKS5261",
+   "public_domain": true,
+   "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+   "image_iiif_id": "https://iip.smk.dk/iiif/jp2/qz20sx771_kks5261.tif.jp2",
+   "image_width": 4992,
+   "image_height": 6287,
+   "image_thumbnail": "https://iip-thumb.smk.dk/iiif/jp2/qz20sx771_kks5261.tif.jp2/full/!1024,/0/default.jpg",
+   "image_native": "https://api.smk.dk/api/v1/download/W3siaW1nX3VybCI6Imh0dHBzOi8vaWlwLnNtay5kay9paWlmL2pwMi9xejIwc3g3NzFfa2tzNTI2MS50aWYuanAyL2Z1bGwvZnVsbC8wL25hdGl2ZS5qcGciLCJwdWJsaWNfZG9tYWluIjp0cnVlLCJvYmplY3RfbnVtYmVyIjoiS0tTNTI2MSIsIm51bSI6IiJ9XQ==/KKS5261.jpg",
+   "has_image": true,
+   "titles": [
+    {
+     "title": "Augustus og den tiburtinske sibylle",
+     "type": "beskrivelse",
+     "language": "dansk"
+    }
+   ],
+   "artist": [
+    "Antonio da Trento"
+   ]
+  },
+  {
+   "object_names": [
+    {
+     "name": "Chiaroscuro woodcut"
+    },
+    {
+     "name": "Print"
+    }
+   ],
+   "production": [
+    {
+     "creator": "Trento, Antonio da",
+     "creator_forename": "Antonio da",
+     "creator_surname": "Trento",
+     "creator_date_of_birth": "1527-01-01T00:00:00.000Z",
+     "creator_date_of_death": "1550-01-01T00:00:00.000Z",
+     "creator_nationality": "Italian",
+     "creator_gender": "MALE",
+     "creator_lref": "29997_person"
+    },
+    {
+     "creator": "Parmigianino",
+     "creator_surname": "Parmigianino",
+     "creator_date_of_birth": "1503-01-01T00:00:00.000Z",
+     "creator_date_of_death": "1540-01-01T00:00:00.000Z",
+     "creator_nationality": "Italian",
+     "creator_gender": "MALE",
+     "creator_history": "se: Mazzola, Francesco",
+     "creator_role": "after",
+     "creator_lref": "1709_person"
+    }
+   ],
+   "production_date": [
+    {
+     "start": "1500-01-01T00:00:00.000Z",
+     "end": "1550-01-01T00:00:00.000Z",
+     "period": "1500-1550"
+    }
+   ],
+   "techniques": [
+    "Chiaroscuro woodcut"
+   ],
+   "object_number": "KKSgb22423",
+   "frontend_url": "https://open.smk.dk/artwork/image/KKSgb22423",
+   "public_domain": true,
+   "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+   "image_iiif_id": "https://iip.smk.dk/iiif/jp2/1z40kx99j_kksgb22423.tif.jp2",
+   "image_width": 7361,
+   "image_height": 4735,
+   "image_thumbnail": "https://iip-thumb.smk.dk/iiif/jp2/1z40kx99j_kksgb22423.tif.jp2/full/!1024,/0/default.jpg",
+   "image_native": "https://api.smk.dk/api/v1/download/W3siaW1nX3VybCI6Imh0dHBzOi8vaWlwLnNtay5kay9paWlmL2pwMi8xejQwa3g5OWpfa2tzZ2IyMjQyMy50aWYuanAyL2Z1bGwvZnVsbC8wL25hdGl2ZS5qcGciLCJwdWJsaWNfZG9tYWluIjp0cnVlLCJvYmplY3RfbnVtYmVyIjoiS0tTZ2IyMjQyMyIsIm51bSI6IiJ9XQ==/KKSgb22423.jpg",
+   "has_image": true,
+   "titles": [
+    {
+     "title": "Peters og Paulus' martyrium",
+     "type": "beskrivelse",
+     "language": "dansk"
+    }
+   ],
+   "artist": [
+    "Antonio da Trento"
+   ]
+  },
+  {
+   "object_names": [
+    {
+     "name": "Painting"
+    }
+   ],
+   "production": [
+    {
+     "creator": "Ballin, Mogens",
+     "creator_forename": "Mogens",
+     "creator_surname": "Ballin",
+     "creator_date_of_birth": "1871-03-20T00:00:00.000Z",
+     "creator_date_of_death": "1914-01-27T00:00:00.000Z",
+     "creator_nationality": "Danish",
+     "creator_gender": "MALE",
+     "creator_lref": "8445_person"
+    }
+   ],
+   "production_date": [
+    {
+     "start": "1891-01-01T00:00:00.000Z",
+     "end": "1892-12-31T00:00:00.000Z",
+     "period": "1891-1892"
+    }
+   ],
+   "techniques": [
+    "Tempera on millboard"
+   ],
+   "titles": [
+    {
+     "title": "Wood with Crooked Tree",
+     "language": "engelsk"
+    }
+   ],
+   "object_number": "KMS8914",
+   "frontend_url": "https://open.smk.dk/artwork/image/KMS8914",
+   "public_domain": true,
+   "rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+   "image_iiif_id": "https://iip.smk.dk/iiif/jp2/gf06g715p_kms8914.tif.jp2",
+   "image_width": 9581,
+   "image_height": 11258,
+   "image_thumbnail": "https://iip-thumb.smk.dk/iiif/jp2/gf06g715p_kms8914.tif.jp2/full/!1024,/0/default.jpg",
+   "image_native": "https://api.smk.dk/api/v1/download/W3siaW1nX3VybCI6Imh0dHBzOi8vaWlwLnNtay5kay9paWlmL2pwMi9nZjA2ZzcxNXBfa21zODkxNC50aWYuanAyL2Z1bGwvZnVsbC8wL25hdGl2ZS5qcGciLCJwdWJsaWNfZG9tYWluIjp0cnVlLCJvYmplY3RfbnVtYmVyIjoiS01TODkxNCIsIm51bSI6IiJ9XQ==/KMS8914.jpg",
+   "has_image": true,
+   "artist": [
+    "Mogens Ballin"
+   ]
+  },
+  {
+   "object_names": [
+    {
+     "name": "Drawing"
+    }
+   ],
+   "production": [
+    {
+     "creator": "Masson, Al",
+     "creator_forename": "Al",
+     "creator_surname": "Masson",
+     "creator_date_of_birth": "1952-01-01T00:00:00.000Z",
+     "creator_nationality": "French, Danish",
+     "creator_gender": "MALE",
+     "creator_lref": "30114_person"
+    }
+   ],
+   "production_date": [
+    {
+     "start": "2003-01-01T00:00:00.000Z",
+     "end": "2003-12-31T00:00:00.000Z",
+     "period": "2003"
+    }
+   ],
+   "techniques": [
+    "Indian ink on paper"
+   ],
+   "titles": [
+    {
+     "title": "Salon",
+     "language": "engelsk"
+    }
+   ],
+   "object_number": "KKS2020-3/16",
+   "frontend_url": "https://open.smk.dk/artwork/image/KKS2020-3/16",
+   "public_domain": false,
+   "rights": "https://www.smk.dk/en/section/use-of-smk-material/",
+   "image_iiif_id": "https://iip.smk.dk/iiif/jp2/5425kf61p_kks2020_3_16.tif.jp2",
+   "image_width": 6296,
+   "image_height": 4370,
+   "image_thumbnail": "https://iip-thumb.smk.dk/iiif/jp2/5425kf61p_kks2020_3_16.tif.jp2/full/!1024,/0/default.jpg",
+   "image_native": "https://api.smk.dk/api/v1/download/W3siaW1nX3VybCI6Imh0dHBzOi8vaWlwLnNtay5kay9paWlmL2pwMi81NDI1a2Y2MXBfa2tzMjAyMF8zXzE2LnRpZi5qcDIvZnVsbC9mdWxsLzAvbmF0aXZlLmpwZyIsInB1YmxpY19kb21haW4iOmZhbHNlLCJvYmplY3RfbnVtYmVyIjoiS0tTMjAyMC0zLzE2IiwibnVtIjoiIn1d/KKS2020-3/16.jpg",
+   "has_image": true,
+   "artist": [
+    "Al Masson"
+   ]
+  }
+ ]
+}

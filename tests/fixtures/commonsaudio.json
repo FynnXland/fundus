@@ -1,0 +1,459 @@
+{
+ "sfx": {
+  "continue": {
+   "gcmcontinue": "file|455343414c4120444520444f204d41594f522044455343454e44454e544520454e20554e205049414e4f204445204a554755455445205343484f454e4855542e574156|108176818",
+   "continue": "gcmcontinue||"
+  },
+  "query": {
+   "pages": [
+    {
+     "pageid": 24006785,
+     "ns": 6,
+     "title": "File:Comic spring up or magic trick.ogg",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 26360,
+       "width": 0,
+       "height": 0,
+       "duration": 2.0375510204081633,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Comic_spring_up_or_magic_trick.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:Comic_spring_up_or_magic_trick.ogg",
+       "sha1": "22dc222f31749afa565153fb457a1fb5e1a61ee5",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "Comic spring up or magic trick"
+        },
+        "Artist": {
+         "value": "stephan"
+        },
+        "LicenseShortName": {
+         "value": "Public domain"
+        },
+        "Categories": {
+         "value": "PD-author|PDsounds.org|Audio files of sound effects|Sound files uploaded by Fæ"
+        }
+       },
+       "mime": "application/ogg",
+       "mediatype": "AUDIO",
+       "derivatives": [
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/4/4e/Comic_spring_up_or_magic_trick.ogg/Comic_spring_up_or_magic_trick.ogg.mp3",
+         "type": "audio/mpeg",
+         "transcodekey": "mp3",
+         "width": 0,
+         "height": 0,
+         "bandwidth": 100568
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "pageid": 28266333,
+     "ns": 6,
+     "title": "File:Beepalert.wav",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 1334,
+       "width": 0,
+       "height": 0,
+       "duration": 0.10938775510204081,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/9/98/Beepalert.wav?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:Beepalert.wav",
+       "sha1": "c33972afb3e2d5f7413545d213c5ca5f32450763",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "Beepalert"
+        },
+        "Artist": {
+         "value": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Leoanonymous&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Leoanonymous (page does not exist)\">Leoanonymous</a>"
+        },
+        "LicenseShortName": {
+         "value": "CC BY-SA 3.0"
+        },
+        "LicenseUrl": {
+         "value": "https://creativecommons.org/licenses/by-sa/3.0"
+        },
+        "Categories": {
+         "value": "Self-published work|Audio files of sound effects"
+        }
+       },
+       "mime": "audio/wav",
+       "mediatype": "AUDIO",
+       "derivatives": [
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/98/Beepalert.wav/Beepalert.wav.mp3",
+         "type": "audio/mpeg",
+         "transcodekey": "mp3",
+         "width": 0,
+         "height": 0,
+         "bandwidth": 178736
+        },
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/9/98/Beepalert.wav/Beepalert.wav.ogg",
+         "type": "audio/ogg; codecs=\"vorbis\"",
+         "transcodekey": "ogg",
+         "width": 0,
+         "height": 0,
+         "bandwidth": 358936
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "pageid": 21392002,
+     "ns": 6,
+     "title": "File:Bird Chirp - Barking Dog.JPG",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 78179,
+       "width": 502,
+       "height": 469,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/e/ee/Bird_Chirp_-_Barking_Dog.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:Bird_Chirp_-_Barking_Dog.JPG",
+       "sha1": "a06a33310b4fc66ee4d6599c3e343df4f6794279",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "Bird Chirp - Barking Dog"
+        },
+        "Artist": {
+         "value": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Technogeezer&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Technogeezer (page does not exist)\">Technogeezer</a>"
+        },
+        "LicenseShortName": {
+         "value": "CC BY-SA 3.0"
+        },
+        "LicenseUrl": {
+         "value": "https://creativecommons.org/licenses/by-sa/3.0"
+        },
+        "Categories": {
+         "value": "Images with inappropriate JPEG compression|SN76477|Circuit diagrams|Self-published work|Audio files of sound effects"
+        }
+       },
+       "mime": "image/jpeg",
+       "mediatype": "BITMAP",
+       "derivatives": []
+      }
+     ]
+    },
+    {
+     "pageid": 31827310,
+     "ns": 14,
+     "title": "Category:Files from Freesound.org"
+    },
+    {
+     "pageid": 32949290,
+     "ns": 14,
+     "title": "Category:Audio files of samples"
+    },
+    {
+     "pageid": 83619240,
+     "ns": 6,
+     "title": "File:ERH - ghostly voices (cc-by) (freesound).mp3",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 2342660,
+       "width": 0,
+       "height": 0,
+       "duration": 58.540375,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/7/79/ERH_-_ghostly_voices_%28cc-by%29_%28freesound%29.mp3?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:ERH_-_ghostly_voices_(cc-by)_(freesound).mp3",
+       "sha1": "fe5409c12e5a73102b5e72cc956defb04d006efe",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "ERH - ghostly voices (cc-by) (freesound)"
+        },
+        "Artist": {
+         "value": "<a rel=\"nofollow\" class=\"external text\" href=\"https://freesound.org/people/ERH/\">ERH</a>"
+        },
+        "LicenseShortName": {
+         "value": "CC BY 3.0"
+        },
+        "LicenseUrl": {
+         "value": "https://creativecommons.org/licenses/by/3.0"
+        },
+        "Categories": {
+         "value": "Ghosts|Uploaded with video2commons|Files from Freesound.org|Audio files of sound effects"
+        }
+       },
+       "mime": "audio/mpeg",
+       "derivatives": [
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/7/79/ERH_-_ghostly_voices_%28cc-by%29_%28freesound%29.mp3/ERH_-_ghostly_voices_%28cc-by%29_%28freesound%29.mp3.ogg",
+         "type": "audio/ogg; codecs=\"vorbis\"",
+         "transcodekey": "ogg",
+         "width": 0,
+         "height": 0,
+         "bandwidth": 89360
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "musopen": {
+  "query": {
+   "pages": [
+    {
+     "pageid": 22093033,
+     "ns": 6,
+     "title": "File:Bach, BWV 147, 10. Jesus bleibet meine Freude.ogg",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 3726571,
+       "width": 0,
+       "height": 0,
+       "duration": 202.2661224489796,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/2/27/Bach%2C_BWV_147%2C_10._Jesus_bleibet_meine_Freude.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:Bach,_BWV_147,_10._Jesus_bleibet_meine_Freude.ogg",
+       "sha1": "42f9cd90c3228fa480ada72ba17040339e3aa8ba",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "Bach, BWV 147, 10. Jesus bleibet meine Freude"
+        },
+        "Artist": {
+         "value": "Orchestra Gli Armonici"
+        },
+        "LicenseShortName": {
+         "value": "CC0"
+        },
+        "LicenseUrl": {
+         "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+        },
+        "Categories": {
+         "value": "BWV 147:6/10|CC-Zero|Musopen|Audio files of cantatas by Johann Sebastian Bach"
+        }
+       },
+       "mime": "application/ogg",
+       "derivatives": [
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/27/Bach%2C_BWV_147%2C_10._Jesus_bleibet_meine_Freude.ogg/Bach%2C_BWV_147%2C_10._Jesus_bleibet_meine_Freude.ogg.mp3",
+         "type": "audio/mpeg",
+         "transcodekey": "mp3",
+         "width": 0,
+         "height": 0,
+         "bandwidth": 219712
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "pageid": 3432311,
+     "ns": 6,
+     "title": "File:Alexander Glazunov - chant du menestrel, op. 71.ogg",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 4198169,
+       "width": 0,
+       "height": 0,
+       "duration": 232.032,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/5/54/Alexander_Glazunov_-_chant_du_menestrel%2C_op._71.ogg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:Alexander_Glazunov_-_chant_du_menestrel,_op._71.ogg",
+       "sha1": "656573967f13d1cef0e8467d8911be82a8a56ae9",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "Alexander Glazunov - chant du menestrel, op. 71"
+        },
+        "Artist": {
+         "value": "Composer: <a href=\"//commons.wikimedia.org/w/index.php?title=Alexander_Glazunov&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"Alexander Glazunov (page does not exist)\">Alexander Glazunov</a> (Глазунов, Александр Константинович)"
+        },
+        "LicenseShortName": {
+         "value": "Public domain"
+        },
+        "Categories": {
+         "value": "Skidmore College|PD-author|Author died more than 100 years ago public domain images|Musopen|Attribution only license|Unknown date|CC-PD-Mark|Audio files of classical music for violin|Audio files requiring restoration|Audio files of music by Alexander Glazunov"
+        }
+       },
+       "mime": "application/ogg",
+       "derivatives": [
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/5/54/Alexander_Glazunov_-_chant_du_menestrel%2C_op._71.ogg/Alexander_Glazunov_-_chant_du_menestrel%2C_op._71.ogg.mp3",
+         "type": "audio/mpeg",
+         "transcodekey": "mp3",
+         "width": 0,
+         "height": 0,
+         "bandwidth": 185032
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "pageid": 27437274,
+     "ns": 6,
+     "title": "File:A Walk down Main Street, Delta PA.webm",
+     "imagerepository": "local",
+     "videoinfo": [
+      {
+       "size": 17156207,
+       "width": 720,
+       "height": 540,
+       "duration": 170.911,
+       "url": "https://upload.wikimedia.org/wikipedia/commons/a/a0/A_Walk_down_Main_Street%2C_Delta_PA.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+       "descriptionurl": "https://commons.wikimedia.org/wiki/File:A_Walk_down_Main_Street,_Delta_PA.webm",
+       "sha1": "bd6a5c0e980fde454f667282eb7c5bda5ec3f5f6",
+       "extmetadata": {
+        "ObjectName": {
+         "value": "A Walk down Main Street, Delta PA"
+        },
+        "Artist": {
+         "value": "<a href=\"//commons.wikimedia.org/wiki/User:Smallbones\" title=\"User:Smallbones\">Smallbones</a>"
+        },
+        "LicenseShortName": {
+         "value": "CC BY-SA 3.0"
+        },
+        "LicenseUrl": {
+         "value": "https://creativecommons.org/licenses/by-sa/3.0"
+        },
+        "Categories": {
+         "value": "Piano sonatas by Wolfgang Amadeus Mozart|Musopen|Self-published work|Media of the day|Videos from Pennsylvania|National Register of Historic Places with known IDs|Delta Historic District"
+        }
+       },
+       "mime": "video/webm",
+       "derivatives": [
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/a/a0/A_Walk_down_Main_Street%2C_Delta_PA.webm/A_Walk_down_Main_Street%2C_Delta_PA.webm.240p.vp9.webm",
+         "type": "video/webm; codecs=\"vp9, opus\"",
+         "transcodekey": "240p.vp9.webm",
+         "width": 320,
+         "height": 240,
+         "bandwidth": 303288
+        },
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/a/a0/A_Walk_down_Main_Street%2C_Delta_PA.webm/A_Walk_down_Main_Street%2C_Delta_PA.webm.360p.mpeg4.mov",
+         "type": "video/quicktime; codecs=\"mp4v\"",
+         "transcodekey": "360p.mpeg4.mov",
+         "width": 480,
+         "height": 360,
+         "bandwidth": 1129272
+        },
+        {
+         "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/a/a0/A_Walk_down_Main_Street%2C_Delta_PA.webm/A_Walk_down_Main_Street%2C_Delta_PA.webm.480p.vp9.webm",
+         "type": "video/webm; codecs=\"vp9, opus\"",
+         "transcodekey": "480p.vp9.webm",
+         "width": 640,
+         "height": 480,
+         "bandwidth": 923240
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "midi": {
+  "pageid": 10597717,
+  "ns": 6,
+  "title": "File:'Oh, Susanna' pentatonic melody.mid",
+  "imagerepository": "local",
+  "videoinfo": [
+   {
+    "size": 361,
+    "width": 0,
+    "height": 0,
+    "duration": 16.001953125,
+    "url": "https://upload.wikimedia.org/wikipedia/commons/1/11/%27Oh%2C_Susanna%27_pentatonic_melody.mid?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "descriptionurl": "https://commons.wikimedia.org/wiki/File:%27Oh,_Susanna%27_pentatonic_melody.mid",
+    "sha1": "05156898c563f29a2448fe0012f8b9ca5ba53584",
+    "extmetadata": {
+     "ObjectName": {
+      "value": "'Oh, Susanna' pentatonic melody"
+     },
+     "Artist": {
+      "value": "<a href=\"//commons.wikimedia.org/wiki/User:Hyacinth\" title=\"User:Hyacinth\">Hyacinth</a> (<a href=\"//commons.wikimedia.org/wiki/User_talk:Hyacinth\" title=\"User talk:Hyacinth\">talk</a>)"
+     },
+     "LicenseShortName": {
+      "value": "Public domain"
+     },
+     "Categories": {
+      "value": "Oh! Susanna|C major|MIDI files|Melodies|PD Old|CC-PD-Mark|Major pentatonic scales"
+     }
+    },
+    "mime": "audio/midi",
+    "mediatype": "AUDIO",
+    "derivatives": [
+     {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/11/%27Oh%2C_Susanna%27_pentatonic_melody.mid/%27Oh%2C_Susanna%27_pentatonic_melody.mid.mp3",
+      "type": "audio/mpeg",
+      "transcodekey": "mp3",
+      "width": 0,
+      "height": 0,
+      "bandwidth": 0
+     },
+     {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/1/11/%27Oh%2C_Susanna%27_pentatonic_melody.mid/%27Oh%2C_Susanna%27_pentatonic_melody.mid.ogg",
+      "type": "audio/ogg; codecs=\"vorbis\"",
+      "transcodekey": "ogg",
+      "width": 0,
+      "height": 0,
+      "bandwidth": 0
+     }
+    ]
+   }
+  ]
+ },
+ "aussprache": {
+  "pageid": 164228125,
+  "ns": 6,
+  "title": "File:LL-Q1860 (eng)-Neøn-salt shaker.wav",
+  "imagerepository": "local",
+  "videoinfo": [
+   {
+    "size": 131116,
+    "width": 0,
+    "height": 0,
+    "duration": 1.3653333333333333,
+    "url": "https://upload.wikimedia.org/wikipedia/commons/d/d4/LL-Q1860_%28eng%29-Ne%C3%B8n-salt_shaker.wav?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "descriptionurl": "https://commons.wikimedia.org/wiki/File:LL-Q1860_(eng)-Ne%C3%B8n-salt_shaker.wav",
+    "sha1": "1a7860ffb355405507b6a14aac7f475c9c8a4290",
+    "extmetadata": {
+     "ObjectName": {
+      "value": "LL-Q1860 (eng)-Neøn-salt shaker"
+     },
+     "Artist": {
+      "value": "<ul><li>Speaker: <a href=\"//lingualibre.org/wiki/Q1496308\" class=\"extiw\" title=\"lingualibre:Q1496308\">Neøn</a></li>\n<li>Recorder: <a href=\"//commons.wikimedia.org/w/index.php?title=User:Ne%C3%B8n&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:Neøn (page does not exist)\">Neøn</a></li></ul>"
+     },
+     "LicenseShortName": {
+      "value": "CC0"
+     },
+     "LicenseUrl": {
+      "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+     },
+     "Categories": {
+      "value": "CC-Zero|Lingua Libre pronunciation-eng|Lingua Libre pronunciation by Neøn"
+     }
+    },
+    "mime": "audio/wav",
+    "mediatype": "AUDIO",
+    "derivatives": [
+     {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/d4/LL-Q1860_%28eng%29-Ne%C3%B8n-salt_shaker.wav/LL-Q1860_%28eng%29-Ne%C3%B8n-salt_shaker.wav.mp3",
+      "type": "audio/mpeg",
+      "transcodekey": "mp3",
+      "width": 0,
+      "height": 0,
+      "bandwidth": 152424
+     },
+     {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/d/d4/LL-Q1860_%28eng%29-Ne%C3%B8n-salt_shaker.wav/LL-Q1860_%28eng%29-Ne%C3%B8n-salt_shaker.wav.ogg",
+      "type": "audio/ogg; codecs=\"vorbis\"",
+      "transcodekey": "ogg",
+      "width": 0,
+      "height": 0,
+      "bandwidth": 93344
+     }
+    ]
+   }
+  ]
+ }
+}

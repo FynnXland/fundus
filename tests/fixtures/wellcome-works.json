@@ -1,0 +1,392 @@
+{
+ "totalResults": 76029,
+ "pageSize": 5,
+ "results": [
+  {
+   "id": "a22jbu3k",
+   "title": "Queen's College, Oxford: its buildings in the sixteenth century, before their replacement by neoclassical buildings. Wood engraving by J. Jackson, 1845.",
+   "referenceNumber": "20672i",
+   "workType": {
+    "id": "k",
+    "label": "Pictures"
+   },
+   "production": [
+    {
+     "label": "1845",
+     "agents": [],
+     "dates": [
+      {
+       "label": "1845",
+       "type": "Period"
+      }
+     ],
+     "type": "ProductionEvent",
+     "places": [
+      {
+       "label": "England",
+       "type": "Place"
+      }
+     ]
+    }
+   ],
+   "contributors": [
+    {
+     "agent": {
+      "id": "xsudbtyk",
+      "label": "John Jackson",
+      "type": "Person"
+     },
+     "roles": [],
+     "primary": true,
+     "type": "Contributor"
+    }
+   ],
+   "subjects": [
+    {
+     "label": "Universities"
+    },
+    {
+     "label": "Chapels"
+    },
+    {
+     "label": "Oxford"
+    },
+    {
+     "label": "University of Oxford"
+    },
+    {
+     "label": "The Queen's College"
+    }
+   ],
+   "genres": [
+    {
+     "label": "Wood engravings"
+    }
+   ],
+   "items": [
+    {
+     "id": "y7k6g497",
+     "locations": [
+      {
+       "locationType": {
+        "id": "closed-stores",
+        "type": "LocationType",
+        "label": "Closed stores"
+       },
+       "accessConditions": [
+        {
+         "method": {
+          "id": "online-request",
+          "type": "AccessMethod",
+          "label": "Online request"
+         },
+         "status": {
+          "id": "open",
+          "type": "AccessStatus",
+          "label": "Open"
+         },
+         "type": "AccessCondition"
+        }
+       ],
+       "label": "Closed stores",
+       "type": "PhysicalLocation"
+      },
+      {
+       "url": "https://iiif.wellcomecollection.org/image/V0014156/info.json",
+       "credit": "Wellcome Collection",
+       "license": {
+        "id": "pdm",
+        "type": "License",
+        "label": "Public Domain Mark",
+        "url": "https://creativecommons.org/share-your-work/public-domain/pdm/"
+       },
+       "accessConditions": [
+        {
+         "method": {
+          "id": "view-online",
+          "type": "AccessMethod",
+          "label": "View online"
+         },
+         "status": {
+          "id": "open",
+          "type": "AccessStatus",
+          "label": "Open"
+         },
+         "type": "AccessCondition"
+        }
+       ],
+       "locationType": {
+        "id": "iiif-image",
+        "type": "LocationType",
+        "label": "IIIF Image API"
+       },
+       "type": "DigitalLocation"
+      }
+     ]
+    }
+   ],
+   "type": "Work"
+  },
+  {
+   "id": "a248hsmb",
+   "title": "Tabloid First Aid Box: Burroughs Wellcome and Company product",
+   "workType": {
+    "id": "q",
+    "label": "Digital Images"
+   },
+   "production": [],
+   "contributors": [],
+   "subjects": [
+    {
+     "label": "Product"
+    }
+   ],
+   "genres": [],
+   "items": [
+    {
+     "locations": [
+      {
+       "url": "https://iiif.wellcomecollection.org/image/L0041239/info.json",
+       "credit": "Wellcome Collection",
+       "license": {
+        "id": "cc-by",
+        "type": "License",
+        "label": "Attribution 4.0 International (CC BY 4.0)",
+        "url": "http://creativecommons.org/licenses/by/4.0/"
+       },
+       "accessConditions": [
+        {
+         "method": {
+          "id": "view-online",
+          "type": "AccessMethod",
+          "label": "View online"
+         },
+         "status": {
+          "id": "open",
+          "type": "AccessStatus",
+          "label": "Open"
+         },
+         "type": "AccessCondition"
+        }
+       ],
+       "locationType": {
+        "id": "iiif-image",
+        "type": "LocationType",
+        "label": "IIIF Image API"
+       },
+       "type": "DigitalLocation"
+      }
+     ]
+    }
+   ],
+   "type": "Work"
+  },
+  {
+   "id": "a36fhtxw",
+   "title": "<I>Plasmodium falciparum</I> malaria: blackwater fever",
+   "workType": {
+    "id": "q",
+    "label": "Digital Images"
+   },
+   "production": [],
+   "contributors": [],
+   "subjects": [],
+   "genres": [],
+   "items": [
+    {
+     "locations": [
+      {
+       "url": "https://iiif.wellcomecollection.org/image/W0043227/info.json",
+       "credit": "Wellcome Collection",
+       "license": {
+        "id": "cc-0",
+        "type": "License",
+        "label": "CC0 1.0 Universal",
+        "url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
+       },
+       "accessConditions": [
+        {
+         "method": {
+          "id": "view-online",
+          "type": "AccessMethod",
+          "label": "View online"
+         },
+         "status": {
+          "id": "open",
+          "type": "AccessStatus",
+          "label": "Open"
+         },
+         "type": "AccessCondition"
+        }
+       ],
+       "locationType": {
+        "id": "iiif-image",
+        "type": "LocationType",
+        "label": "IIIF Image API"
+       },
+       "type": "DigitalLocation"
+      }
+     ]
+    }
+   ],
+   "type": "Work"
+  },
+  {
+   "id": "a2597d7n",
+   "title": "Signs of crib biting on the manger.",
+   "workType": {
+    "id": "q",
+    "label": "Digital Images"
+   },
+   "production": [],
+   "contributors": [
+    {
+     "agent": {
+      "id": "rwt7whcb",
+      "label": "ROYAL VETERINARY COLLEGE",
+      "type": "Agent"
+     },
+     "roles": [],
+     "primary": true,
+     "type": "Contributor"
+    }
+   ],
+   "subjects": [
+    {
+     "label": "Equine"
+    },
+    {
+     "label": "ROYAL VETERINARY COLLEGE"
+    },
+    {
+     "label": "CRIB BITING"
+    },
+    {
+     "label": "MANGER"
+    }
+   ],
+   "genres": [],
+   "items": [
+    {
+     "locations": [
+      {
+       "url": "https://iiif.wellcomecollection.org/image/A0000681/info.json",
+       "credit": "Royal Veterinary College",
+       "license": {
+        "id": "cc-by-nc",
+        "type": "License",
+        "label": "Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)",
+        "url": "https://creativecommons.org/licenses/by-nc/4.0/"
+       },
+       "accessConditions": [
+        {
+         "method": {
+          "id": "view-online",
+          "type": "AccessMethod",
+          "label": "View online"
+         },
+         "status": {
+          "id": "open",
+          "type": "AccessStatus",
+          "label": "Open"
+         },
+         "type": "AccessCondition"
+        }
+       ],
+       "locationType": {
+        "id": "iiif-image",
+        "type": "LocationType",
+        "label": "IIIF Image API"
+       },
+       "type": "DigitalLocation"
+      }
+     ]
+    }
+   ],
+   "type": "Work"
+  },
+  {
+   "id": "a26ghhgm",
+   "title": "Engraving of anatomical theatre in Altdorf.",
+   "workType": {
+    "id": "q",
+    "label": "Digital Images"
+   },
+   "production": [],
+   "contributors": [
+    {
+     "agent": {
+      "id": "vzyacar4",
+      "label": "J. G. Puschner",
+      "type": "Agent"
+     },
+     "roles": [],
+     "primary": true,
+     "type": "Contributor"
+    }
+   ],
+   "subjects": [
+    {
+     "label": "ANATOMICAL THEATRE"
+    },
+    {
+     "label": "ALTDORF"
+    },
+    {
+     "label": "History, 18th Century"
+    },
+    {
+     "label": "Engraving"
+    },
+    {
+     "label": "PUSCHNER, J.G"
+    },
+    {
+     "label": "Janus"
+    },
+    {
+     "label": "GC"
+    }
+   ],
+   "genres": [],
+   "items": [
+    {
+     "locations": [
+      {
+       "url": "https://iiif.wellcomecollection.org/image/L0009966/info.json",
+       "credit": "Wellcome Collection",
+       "license": {
+        "id": "inc",
+        "type": "License",
+        "label": "In copyright",
+        "url": "http://rightsstatements.org/vocab/InC/1.0/"
+       },
+       "accessConditions": [
+        {
+         "method": {
+          "id": "view-online",
+          "type": "AccessMethod",
+          "label": "View online"
+         },
+         "status": {
+          "id": "open",
+          "type": "AccessStatus",
+          "label": "Open"
+         },
+         "type": "AccessCondition"
+        }
+       ],
+       "locationType": {
+        "id": "iiif-image",
+        "type": "LocationType",
+        "label": "IIIF Image API"
+       },
+       "type": "DigitalLocation"
+      }
+     ]
+    }
+   ],
+   "type": "Work"
+  }
+ ]
+}

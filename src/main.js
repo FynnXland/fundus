@@ -1,5 +1,5 @@
 import './styles.css';
-import { ladeKatalog, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN } from './katalog.js';
+import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN } from './katalog.js';
 import { vorschau, hoerprobe, alleAnhalten } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
@@ -138,6 +138,10 @@ async function katalogLaden() {
   if (zustand.katalog || zustand.fehler) return;
   try {
     zustand.katalog = await ladeKatalog();
+    // a folder shows its head at once; when the rest arrives, the grid fills up without losing the place
+    beimNachladen(zustand.katalog, (was) => {
+      if (imKatalog() && bedarf(zustand.filter, zustand.wurzelAlle) === was) trefferZeigen({ behalteAnzahl: true });
+    });
   } catch (err) {
     zustand.fehler = err;
   }
@@ -400,7 +404,10 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   const { liste, auswahl } = filtern(k, f, zustand.wurzelAlle);
   if (!behalteAnzahl) zustand.sichtbar = SEITENGROESSE;
   const zeigen = liste.slice(0, zustand.sichtbar);
-  const gesamt = auswahl ? k.stand.total : liste.length;
+  // while a folder is still loading, the list is shorter than the folder: the full count is in the data already
+  const ohneFilter = !f.unter && !f.q && (!f.lizenz || f.lizenz === 'alle') && !f.format && !f.quelle;
+  const gesamt = auswahl || (zustand.wurzelAlle && !f.art && ohneFilter) ? k.stand.total
+    : f.art && ohneFilter ? (k.stand.perKind[f.art] ?? liste.length) : liste.length;
   main.querySelector('#anzahl').textContent = `${zahl(gesamt)} ${gesamt === 1 ? 'Objekt' : 'Objekte'}${f.q ? ` für „${f.q}“` : ''}`;
   main.querySelector('#stand').textContent = `Stand der Daten: ${datum(k.stand.crawledAt)}. Vorschauen von den Quellen sind ${vorschau.an() ? 'eingeschaltet' : 'ausgeschaltet'}.`;
 

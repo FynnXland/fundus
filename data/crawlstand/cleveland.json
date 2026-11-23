@@ -1,0 +1,9 @@
+{
+ "version": 1,
+ "strang": {
+  "weiter": 5000,
+  "fertig": false,
+  "fertigAm": null,
+  "seiten": 25
+ }
+}

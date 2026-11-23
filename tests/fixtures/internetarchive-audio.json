@@ -1,0 +1,97 @@
+{
+ "suche": {
+  "response": {
+   "numFound": 58714,
+   "start": 0,
+   "docs": [
+    {
+     "addeddate": "2013-02-20T14:10:26Z",
+     "identifier": "aporee_1_2"
+    },
+    {
+     "addeddate": "2013-02-20T14:10:36Z",
+     "identifier": "aporee_2_3"
+    },
+    {
+     "addeddate": "2013-02-20T14:10:46Z",
+     "identifier": "aporee_2_4"
+    }
+   ]
+  }
+ },
+ "aporee": {
+  "item_size": 679360,
+  "metadata": {
+   "identifier": "aporee_1_2",
+   "creator": "udo noll",
+   "title": "radio aporee - a pencil line",
+   "licenseurl": "http://creativecommons.org/licenses/by-sa/3.0/",
+   "subject": "field recording;phonography;soundscape;sound art;soundmap;radio;ephemeral;listening;radio aporee",
+   "collection": "radio-aporee-maps",
+   "mediatype": "audio",
+   "addeddate": "2013-02-20 14:10:26"
+  },
+  "files": [
+   {
+    "name": "maps.mp3",
+    "format": "VBR MP3",
+    "length": "40.07",
+    "size": "320910",
+    "md5": "d84c74f7195ba486290ee4771652e830",
+    "sha1": "209cf0b9d94999e5041e2c3be479228a9b3c8bab"
+   },
+   {
+    "name": "maps.ogg",
+    "format": "Ogg Vorbis",
+    "length": "40.05",
+    "size": "339010",
+    "md5": "7303b1918d9289f73e6a07a660973397",
+    "sha1": "63447df7a51d64b0103298d8625c763614fd4ec2"
+   }
+  ]
+ },
+ "fma": {
+  "item_size": 89019174,
+  "metadata": {
+   "identifier": "Behaviour_state-10035",
+   "creator": "DEREK PIOTR / SALAKAPAKKA SOUND SYSTEM",
+   "title": "Behaviour state",
+   "licenseurl": "http://creativecommons.org/licenses/by/3.0/",
+   "collection": "freemusicarchive",
+   "mediatype": "audio",
+   "addeddate": "2011-09-27 17:37:37"
+  },
+  "files": [
+   {
+    "name": "DEREK_PIOTR_-_02_-_Behavior_state.mp3",
+    "format": "VBR MP3",
+    "length": "293.58",
+    "size": "11743597",
+    "md5": "db1b6c68f015386a71be20ab9f19edcb",
+    "sha1": "927eba88db06a45bfa5194ed133955bd4d7ce0a2",
+    "title": "Behavior state",
+    "track": "2"
+   },
+   {
+    "name": "DEREK_PIOTR_-_04_-_Behaviour_Strategy.mp3",
+    "format": "VBR MP3",
+    "length": "77.71",
+    "size": "3108688",
+    "md5": "ae243945411e766d519226de07cad9db",
+    "sha1": "153455a95186eb7bfb7dc8d129f09e4d1a154c74",
+    "title": "Behaviour Strategy",
+    "track": "4"
+   },
+   {
+    "name": "DEREK_PIOTR_-_06_-_Behaviour_Stutter.mp3",
+    "format": "VBR MP3",
+    "length": "155.61",
+    "size": "6224622",
+    "md5": "d42c39221b863db28e036527d31f9c81",
+    "sha1": "b9d50be57f79f7c6705d4e8b9266a732a0cbcf14",
+    "title": "Behaviour Stutter",
+    "track": "6"
+   }
+  ]
+ }
+}

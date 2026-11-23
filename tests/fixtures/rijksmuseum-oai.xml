@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2026-11-23T12:49:42Z</responseDate>
+  <request metadataPrefix="edm" from="1900-01-01T00:00:00Z" until="2026-11-23T12:49:42Z">https://data.rijksmuseum.nl/oai</request>
+  <ListRecords>
+        <record>
+      <header>
+        <identifier>https://id.rijksmuseum.nl/20010000</identifier>
+        <datestamp>2026-10-16T20:17:33Z</datestamp>
+        <setSpec>260241</setSpec>
+        <setSpec>260238</setSpec>
+        <setSpec>260239</setSpec>
+        <setSpec>26151</setSpec>
+        <setSpec>260251</setSpec>
+      </header>
+      <metadata>
+        <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:edmfp="http://www.europeanafashion.eu/edmfp/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdaGr2="http://rdvocab.info/ElementsGr2/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:svcs="http://rdfs.org/sioc/services#">
+          <ore:Aggregation rdf:about="https://id.rijksmuseum.nl/20010000#aggregation">
+            <edm:aggregatedCHO rdf:resource="https://id.rijksmuseum.nl/20010000"/>
+            <edm:dataProvider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:isShownAt rdf:resource="https://www.rijksmuseum.nl/nl/collectie/object/RP-P-1906-2550--377d0d5403462d8f6ff78ca7dad6a2de"/>
+            <edm:isShownBy rdf:resource="https://iiif.micr.io/owHmZ/full/max/0/default.jpg"/>
+            <edm:object rdf:resource="https://iiif.micr.io/owHmZ/full/max/0/default.jpg"/>
+            <edm:provider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:rights rdf:resource="http://creativecommons.org/publicdomain/mark/1.0/"/>
+          </ore:Aggregation>
+          <edm:ProvidedCHO rdf:about="https://id.rijksmuseum.nl/20010000">
+            <dcterms:created xml:lang="en">1620</dcterms:created>
+            <dcterms:created xml:lang="nl">1620</dcterms:created>
+            <dc:type rdf:resource="https://id.rijksmuseum.nl/22040"/>
+            <dc:identifier>RP-P-1906-2550</dc:identifier>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260238"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260239"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260241"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260251"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/26151"/>
+            <dc:creator rdf:resource="https://id.rijksmuseum.nl/2108277"/>
+            <dc:description xml:lang="nl">Portret van Dirk I, graaf van Holland, staande in een harnas met op zijn schouder het wapen van Holland en in zijn hand een zwaard. Prent uit een serie van 36 prenten met portretten ten voeten uit van graven en gravinnen van Holland.</dc:description>
+            <dc:subject rdf:resource="https://id.rijksmuseum.nl/21056999"/>
+            <dc:subject rdf:resource="https://id.rijksmuseum.nl/221925"/>
+            <dc:subject rdf:resource="https://id.rijksmuseum.nl/2305922"/>
+            <dc:title xml:lang="nl">Portret van Dirk I, graaf van Holland</dc:title>
+            <dcterms:alternative xml:lang="nl">Graven en gravinnen van Holland</dcterms:alternative>
+            <dcterms:extent xml:lang="en">height 130 mm x width 80 mm</dcterms:extent>
+            <dcterms:extent xml:lang="nl">blad: hoogte 130 mm x breedte 80 mm</dcterms:extent>
+            <dcterms:isReferencedBy>Hollstein Dutch 15-50</dcterms:isReferencedBy>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/30116841"/>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/301189649"/>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/30185782"/>
+            <dcterms:medium rdf:resource="https://id.rijksmuseum.nl/22020"/>
+            <dcterms:spatial rdf:resource="https://id.rijksmuseum.nl/230134"/>
+            <edm:type>IMAGE</edm:type>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/2207277"/>
+          </edm:ProvidedCHO>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/21056999">
+            <skos:prefLabel xml:lang="nl">Dirk I (graaf van Holland)</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">Diederik I (graaf van Holland)</skos:altLabel>
+            <rdaGr2:dateOfBirth xml:lang="nl">ca. 910</rdaGr2:dateOfBirth>
+            <rdaGr2:dateOfDeath xml:lang="nl">939-10-06</rdaGr2:dateOfDeath>
+            <rdaGr2:placeOfDeath rdf:resource="https://id.rijksmuseum.nl/2301417"/>
+          </edm:Agent>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/2108277">
+            <skos:prefLabel xml:lang="en">Adriaen Matham</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Adriaen Matham</skos:prefLabel>
+            <skos:altLabel xml:lang="en">Matham, Adriaen</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Adriaen Jacobsz. Matham</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Matham, Adriaen Jacobsz.</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Matham, Adriaen</skos:altLabel>
+            <rdaGr2:dateOfBirth xml:lang="nl">ca. 1599</rdaGr2:dateOfBirth>
+            <rdaGr2:dateOfDeath xml:lang="nl">1660-11-23</rdaGr2:dateOfDeath>
+            <rdaGr2:placeOfBirth rdf:resource="https://id.rijksmuseum.nl/230134"/>
+            <rdaGr2:placeOfDeath rdf:resource="https://id.rijksmuseum.nl/2301261"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2202348"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2202371"/>
+            <owl:sameAs rdf:resource="http://viaf.org/viaf/295919274"/>
+            <owl:sameAs rdf:resource="http://vocab.getty.edu/ulan/500006126"/>
+            <owl:sameAs rdf:resource="http://www.wikidata.org/entity/Q4684802"/>
+            <owl:sameAs rdf:resource="https://rkd.nl/artists/53937"/>
+          </edm:Agent>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/2109266">
+            <skos:prefLabel xml:lang="en">Rijksmuseum Amsterdam</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Rijksmuseum Amsterdam</skos:prefLabel>
+          </edm:Agent>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/2301261">
+            <skos:prefLabel xml:lang="en">The Hague</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Den Haag</skos:prefLabel>
+          </edm:Place>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/230134">
+            <skos:prefLabel xml:lang="en">Haarlem</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Haarlem</skos:prefLabel>
+            <owl:sameAs rdf:resource="http://vocab.getty.edu/tgn/7007048"/>
+            <owl:sameAs rdf:resource="http://www.wikidata.org/entity/Q9920"/>
+          </edm:Place>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/2301417">
+            <skos:prefLabel xml:lang="nl">Andernach</skos:prefLabel>
+          </edm:Place>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/2305922">
+            <skos:prefLabel xml:lang="en">County of Holland</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Graafschap Holland</skos:prefLabel>
+            <owl:sameAs rdf:resource="http://www.wikidata.org/entity/Q762943"/>
+          </edm:Place>
+          <edm:WebResource rdf:about="https://iiif.micr.io/owHmZ/full/max/0/default.jpg">
+            <svcs:has_service rdf:resource="https://iiif.micr.io/owHmZ"/>
+          </edm:WebResource>
+          <edm:WebResource rdf:about="https://www.rijksmuseum.nl/nl/collectie/object/RP-P-1906-2550--377d0d5403462d8f6ff78ca7dad6a2de">
+            <dc:format>text/html</dc:format>
+            <dc:type rdf:resource="http://purl.org/dc/dcmitype/InteractiveResource"/>
+            <dc:language>nl</dc:language>
+          </edm:WebResource>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22020">
+            <skos:prefLabel xml:lang="en">paper</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">papier (materiaal)</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2202348">
+            <skos:prefLabel xml:lang="en">printmaker</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prentmaker</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2202371">
+            <skos:prefLabel xml:lang="en">draftsman (artist)</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">tekenaar</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22040">
+            <skos:prefLabel xml:lang="en">print</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prent</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2207277">
+            <skos:prefLabel xml:lang="en">engraving</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">graveren (drukproced&#233;)</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">kopergravure</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/221925">
+            <skos:prefLabel xml:lang="en">nobility and patriciate; chivalry, knighthood</skos:prefLabel>
+            <skos:altLabel>46A12</skos:altLabel>
+            <skos:exactMatch rdf:resource="https://iconclass.org/46A12"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260238">
+            <skos:prefLabel xml:lang="nl">Alleen beeld</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260239">
+            <skos:prefLabel xml:lang="nl">Entire Public Domain Set</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260241">
+            <skos:prefLabel xml:lang="en">biografic</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">biografisch</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260251">
+            <skos:prefLabel xml:lang="en">All published objects</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Alle gepubliceerde objecten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/26151">
+            <skos:prefLabel xml:lang="en">prints</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prenten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <svcs:Service rdf:about="https://iiif.micr.io/owHmZ">
+            <dcterms:conformsTo rdf:resource="http://iiif.io/api/image"/>
+          </svcs:Service>
+        </rdf:RDF>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>https://id.rijksmuseum.nl/200100002</identifier>
+        <datestamp>2026-10-25T17:19:01Z</datestamp>
+        <setSpec>260238</setSpec>
+        <setSpec>260239</setSpec>
+        <setSpec>261106</setSpec>
+        <setSpec>260251</setSpec>
+        <setSpec>2601</setSpec>
+      </header>
+      <metadata>
+        <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:edmfp="http://www.europeanafashion.eu/edmfp/" xmlns:mrel="http://id.loc.gov/vocabulary/relators/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:svcs="http://rdfs.org/sioc/services#">
+          <ore:Aggregation rdf:about="https://id.rijksmuseum.nl/200100002#aggregation">
+            <edm:aggregatedCHO rdf:resource="https://id.rijksmuseum.nl/200100002"/>
+            <edm:dataProvider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:isShownAt rdf:resource="https://www.rijksmuseum.nl/nl/collectie/object/KOG-MP-2-1957--52ad142ccf0657687d7d0e87aa735463"/>
+            <edm:isShownBy rdf:resource="https://iiif.micr.io/BzUUr/full/max/0/default.jpg"/>
+            <edm:object rdf:resource="https://iiif.micr.io/BzUUr/full/max/0/default.jpg"/>
+            <edm:provider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:rights rdf:resource="http://creativecommons.org/publicdomain/mark/1.0/"/>
+          </ore:Aggregation>
+          <edm:ProvidedCHO rdf:about="https://id.rijksmuseum.nl/200100002">
+            <dcterms:created xml:lang="en">1815</dcterms:created>
+            <dcterms:created xml:lang="nl">1815</dcterms:created>
+            <dc:type rdf:resource="https://id.rijksmuseum.nl/2201653"/>
+            <dc:identifier>KOG-MP-2-1957</dc:identifier>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/2601"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260238"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260239"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260251"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/261106"/>
+            <dc:description xml:lang="nl">Messing penning, op de voorzijde de kroonprins met blanke sabel te paard naar links, met omschrift, op de keerzijde twee regels tekst tussen palm- en lauwertak, Engelstalig.</dc:description>
+            <dc:title xml:lang="nl">De Kroonprins van Oranje in de Slag bij Waterloo 1815</dc:title>
+            <dcterms:extent xml:lang="en">diameter 2.5 cm x weight 0</dcterms:extent>
+            <dcterms:extent xml:lang="nl">diameter 2,5 cm x gewicht (eigenschap) 0</dcterms:extent>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/30116856"/>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/30125387"/>
+            <dcterms:medium rdf:resource="https://id.rijksmuseum.nl/22054"/>
+            <edm:type>IMAGE</edm:type>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/2202379"/>
+            <mrel:spn xml:lang="en">On loan from the Koninklijk Oudheidkundig Genootschap</mrel:spn>
+            <mrel:spn xml:lang="nl">Bruikleen van het Koninklijk Oudheidkundig Genootschap</mrel:spn>
+          </edm:ProvidedCHO>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/2109266">
+            <skos:prefLabel xml:lang="en">Rijksmuseum Amsterdam</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Rijksmuseum Amsterdam</skos:prefLabel>
+          </edm:Agent>
+          <edm:WebResource rdf:about="https://iiif.micr.io/BzUUr/full/max/0/default.jpg">
+            <svcs:has_service rdf:resource="https://iiif.micr.io/BzUUr"/>
+          </edm:WebResource>
+          <edm:WebResource rdf:about="https://www.rijksmuseum.nl/nl/collectie/object/KOG-MP-2-1957--52ad142ccf0657687d7d0e87aa735463">
+            <dc:format>text/html</dc:format>
+            <dc:type rdf:resource="http://purl.org/dc/dcmitype/InteractiveResource"/>
+            <dc:language>nl</dc:language>
+          </edm:WebResource>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2201653">
+            <skos:prefLabel xml:lang="en">history medal</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">historiepenning</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">gedenkpenning</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2202379">
+            <skos:prefLabel xml:lang="en">striking (metalworking)</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">slaan</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">geslagen</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22054">
+            <skos:prefLabel xml:lang="en">brass (alloy)</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">messing</skos:prefLabel>
+            <skos:altLabel xml:lang="en">brass (alloy)</skos:altLabel>
+            <skos:altLabel xml:lang="nl">geelkoper</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2601">
+            <skos:prefLabel xml:lang="nl">KOG</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260238">
+            <skos:prefLabel xml:lang="nl">Alleen beeld</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260239">
+            <skos:prefLabel xml:lang="nl">Entire Public Domain Set</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260251">
+            <skos:prefLabel xml:lang="en">All published objects</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Alle gepubliceerde objecten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/261106">
+            <skos:prefLabel xml:lang="nl">munten, penningen en draagtekens</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <svcs:Service rdf:about="https://iiif.micr.io/BzUUr">
+            <dcterms:conformsTo rdf:resource="http://iiif.io/api/image"/>
+          </svcs:Service>
+        </rdf:RDF>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>https://id.rijksmuseum.nl/2001</identifier>
+        <datestamp>2026-10-24T17:45:04Z</datestamp>
+        <setSpec>260238</setSpec>
+        <setSpec>26151</setSpec>
+        <setSpec>260251</setSpec>
+      </header>
+      <metadata>
+        <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:edmfp="http://www.europeanafashion.eu/edmfp/" xmlns:mrel="http://id.loc.gov/vocabulary/relators/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdaGr2="http://rdvocab.info/ElementsGr2/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:svcs="http://rdfs.org/sioc/services#">
+          <ore:Aggregation rdf:about="https://id.rijksmuseum.nl/2001#aggregation">
+            <edm:aggregatedCHO rdf:resource="https://id.rijksmuseum.nl/2001"/>
+            <edm:dataProvider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:isShownAt rdf:resource="https://www.rijksmuseum.nl/nl/collectie/object/RP-P-2010-222-3315--ba97e0d4396e589a312631ff4fbfd5fb"/>
+            <edm:isShownBy rdf:resource="https://iiif.micr.io/KMFvF/full/max/0/default.jpg"/>
+            <edm:object rdf:resource="https://iiif.micr.io/KMFvF/full/max/0/default.jpg"/>
+            <edm:provider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:rights rdf:resource="http://rightsstatements.org/vocab/InC/1.0/"/>
+          </ore:Aggregation>
+          <edm:ProvidedCHO rdf:about="https://id.rijksmuseum.nl/2001">
+            <dcterms:created xml:lang="en">1973</dcterms:created>
+            <dcterms:created xml:lang="nl">1973</dcterms:created>
+            <dc:type rdf:resource="https://id.rijksmuseum.nl/22040"/>
+            <dc:identifier>RP-P-2010-222-3315</dc:identifier>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260238"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260251"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/26151"/>
+            <dc:creator rdf:resource="https://id.rijksmuseum.nl/21029638"/>
+            <dc:description xml:lang="nl">Links naast de vrouw staat een paal waaraan een opgespannen doek met blote billen erop hangt. De vrouw leunt op een blok met de titel.</dc:description>
+            <dc:subject rdf:resource="https://id.rijksmuseum.nl/2212675"/>
+            <dc:subject rdf:resource="https://id.rijksmuseum.nl/2214376"/>
+            <dc:title xml:lang="nl">Before, Behind, Between, Above, Below</dc:title>
+            <dcterms:alternative xml:lang="nl">John Donne, Elegie XIX: To his Mistris going to Bed</dcterms:alternative>
+            <dcterms:extent xml:lang="en">height 296 mm x width 415 mm</dcterms:extent>
+            <dcterms:extent xml:lang="nl">plaatrand: hoogte 296 mm x breedte 415 mm</dcterms:extent>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/301102015"/>
+            <dcterms:medium rdf:resource="https://id.rijksmuseum.nl/22020"/>
+            <edm:type>IMAGE</edm:type>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/2202942"/>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/220922"/>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/220934"/>
+            <mrel:spn xml:lang="en">Piet Clement Collection</mrel:spn>
+            <mrel:spn xml:lang="nl">Collectie Piet Clement</mrel:spn>
+          </edm:ProvidedCHO>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/21029638">
+            <skos:prefLabel xml:lang="en">Nicolaas Wijnberg</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Nicolaas Wijnberg</skos:prefLabel>
+            <skos:altLabel xml:lang="en">Wijnberg, Nicolaas</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Klaas Wijnberg</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Wijnberg, Klaas</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Wijnberg, Nicolaas</skos:altLabel>
+            <rdaGr2:dateOfBirth xml:lang="nl">1918-11-22</rdaGr2:dateOfBirth>
+            <rdaGr2:dateOfDeath xml:lang="nl">2006-06-11</rdaGr2:dateOfDeath>
+            <rdaGr2:placeOfBirth rdf:resource="https://id.rijksmuseum.nl/23029985"/>
+            <rdaGr2:placeOfDeath rdf:resource="https://id.rijksmuseum.nl/2304798"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2202348"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2205167"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2205515"/>
+            <owl:sameAs rdf:resource="http://viaf.org/viaf/39465339"/>
+            <owl:sameAs rdf:resource="http://www.wikidata.org/entity/Q3324470"/>
+            <owl:sameAs rdf:resource="https://rkd.nl/artists/84375"/>
+          </edm:Agent>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/2109266">
+            <skos:prefLabel xml:lang="en">Rijksmuseum Amsterdam</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Rijksmuseum Amsterdam</skos:prefLabel>
+          </edm:Agent>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/23029985">
+            <skos:prefLabel xml:lang="en">Amsterdam</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Amsterdam</skos:prefLabel>
+          </edm:Place>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/2304798">
+            <skos:prefLabel xml:lang="nl">Laren (Noord-Holland)</skos:prefLabel>
+          </edm:Place>
+          <edm:WebResource rdf:about="https://iiif.micr.io/KMFvF/full/max/0/default.jpg">
+            <svcs:has_service rdf:resource="https://iiif.micr.io/KMFvF"/>
+          </edm:WebResource>
+          <edm:WebResource rdf:about="https://www.rijksmuseum.nl/nl/collectie/object/RP-P-2010-222-3315--ba97e0d4396e589a312631ff4fbfd5fb">
+            <dc:format>text/html</dc:format>
+            <dc:type rdf:resource="http://purl.org/dc/dcmitype/InteractiveResource"/>
+            <dc:language>nl</dc:language>
+          </edm:WebResource>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22020">
+            <skos:prefLabel xml:lang="en">paper</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">papier (materiaal)</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2202348">
+            <skos:prefLabel xml:lang="en">printmaker</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prentmaker</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2202942">
+            <skos:prefLabel xml:lang="en">etching</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">etsen</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">ge&#235;tst</skos:altLabel>
+            <skos:altLabel xml:lang="nl">omtrekets</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22040">
+            <skos:prefLabel xml:lang="en">print</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prent</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2205167">
+            <skos:prefLabel xml:lang="en">sculptor</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">beeldhouwer</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2205515">
+            <skos:prefLabel xml:lang="nl">monumentaal kunstenaar</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/220922">
+            <skos:prefLabel xml:lang="en">drypoint</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">droge naald</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/220934">
+            <skos:prefLabel xml:lang="en">aquatint</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">aquatint</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">lavismanier</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2212675">
+            <skos:prefLabel xml:lang="en">woman (showing herself) undressed, quasi-nude</skos:prefLabel>
+            <skos:altLabel>41D92</skos:altLabel>
+            <skos:exactMatch rdf:resource="https://iconclass.org/41D92"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2214376">
+            <skos:prefLabel xml:lang="en">buttocks, 'partes posteriores'</skos:prefLabel>
+            <skos:altLabel>31A2237</skos:altLabel>
+            <skos:exactMatch rdf:resource="https://iconclass.org/31A2237"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260238">
+            <skos:prefLabel xml:lang="nl">Alleen beeld</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260251">
+            <skos:prefLabel xml:lang="en">All published objects</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Alle gepubliceerde objecten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/26151">
+            <skos:prefLabel xml:lang="en">prints</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prenten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <svcs:Service rdf:about="https://iiif.micr.io/KMFvF">
+            <dcterms:conformsTo rdf:resource="http://iiif.io/api/image"/>
+          </svcs:Service>
+        </rdf:RDF>
+      </metadata>
+    </record>
+    <record>
+      <header>
+        <identifier>https://id.rijksmuseum.nl/20010</identifier>
+        <datestamp>2026-10-24T12:18:17Z</datestamp>
+        <setSpec>260238</setSpec>
+        <setSpec>26151</setSpec>
+        <setSpec>260251</setSpec>
+      </header>
+      <metadata>
+        <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:edm="http://www.europeana.eu/schemas/edm/" xmlns:edmfp="http://www.europeanafashion.eu/edmfp/" xmlns:mrel="http://id.loc.gov/vocabulary/relators/" xmlns:ore="http://www.openarchives.org/ore/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdaGr2="http://rdvocab.info/ElementsGr2/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:svcs="http://rdfs.org/sioc/services#">
+          <ore:Aggregation rdf:about="https://id.rijksmuseum.nl/20010#aggregation">
+            <edm:aggregatedCHO rdf:resource="https://id.rijksmuseum.nl/20010"/>
+            <edm:dataProvider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:isShownAt rdf:resource="https://www.rijksmuseum.nl/nl/collectie/object/RP-P-2017-2033-37--9c0bd70c53398f506344c1f358d4f166"/>
+            <edm:isShownBy rdf:resource="https://iiif.micr.io/wgIZp/full/max/0/default.jpg"/>
+            <edm:object rdf:resource="https://iiif.micr.io/wgIZp/full/max/0/default.jpg"/>
+            <edm:provider rdf:resource="https://id.rijksmuseum.nl/2109266"/>
+            <edm:rights rdf:resource="http://rightsstatements.org/vocab/InC/1.0/"/>
+          </ore:Aggregation>
+          <edm:ProvidedCHO rdf:about="https://id.rijksmuseum.nl/20010">
+            <dc:rights xml:lang="nl">erven Nicolaas Wijnberg</dc:rights>
+            <dcterms:created xml:lang="en">1947</dcterms:created>
+            <dcterms:created xml:lang="nl">1947</dcterms:created>
+            <dc:type rdf:resource="https://id.rijksmuseum.nl/22040"/>
+            <dc:identifier>RP-P-2017-2033-37</dc:identifier>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260238"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/260251"/>
+            <dcterms:isPartOf rdf:resource="https://id.rijksmuseum.nl/26151"/>
+            <dc:creator rdf:resource="https://id.rijksmuseum.nl/21029638"/>
+            <dc:description xml:lang="nl">In het midden trekt een jongen zijn hemd over zijn hoofd uit.</dc:description>
+            <dc:subject rdf:resource="https://id.rijksmuseum.nl/221459"/>
+            <dc:title xml:lang="nl">Badende jongens</dc:title>
+            <dcterms:alternative xml:lang="nl">Schildersprenten 1947</dcterms:alternative>
+            <dcterms:extent xml:lang="en">height 630 mm x width 478 mm</dcterms:extent>
+            <dcterms:extent xml:lang="nl">blad: hoogte 630 mm x breedte 478 mm</dcterms:extent>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/301102015"/>
+            <dcterms:isReferencedBy rdf:resource="https://id.rijksmuseum.nl/301267971"/>
+            <dcterms:medium rdf:resource="https://id.rijksmuseum.nl/22020"/>
+            <edm:type>IMAGE</edm:type>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/2205383"/>
+            <edmfp:technique rdf:resource="https://id.rijksmuseum.nl/2206828"/>
+            <mrel:spn xml:lang="en">J.C.G. Verhaaff-Hofslag Bequest, Amsterdam</mrel:spn>
+            <mrel:spn xml:lang="nl">Legaat van mevrouw J.C.G. Verhaaff-Hofslag, Amsterdam</mrel:spn>
+          </edm:ProvidedCHO>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/21029638">
+            <skos:prefLabel xml:lang="en">Nicolaas Wijnberg</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Nicolaas Wijnberg</skos:prefLabel>
+            <skos:altLabel xml:lang="en">Wijnberg, Nicolaas</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Klaas Wijnberg</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Wijnberg, Klaas</skos:altLabel>
+            <skos:altLabel xml:lang="nl">Wijnberg, Nicolaas</skos:altLabel>
+            <rdaGr2:dateOfBirth xml:lang="nl">1918-11-22</rdaGr2:dateOfBirth>
+            <rdaGr2:dateOfDeath xml:lang="nl">2006-06-11</rdaGr2:dateOfDeath>
+            <rdaGr2:placeOfBirth rdf:resource="https://id.rijksmuseum.nl/23029985"/>
+            <rdaGr2:placeOfDeath rdf:resource="https://id.rijksmuseum.nl/2304798"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2202348"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2205167"/>
+            <rdaGr2:professionOrOccupation rdf:resource="https://id.rijksmuseum.nl/2205515"/>
+            <owl:sameAs rdf:resource="http://viaf.org/viaf/39465339"/>
+            <owl:sameAs rdf:resource="http://www.wikidata.org/entity/Q3324470"/>
+            <owl:sameAs rdf:resource="https://rkd.nl/artists/84375"/>
+          </edm:Agent>
+          <edm:Agent rdf:about="https://id.rijksmuseum.nl/2109266">
+            <skos:prefLabel xml:lang="en">Rijksmuseum Amsterdam</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Rijksmuseum Amsterdam</skos:prefLabel>
+          </edm:Agent>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/23029985">
+            <skos:prefLabel xml:lang="en">Amsterdam</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Amsterdam</skos:prefLabel>
+          </edm:Place>
+          <edm:Place rdf:about="https://id.rijksmuseum.nl/2304798">
+            <skos:prefLabel xml:lang="nl">Laren (Noord-Holland)</skos:prefLabel>
+          </edm:Place>
+          <edm:WebResource rdf:about="https://iiif.micr.io/wgIZp/full/max/0/default.jpg">
+            <svcs:has_service rdf:resource="https://iiif.micr.io/wgIZp"/>
+          </edm:WebResource>
+          <edm:WebResource rdf:about="https://www.rijksmuseum.nl/nl/collectie/object/RP-P-2017-2033-37--9c0bd70c53398f506344c1f358d4f166">
+            <dc:format>text/html</dc:format>
+            <dc:type rdf:resource="http://purl.org/dc/dcmitype/InteractiveResource"/>
+            <dc:language>nl</dc:language>
+          </edm:WebResource>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22020">
+            <skos:prefLabel xml:lang="en">paper</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">papier (materiaal)</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2202348">
+            <skos:prefLabel xml:lang="en">printmaker</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prentmaker</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/22040">
+            <skos:prefLabel xml:lang="en">print</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prent</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2205167">
+            <skos:prefLabel xml:lang="en">sculptor</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">beeldhouwer</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2205383">
+            <skos:prefLabel xml:lang="en">offset-printed</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">offsetdrukken</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">offsetdruk</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2205515">
+            <skos:prefLabel xml:lang="nl">monumentaal kunstenaar</skos:prefLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/2206828">
+            <skos:prefLabel xml:lang="en">lithography</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">lithografie (techniek)</skos:prefLabel>
+            <skos:altLabel xml:lang="nl">lithodruk</skos:altLabel>
+            <skos:altLabel xml:lang="nl">steendruk</skos:altLabel>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/221459">
+            <skos:prefLabel xml:lang="en">taking a bath - AA - in the open air</skos:prefLabel>
+            <skos:altLabel>31AA545</skos:altLabel>
+            <skos:exactMatch rdf:resource="https://iconclass.org/31AA545"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260238">
+            <skos:prefLabel xml:lang="nl">Alleen beeld</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/260251">
+            <skos:prefLabel xml:lang="en">All published objects</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">Alle gepubliceerde objecten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <skos:Concept rdf:about="https://id.rijksmuseum.nl/26151">
+            <skos:prefLabel xml:lang="en">prints</skos:prefLabel>
+            <skos:prefLabel xml:lang="nl">prenten</skos:prefLabel>
+            <skos:broader rdf:resource="https://linked.art/ns/terms/Set"/>
+          </skos:Concept>
+          <svcs:Service rdf:about="https://iiif.micr.io/wgIZp">
+            <dcterms:conformsTo rdf:resource="http://iiif.io/api/image"/>
+          </svcs:Service>
+        </rdf:RDF>
+      </metadata>
+    </record>
+    <resumptionToken completeListSize="848910">bWV0YWRhdGFQcmVmaXg9ZWRtJmZyb209MTkwMC0wMS0wMVQwMCUzQTAwJTNBMDBaJnVudGlsPTIwMjYtMTEtMjNUMTIlM0E0OSUzQTQyWiZjPTIwMDEwMDA0MiZzPTg0ODkxMA==</resumptionToken>
+  </ListRecords>
+</OAI-PMH>

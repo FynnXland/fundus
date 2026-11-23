@@ -19,7 +19,7 @@ besonders Musik und Sounds.
   Vorschaubild ein kleines Bild der Quelle, jeweils erst kurz bevor die Karte sichtbar wird; 3D im Raster nur als Bild.
 - Dieser Chat orchestriert; neue Arbeitspakete laufen als echte Unterchats (nicht als Hilfsagenten).
 
-## Unterchats (alle im selben Ordner, kein Git, feste Dateizuständigkeiten)
+## Unterchats (alle im selben Ordner, committen nicht selbst, feste Dateizuständigkeiten)
 
 | Name | Session-ID | Auftrag | darf ändern |
 |---|---|---|---|
@@ -38,6 +38,29 @@ nur für wirklich einfache Aufgaben). Bis dahin hatte keiner eine Stand-Datei ge
 
 Hinweis: Die drei Quellen-Pakete liefen vorher als Hilfsagenten mit Fable und sind am Fable-Limit abgebrochen, ohne
 Dateien zu hinterlassen. Sie wurden als Unterchats mit Opus neu gestartet.
+
+## Einbindung 23.11.2026 nachmittags (Orchestrator)
+
+Alle fünf Unterchats sind fertig (Stand-Dateien `docs/stand/fundus-*.md`). Eingebunden:
+- `crawler/sources/index.mjs`: commonsaudio, wikimediavideo, khronos, cleveland, wellcome, blender, godot, opengameart,
+  openclipart (Feed). Zurückgehalten mit Begründung im Kopf der Datei und in `docs/RECHT.md`: rijksmuseum, europeana, nga,
+  godotshaders, smk. To-do für Fynn: `fundus:quellen-entscheiden`.
+- `crawler/lib/dedupe.mjs` `QUELLRANG`: alle direkten Quellen eingetragen (vorher hätte Openverse jede neue Quelle
+  geschlagen, weil Unbekannte Rang 50 bekamen). Museen stehen jetzt vor Commons.
+- `crawler/config.json`: Einträge laut Stand-Dateien; `wikimedia` jetzt mit `gruppen` (inkl. Quality images, Clipart,
+  Texturen, 3D).
+- OGA-BY 3.0/4.0 in `crawler/lib/licenses.mjs` (Lizenztext gelesen), bei Gleichstand gewinnt CC BY.
+- Quellnamen: „Wikimedia Commons (Audio)“ und „(Video)“, damit der Quellenfilter sie unterscheidet.
+- `src/seiten.js`: Hosts der eingeschalteten Quellen in `VORSCHAU_HOSTS`; `melden` liest jetzt Indexzeilen (Absturz mit `?id=` behoben).
+- `src/main.js`: Patch aus fundus-index (`beimNachladen`, Gesamtzahl aus `stand.perKind` während ein Ordner lädt).
+- `crawler/thumbs.mjs`: Accept-Header mit `*/*` (Openverse antwortete sonst 406), opengameart.org 10 s Abstand.
+- Probelauf aller zehn Adapter mit Mini-Budget: alle Einträge schema-gültig.
+- Erster echter Crawl (23.11. nachmittags): 42.337 veröffentlichte Objekte (vorher 17.881). Musik 3.249, Sound 3.684,
+  Video 4.381, Bild 17.615, Skript 2.109, 3D 1.919. Im Browser geprüft: Videos-Ordner, Hörproben Commons und Internet
+  Archive, Suche, Khronos-Detail, Meldeseite mit `?id=`. Danach thumbs-Lauf für die neuen Einträge, dann Linkprüfung.
+
+Noch offen aus den Stand-Dateien: Videoprobe in der Detailansicht (`PREVIEW_TYPES` um `video`, Zweig in `karte.js`,
+`preview.video` in `check-links.mjs`), `minisearch` aus `package.json` entfernen, Openclipart-Sitemap (Entscheidung Fynn).
 
 ## Wenn ein Unterchat seinen Bericht schickt: einbinden
 
@@ -79,6 +102,9 @@ Linkprüfung: erst 1.698 Einträge geprüft (1.594 ok, 234 unklar, 0 tot). Die n
   SMITHSONIAN_API_KEY, EUROPEANA_API_KEY. Danach Openverse-Budget in `config.json` hochsetzen.
 - To-do `fundus:betreiberangaben`: Impressum/Datenschutz-Angaben in `src/betreiber.js` fehlen.
 - Vorschaubilder überschreiten bald 20.000 Dateien (Grenze von Cloudflare Pages): Speicher wie R2 einplanen.
-- Projekt hat kein Git. Am Ende dieser Runde Fynn `git init` und einen ersten Commit anbieten (nur mit Zustimmung).
+- Git seit 23.11. (Branch `main`, erster Commit `79495f7`, mit Fynns Zustimmung). Nur der Orchestrator committet,
+  Unterchats nicht. Kein Remote: die nächtliche Action in `.github/workflows/katalog.yml` läuft erst, wenn Fynn ein
+  GitHub-Repo anlegt und pusht (und die Variable FUNDUS_KONTAKT setzt). `g.html` (fremde Webseite, Debug-Rest) liegt
+  bewusst ungetrackt.
 - Fehler in der Browser-Konsole „menueListenFuellen“ stammen von einer alten, längst ersetzten Seitenversion im Cache
   der Vorschau, nicht vom aktuellen Code.

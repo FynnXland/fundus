@@ -65,7 +65,13 @@ export function dedupe(items) {
 // Only photographs and artworks are compared by picture. Rendered previews (material spheres, model
 // turntables, HDRI balls) look alike across unrelated assets and produced false matches in the first run.
 const BILDARTEN = new Set(['bild']);
-const QUELLRANG = ['polyhaven', 'ambientcg', 'wikimedia', 'met', 'smithsonian', 'fontsource', 'iconify', 'github', 'internetarchive', 'freesound', 'openverse'];
+// Lower wins. Every direct source must be listed: an unlisted one ranks 50, behind Openverse. Origins come
+// before copies (Openclipart before the Commons clipart categories, museums before Commons uploads of their works).
+const QUELLRANG = [
+  'polyhaven', 'ambientcg', 'khronos', 'openclipart', 'opengameart', 'cleveland', 'wellcome', 'nga', 'smk', 'rijksmuseum',
+  'met', 'smithsonian', 'wikimedia', 'commonsaudio', 'wikimediavideo', 'europeana', 'fontsource', 'iconify', 'github',
+  'blender', 'godot', 'godotshaders', 'internetarchive', 'freesound', 'openverse',
+];
 
 function bits(hex) {
   let x = BigInt(`0x${hex}`);

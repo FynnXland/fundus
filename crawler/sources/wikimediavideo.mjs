@@ -25,7 +25,7 @@ const PAGE = 50;
 const source = {
   id: 'wikimediavideo',
   code: 'WV',
-  name: 'Wikimedia Commons',
+  name: 'Wikimedia Commons (Video)',
   url: 'https://commons.wikimedia.org',
   kinds: ['video'],
   terms: 'https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use',

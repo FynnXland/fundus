@@ -1,0 +1,134 @@
+{
+ "info": {
+  "total": 41902
+ },
+ "data": [
+  {
+   "id": 94979,
+   "accession_number": "1915.534",
+   "share_license_status": "CC0",
+   "title": "Nathaniel Hurd",
+   "creation_date": "c. 1765",
+   "type": "Painting",
+   "technique": "oil on canvas",
+   "department": "American Painting and Sculpture",
+   "culture": [
+    "United States"
+   ],
+   "url": "https://clevelandart.org/art/1915.534",
+   "images": {
+    "annotation": "",
+    "web": {
+     "url": "https://openaccess-cdn.clevelandart.org/1915.534/1915.534_web.jpg",
+     "width": "748",
+     "height": "893",
+     "filesize": "402404",
+     "filename": "1915.534_web.jpg"
+    },
+    "print": {
+     "url": "https://openaccess-cdn.clevelandart.org/1915.534/1915.534_print.jpg",
+     "width": "2849",
+     "height": "3400",
+     "filesize": "5904910",
+     "filename": "1915.534_print.jpg"
+    },
+    "full": {
+     "url": "https://openaccess-cdn.clevelandart.org/1915.534/1915.534_full.tif",
+     "width": "4609",
+     "height": "5500",
+     "filesize": "76080612",
+     "filename": "1915.534_full.tif"
+    }
+   },
+   "creators": [
+    {
+     "id": 2409,
+     "description": "John Singleton Copley (American, born The Thirteen Colonies, 1738–1815)",
+     "extent": null,
+     "qualifier": null,
+     "role": "artist",
+     "biography": null,
+     "name_in_original_language": null,
+     "birth_year": "1738",
+     "death_year": "1815",
+     "use_in_caption": true,
+     "include_extent": false,
+     "weight": 1
+    }
+   ],
+   "copyright": null
+  },
+  {
+   "id": 678782,
+   "accession_number": "1942.152.346.a",
+   "share_license_status": "CC0",
+   "title": "Text, folio 346 (recto), from a Gospel Book with Commentaries",
+   "creation_date": "c. 1000–1100",
+   "type": "Bound Volume",
+   "technique": "ink, tempera, and gold on vellum; leather binding",
+   "department": "Medieval Art",
+   "culture": [
+    "Byzantium, Constantinople"
+   ],
+   "url": "https://clevelandart.org/art/1942.152.346.a",
+   "images": {
+    "annotation": null,
+    "web": {
+     "url": "https://openaccess-cdn.clevelandart.org/1942.152.346.a/1942.152.346.a_web.jpg",
+     "width": "714",
+     "height": "900",
+     "filesize": "266923",
+     "filename": "1942.152.346.a_web.jpg"
+    },
+    "print": {
+     "url": "https://openaccess-cdn.clevelandart.org/1942.152.346.a/1942.152.346.a_print.jpg",
+     "width": "2698",
+     "height": "3400",
+     "filesize": "3023196",
+     "filename": "1942.152.346.a_print.jpg"
+    },
+    "full": {
+     "url": "https://openaccess-cdn.clevelandart.org/1942.152.346.a/1942.152.346.a_full.tif",
+     "width": "7016",
+     "height": "8840",
+     "filesize": "186091216",
+     "filename": "1942.152.346.a_full.tif"
+    }
+   },
+   "creators": [],
+   "copyright": null
+  },
+  {
+   "id": 160090,
+   "accession_number": "1997.59",
+   "share_license_status": "Copyrighted",
+   "title": "Paul III",
+   "creation_date": "1996",
+   "type": "Painting",
+   "technique": "oil on canvas",
+   "department": "Contemporary Art",
+   "culture": [
+    "America"
+   ],
+   "url": "https://clevelandart.org/art/1997.59",
+   "images": {},
+   "creators": [
+    {
+     "id": 6583,
+     "description": "Chuck Close (American, 1940–2021)",
+     "extent": null,
+     "qualifier": null,
+     "role": "artist",
+     "biography": null,
+     "name_in_original_language": null,
+     "birth_year": "1940",
+     "death_year": "2021",
+     "use_in_caption": true,
+     "include_extent": false,
+     "weight": 1
+    }
+   ],
+   "copyright": "© Chuck Close, courtesy The Pace Gallery"
+  }
+ ]
+}

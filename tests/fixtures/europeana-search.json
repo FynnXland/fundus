@@ -1,0 +1,50 @@
+{
+  "apikey": "test",
+  "success": true,
+  "requestNumber": 999,
+  "itemsCount": 4,
+  "totalResults": 4,
+  "nextCursor": "AoE/EGRhdGFzZXQvMDkyMDQvZXhhbXBsZQ==",
+  "items": [
+    {
+      "id": "/9200579/BibliographicResource_3000126284264",
+      "guid": "https://www.europeana.eu/item/9200579/BibliographicResource_3000126284264?utm_source=api&utm_medium=api&utm_campaign=test",
+      "type": "IMAGE",
+      "title": ["Beispielbild: Hafen bei Nacht"],
+      "dcCreator": ["Beispiel, Maria"],
+      "year": ["1890"],
+      "dataProvider": ["Beispielmuseum"],
+      "provider": "Beispielaggregator",
+      "rights": ["http://creativecommons.org/publicdomain/mark/1.0/"],
+      "edmPreview": ["https://api.europeana.eu/thumbnail/v2/url.json?uri=https%3A%2F%2Fexample.org%2Fmedia%2F1.jpg&type=IMAGE"],
+      "edmIsShownBy": ["https://example.org/media/1.jpg"]
+    },
+    {
+      "id": "/2022608/example_CC_BY",
+      "guid": "https://www.europeana.eu/item/2022608/example_CC_BY",
+      "type": "IMAGE",
+      "title": ["Beispielkarte"],
+      "rights": ["http://creativecommons.org/licenses/by/4.0/"],
+      "edmPreview": ["https://api.europeana.eu/thumbnail/v2/url.json?uri=https%3A%2F%2Fexample.org%2Fmedia%2F2.jpg&type=IMAGE"],
+      "edmIsShownBy": ["https://example.org/media/2.jpg"]
+    },
+    {
+      "id": "/2022608/example_CC_BY_NC",
+      "guid": "https://www.europeana.eu/item/2022608/example_CC_BY_NC",
+      "type": "IMAGE",
+      "title": ["Nicht kommerziell"],
+      "rights": ["http://creativecommons.org/licenses/by-nc/4.0/"],
+      "edmPreview": ["https://api.europeana.eu/thumbnail/v2/url.json?uri=https%3A%2F%2Fexample.org%2Fmedia%2F3.jpg&type=IMAGE"],
+      "edmIsShownBy": ["https://example.org/media/3.jpg"]
+    },
+    {
+      "id": "/2022608/example_InC",
+      "guid": "https://www.europeana.eu/item/2022608/example_InC",
+      "type": "IMAGE",
+      "title": ["Urheberrechtlich geschützt"],
+      "rights": ["http://rightsstatements.org/vocab/InC/1.0/"],
+      "edmPreview": ["https://api.europeana.eu/thumbnail/v2/url.json?uri=https%3A%2F%2Fexample.org%2Fmedia%2F4.jpg&type=IMAGE"],
+      "edmIsShownBy": ["https://example.org/media/4.jpg"]
+    }
+  ]
+}

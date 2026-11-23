@@ -47,3 +47,13 @@ test('Namensnennung im TASL-Format', () => {
   const frei = attributionText({ title: 'Holz', creator: { name: 'ambientCG' }, sourceUrl: 'https://ambientcg.com/a/Wood099', license: normalizeLicense('cc0') });
   assert.match(frei, /Namensnennung nicht erforderlich/);
 });
+
+test('OGA-BY wie CC BY: Namensnennung, kein Share-Alike, Version bleibt', () => {
+  const vier = normalizeLicense('OGA-BY 4.0');
+  assert.equal(vier.id, 'OGA-BY-4.0');
+  assert.equal(vier.attribution, true);
+  assert.equal(vier.shareAlike, false);
+  assert.equal(normalizeLicense('oga-by-3.0').id, 'OGA-BY-3.0');
+  assert.equal(normalizeLicense('OGA-BY').id, 'OGA-BY-4.0');
+  assert.equal(normalizeLicense('OGA-BY 2.0'), null);
+});
