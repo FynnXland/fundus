@@ -1,6 +1,6 @@
 import './styles.css';
 import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN, STANDARD_SORT } from './katalog.js';
-import { vorschau, hoerprobe, alleAnhalten } from './vorschau.js';
+import { vorschau, hoerprobe, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
 import { symbol } from './symbole.js';
@@ -43,7 +43,20 @@ themaknopf.addEventListener('click', () => {
   store.set('fundus.thema', neu === 'dark' ? 'dunkel' : 'hell');
   kopfZustand();
 });
-vorschauschalter.addEventListener('click', () => vorschau.setzen(!vorschau.an()));
+// Switching on asks first and names the risk of servers outside the EU; switching off needs no question.
+const vorschaufrage = document.getElementById('vorschaufrage');
+document.getElementById('vf-drittland').innerHTML = DRITTLAND_HINWEIS;
+vorschaufrage.addEventListener('close', () => {
+  if (vorschaufrage.returnValue === 'an') vorschau.setzen(true);
+  vorschauschalter.focus();
+});
+vorschauschalter.addEventListener('click', () => {
+  if (vorschau.an()) vorschau.setzen(false);
+  else {
+    vorschaufrage.returnValue = '';
+    vorschaufrage.showModal();
+  }
+});
 vorschau.beiAenderung(() => {
   kopfZustand();
   alleAnhalten();

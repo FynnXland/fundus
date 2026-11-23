@@ -3,7 +3,7 @@
 // after consent (switch in the menu, or "load this preview" here).
 
 import { ARTEN, ladeKarte, ladeArt, aehnliche, mehrAusSammlung } from './katalog.js';
-import { vorschau, alleAnhalten } from './vorschau.js';
+import { vorschau, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { symbol } from './symbole.js';
 import { esc, safeUrl, bytes, host, datum, sterneHtml, beliebtheitHtml, bewertungAusEintrag } from './util.js';
 
@@ -73,6 +73,7 @@ function vorschauFlaeche(it, mitVorschau) {
   return `${lokal}
     <div class="info__zustimmung">
       <p>${esc(was)} kommt direkt von ${esc(grossVorschauHosts(it))}. Dabei erfährt der Server deine IP-Adresse.</p>
+      <p class="info__klein">${DRITTLAND_HINWEIS}</p>
       <div class="knopfreihe">
         <button type="button" class="knopf knopf--haupt" data-einmal>${esc(was)} laden</button>
         <button type="button" class="knopf" data-immer>Immer laden</button>

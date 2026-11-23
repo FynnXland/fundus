@@ -1,9 +1,7 @@
-// Operator details for imprint, privacy policy and the report page.
-// TODO(Fynn): fill in before going public. While a value is null, the pages show a visible placeholder.
+// Operator details. Fundus runs on fundus.fynn.land; imprint and privacy policy are the fynn.land pages with a
+// section on Fundus (decision Fynn, 23.11.2026). The address below is the contact address published there.
 export const BETREIBER = {
-  name: null, // Vor- und Nachname
-  anschrift: null, // Straße Hausnummer, PLZ Ort (ladungsfähige Anschrift, kein Postfach)
-  email: null, // Kontaktadresse, auch für Meldungen
-  hoster: null, // z. B. Anbieter und Sitz des Webhosters
-  logTage: null, // nach wie vielen Tagen der Hoster Server-Logs löscht
+  email: 'kontakt@fynnland.xyz', // also receives the reports from #/melden
+  impressum: 'https://fynn.land/impressum.html#fundus',
+  datenschutz: 'https://fynn.land/datenschutz.html#fundus',
 };

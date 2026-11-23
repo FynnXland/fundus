@@ -362,6 +362,12 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 .blatt::backdrop { background: rgb(20 20 19 / 0); transition: background-color 200ms ease-out, overlay 200ms allow-discrete, display 200ms allow-discrete; }
 .blatt[open]::backdrop { background: rgb(20 20 19 / 0.45); }
 @starting-style { .blatt[open]::backdrop { background: rgb(20 20 19 / 0); } }
+.blatt--frage { width: min(460px, calc(100vw - 32px)); }
+.blatt--frage form { display: grid; gap: 12px; padding: 24px; }
+.blatt--frage h2 { margin: 0; font-family: var(--serif); font-size: 22px; line-height: 1.25; }
+.blatt--frage p { margin: 0; line-height: 1.5; }
+.blatt__klein { color: var(--bleistift); font-size: 14px; }
+.blatt--frage .knopfreihe { margin-top: 8px; }
 
 .blatt__kopf { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 12px 12px 24px; background: var(--karte); border-bottom: 1px solid var(--haar); }
 .blatt__kicker { margin: 0; font-size: 13.5px; color: var(--bleistift); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

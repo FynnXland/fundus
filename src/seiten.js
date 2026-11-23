@@ -1,16 +1,15 @@
 import { BETREIBER } from './betreiber.js';
 import { ARTEN } from './katalog.js';
-import { vorschau } from './vorschau.js';
+import { vorschau, DRITTLAND_TEXT } from './vorschau.js';
 import { esc, safeUrl, zahl, datum, store } from './util.js';
 
 const luecke = (was) => `<span class="platzhalterdaten">[${esc(was)} fehlt noch]</span>`;
-const wert = (v, was) => (v ? esc(v) : luecke(was));
 
 // Hosts that previews load from, per source. Shown in the privacy policy and kept next to the adapters.
 const VORSCHAU_HOSTS = [
-  ['Openverse', 'api.openverse.org (Vorschaubilder) sowie die Server der dort verzeichneten Anbieter, etwa live.staticflickr.com und cdn.freesound.org'],
+  ['Openverse', 'api.openverse.org (Vorschaubilder) sowie die Server der dort verzeichneten Anbieter: live.staticflickr.com, cdn.freesound.org, prod-1.storage.jamendo.com, images.rawpixel.com'],
   ['Wikimedia Commons (Bilder, Audio, Video)', 'upload.wikimedia.org, thumb.wikimedia.org'],
-  ['Poly Haven', 'cdn.polyhaven.org, dl.polyhaven.org'],
+  ['Poly Haven', 'cdn.polyhaven.com, dl.polyhaven.org'],
   ['ambientCG', 'acg-media.struffelproductions.com'],
   ['Fontsource', 'cdn.jsdelivr.net'],
   ['Iconify', 'api.iconify.design'],
@@ -67,13 +66,7 @@ function quellen({ katalog, fehler }) {
 function impressum() {
   return `
   <h1>Impressum</h1>
-  <p class="hinweis">Entwurf. Vor der Veröffentlichung müssen die markierten Angaben in <code>src/betreiber.js</code> stehen.</p>
-  <h2>Angaben nach § 5 DDG und § 18 Abs. 1 MStV</h2>
-  <p>${wert(BETREIBER.name, 'Name')}<br />${wert(BETREIBER.anschrift, 'Anschrift')}</p>
-  <h2>Kontakt</h2>
-  <p>E-Mail: ${BETREIBER.email ? `<a href="mailto:${esc(BETREIBER.email)}">${esc(BETREIBER.email)}</a>` : luecke('E-Mail-Adresse')}</p>
-  <h2>Verantwortlich für den Inhalt</h2>
-  <p>${wert(BETREIBER.name, 'Name')}, Anschrift wie oben.</p>
+  <p>Fundus läuft auf fundus.fynn.land und gehört zu fynn.land. Anbieter, Anschrift und Kontakt stehen im <a href="${esc(BETREIBER.impressum)}" rel="noopener" target="_blank">Impressum von fynn.land</a>.</p>
   <h2>Inhalte Dritter</h2>
   <p>Die Werke im Katalog stammen von Dritten und liegen auf deren Servern. Fundus übernimmt Titel, Urheber und Lizenz so, wie die jeweilige Quelle sie angibt. Wer einen Fehler oder eine Rechtsverletzung findet, kann den Eintrag über die Seite <a href="#/melden">Eintrag melden</a> mitteilen. Gemeldete Einträge nehmen wir bis zur Klärung aus dem Katalog.</p>`;
 }
@@ -82,30 +75,22 @@ function datenschutz() {
   const an = vorschau.an();
   return `
   <h1>Datenschutz</h1>
-  <p class="hinweis">Entwurf. Die markierten Angaben fehlen noch, ein Abgleich mit dem tatsächlichen Hosting steht aus.</p>
+  <p>Die Datenschutzerklärung für Fundus steht auf fynn.land, im <a href="${esc(BETREIBER.datenschutz)}" rel="noopener" target="_blank">Abschnitt Fundus</a>. Hier das Wichtigste in Kürze.</p>
 
-  <h2>Verantwortlich</h2>
-  <p>${wert(BETREIBER.name, 'Name')}, ${wert(BETREIBER.anschrift, 'Anschrift')}, ${BETREIBER.email ? esc(BETREIBER.email) : luecke('E-Mail-Adresse')}.</p>
-
-  <h2>Beim Aufruf der Seite</h2>
-  <p>Die Seite liegt bei ${wert(BETREIBER.hoster, 'Webhoster')}. Dessen Server speichert bei jedem Abruf, wie bei jeder Website üblich, IP-Adresse, Zeitpunkt, aufgerufene Adresse und Browserkennung in einem Protokoll. Das dient dem sicheren Betrieb (Art. 6 Abs. 1 lit. f DSGVO). Gelöscht wird das Protokoll nach ${BETREIBER.logTage ? `${esc(String(BETREIBER.logTage))} Tagen` : luecke('Löschfrist')}.</p>
-  <p>Fundus setzt keine Cookies und nutzt weder Statistik- noch Werbedienste. Schriften, Programmcode und die kleinen Vorschaubilder im Katalog liefert der eigene Server aus, ohne Umweg über fremde Netzwerke.</p>
+  <h2>Ohne deine Zustimmung</h2>
+  <p>Fundus setzt keine Cookies und nutzt weder Statistik- noch Werbedienste. Seite, Schriften, Katalogdaten und die kleinen Vorschaubilder kommen von fundus.fynn.land selbst.</p>
 
   <h2>Vorschauen von den Quellen</h2>
-  <p>Große Vorschaubilder, Hörproben, 3D-Modelle und Schriftproben liegen bei den Quellen. Fundus lädt sie erst, wenn du es willst: entweder über den Schalter „Vorschauen von Quellen“ oben auf der Seite oder einzeln über den Knopf in der Detailansicht eines Objekts. Dann ruft dein Browser die Datei direkt beim Server der Quelle ab. Mit eingeschaltetem Schalter zeigt der Katalog außerdem für Objekte, die noch kein eigenes Vorschaubild haben, ein kleines Bild der Quelle; es lädt erst, wenn die Karte in die Nähe des sichtbaren Bereichs kommt. Der erfährt dabei deine IP-Adresse, den Zeitpunkt, die Datei und deine Browserkennung. Rechtsgrundlage ist deine Einwilligung (Art. 6 Abs. 1 lit. a DSGVO), die du jederzeit über denselben Schalter oder den Knopf unten zurücknehmen kannst.</p>
+  <p>Große Vorschaubilder, Hörproben, 3D-Modelle und Schriftproben liegen bei den Quellen. Dein Browser lädt sie erst, wenn du zustimmst: über den Schalter „Vorschauen von Quellen“ oben auf der Seite oder einzeln in der Detailansicht eines Objekts. Der Server der Quelle erfährt dabei deine IP-Adresse, den Zeitpunkt, die Datei und deine Browserkennung. ${DRITTLAND_TEXT}</p>
   <p>Je nach Quelle gehen die Anfragen an diese Server:</p>
   <ul>${VORSCHAU_HOSTS.map(([n, h]) => `<li>${esc(n)}: ${esc(h)}</li>`).join('')}</ul>
-  <p>Mehrere dieser Anbieter sitzen in den USA, etwa die Wikimedia Foundation und GitHub. Für Übermittlungen dorthin gilt der Angemessenheitsbeschluss der EU-Kommission zum EU-US Data Privacy Framework, soweit der Empfänger danach zertifiziert ist. ${luecke('Prüfung der Zertifizierung je Empfänger')}</p>
 
   <h2>Downloads und Links</h2>
-  <p>Ein Klick auf einen Download lädt die Datei direkt vom Server der Quelle, ein Klick auf „Ursprungsseite“ öffnet deren Website. Für beides gilt die Datenschutzerklärung der jeweiligen Quelle. Pakete (etwa ein 3D-Modell mit Texturen oder ein Skill-Ordner von raw.githubusercontent.com) holt dein Browser Datei für Datei von der Quelle und packt sie auf deinem Gerät zu einer ZIP-Datei.</p>
+  <p>Ein Klick auf einen Download lädt die Datei direkt vom Server der Quelle, ein Klick auf „Ursprungsseite“ öffnet deren Website. Pakete (etwa ein 3D-Modell mit Texturen) holt dein Browser Datei für Datei von der Quelle und packt sie auf deinem Gerät zu einer ZIP-Datei.</p>
 
   <h2>Gespeicherte Einstellungen</h2>
-  <p>Drei Einstellungen merkt sich die Seite im lokalen Speicher deines Browsers: ob Vorschauen von den Quellen laden sollen (<code>fundus.vorschau</code>), ob du das helle oder dunkle Farbschema gewählt hast (<code>fundus.thema</code>) und ob du Symbole oder eine Liste sehen willst (<code>fundus.ansicht</code>). Alles bleibt auf deinem Gerät, wird nie übertragen und entsteht nur, wenn du die jeweilige Einstellung änderst (§ 25 Abs. 2 Nr. 2 TDDDG).</p>
-  <p><button type="button" class="knopf" id="einstellungenweg">Vorschauen ausschalten und Einstellungen löschen</button> <span id="einstellungenstatus" aria-live="polite">${an ? 'Vorschauen sind gerade eingeschaltet.' : 'Vorschauen sind gerade ausgeschaltet.'}</span></p>
-
-  <h2>Deine Rechte</h2>
-  <p>Du kannst Auskunft über deine Daten verlangen, ihre Berichtigung, Löschung oder eingeschränkte Verarbeitung, außerdem kannst du der Verarbeitung widersprechen und eine Kopie in einem gängigen Format bekommen (Art. 15 bis 21 DSGVO). Fundus selbst speichert über dich nichts außer dem Server-Protokoll. Beschweren kannst du dich bei einer Datenschutz-Aufsichtsbehörde, zum Beispiel der deines Bundeslandes.</p>`;
+  <p>Drei Einstellungen merkt sich die Seite im lokalen Speicher deines Browsers: ob Vorschauen von den Quellen laden sollen (<code>fundus.vorschau</code>), ob du das helle oder dunkle Farbschema gewählt hast (<code>fundus.thema</code>) und ob du Symbole oder eine Liste sehen willst (<code>fundus.ansicht</code>). Alles bleibt auf deinem Gerät, wird nie übertragen und entsteht nur, wenn du die jeweilige Einstellung änderst.</p>
+  <p><button type="button" class="knopf" id="einstellungenweg">Vorschauen ausschalten und Einstellungen löschen</button> <span id="einstellungenstatus" aria-live="polite">${an ? 'Vorschauen sind gerade eingeschaltet.' : 'Vorschauen sind gerade ausgeschaltet.'}</span></p>`;
 }
 
 function melden({ katalog, params }) {
@@ -123,7 +108,7 @@ function melden({ katalog, params }) {
   <h1>Eintrag melden</h1>
   ${it ? `<p>Es geht um <strong>${esc(it.title)}</strong> (Signatur <span class="kf__sig">${esc(it.sig)}</span>) von ${esc(it.source.name)}.</p>` : ''}
   <p>Melde einen Eintrag, wenn die Lizenz falsch angegeben ist, ein Werk ohne Erlaubnis bei der Quelle liegt, du als Urheber nicht im Katalog stehen willst oder die Datei nicht mehr erreichbar ist. Bis zur Klärung nehmen wir den Eintrag aus dem Katalog.</p>
-  <p>Beachte: Die Datei selbst liegt bei der Quelle. Soll sie dort verschwinden, wende dich zusätzlich an die Quelle${it ? `, also an <a href="${esc(safeUrl(it.source.url))}" rel="noopener noreferrer" target="_blank">${esc(it.source.name)}</a>` : ''}.</p>
+  <p>Beachte: Die Datei selbst liegt bei der Quelle. Soll sie dort verschwinden, wende dich zusätzlich an die Quelle${it ? `, also an ${esc(it.source.name)} (der Link „Ursprungsseite“ auf der Karte führt hin)` : ''}.</p>
   ${mail}`;
 }
 

@@ -3,6 +3,11 @@
 // or asks for one single preview in the detail view.
 
 import { store } from './util.js';
+import { BETREIBER } from './betreiber.js';
+
+// Said before every consent to load from the sources (Art. 49 (1)(a) GDPR wants the risk named beforehand).
+export const DRITTLAND_TEXT = 'Manche Quellen sitzen außerhalb der EU, etwa in den USA. Dort gilt nicht unbedingt ein Datenschutz wie in der EU, und Behörden können unter Umständen auf Daten zugreifen.';
+export const DRITTLAND_HINWEIS = `${DRITTLAND_TEXT} <a href="${BETREIBER.datenschutz}" rel="noopener" target="_blank">Mehr im Datenschutz</a>`;
 
 const KEY = 'fundus.vorschau';
 const listeners = new Set();
