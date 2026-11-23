@@ -5,7 +5,7 @@
 import { ARTEN, ladeKarte, ladeArt, aehnliche, mehrAusSammlung } from './katalog.js';
 import { vorschau, alleAnhalten } from './vorschau.js';
 import { symbol } from './symbole.js';
-import { esc, safeUrl, bytes, host, datum } from './util.js';
+import { esc, safeUrl, bytes, host, datum, sterneHtml, beliebtheitHtml, bewertungAusEintrag } from './util.js';
 
 const SCHRIFTPROBE = 'Fundus 1984: Quax jagt Wölfe über den Deich.';
 let ausloeser = null;
@@ -119,6 +119,16 @@ function blattKopf(kicker, titel) {
   return `<div class="blatt__kopf"><p class="blatt__kicker">${esc(kicker)}</p>${titel ? `<h2 class="unsichtbar" id="if-titel">${esc(titel)}</h2>` : ''}<button class="rundknopf" type="button" data-zu aria-label="Schließen">${ZU_ZEICHEN}</button></div>`;
 }
 
+/** Rating of the source (scaled to 5) and popularity, with the source named; nothing if the source has neither. */
+function bewertungsZeile(it) {
+  const { bewertung, beliebtheit } = bewertungAusEintrag(it);
+  if (!bewertung && !beliebtheit) return '';
+  const quelle = it.rating?.source ?? it.popularity?.source;
+  const original = bewertung && it.rating.max !== 5 ? `<span class="info__klein">Original: ${esc(String(it.rating.value).replace('.', ','))} von ${esc(String(it.rating.max))}</span>` : '';
+  const stimmen = bewertung ? `<span class="info__klein">${esc(bewertung.anzahl.toLocaleString('de-DE'))} ${bewertung.anzahl === 1 ? 'Bewertung' : 'Bewertungen'} auf ${quelle?.url ? `<a href="${esc(safeUrl(quelle.url))}" rel="noopener noreferrer" target="_blank">${esc(quelle.name)}</a>` : esc(quelle?.name ?? '')}</span>` : '';
+  return `<div class="info__bewertung">${sterneHtml(bewertung, { gross: true })}${stimmen}${original}${beliebtheitHtml(beliebtheit)}</div>`;
+}
+
 function infoHtml(it, katalog, mitVorschau) {
   const a = ARTEN[it.kind];
   const o = katalog.byId.get(it.id);
@@ -131,6 +141,7 @@ function infoHtml(it, katalog, mitVorschau) {
     <div class="info__vorschau" id="info-vorschau">${vorschauFlaeche(it, mitVorschau)}</div>
     <div class="info__haupt">
       <h2 class="info__titel" id="if-titel">${esc(it.title)}</h2>
+      ${bewertungsZeile(it)}
       ${it.description ? `<p class="info__beschreibung">${esc(it.description)}</p>` : ''}
       <div class="knopfreihe">${downloadsHtml(it)}</div>
       <p class="info__klein" id="paketstatus" aria-live="polite">Download direkt von ${esc([...new Set(it.downloads.map((d) => host(d.paket ? d.paket.files[0].url : d.url)))].join(', '))}.</p>

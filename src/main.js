@@ -4,7 +4,7 @@ import { vorschau, hoerprobe, alleAnhalten } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
 import { symbol } from './symbole.js';
-import { esc, store, zahl, datum } from './util.js';
+import { esc, store, zahl, datum, sterneHtml, beliebtheitHtml } from './util.js';
 
 const SEITENGROESSE = 120;
 const main = document.getElementById('inhalt');
@@ -351,6 +351,7 @@ function karte(o, mitVorschau) {
       ${flaeche}
       <span class="karte__titel">${esc(o.titel)}</span>
       <span class="karte__meta"><span class="mono">${esc(o.lizenz)}</span> · ${esc(o.quellname)}</span>
+      ${o.bewertung ? sterneHtml(o.bewertung) : o.beliebtheit ? beliebtheitHtml(o.beliebtheit) : ''}
     </a>${hoeren}
   </li>`;
 }

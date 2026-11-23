@@ -515,3 +515,16 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
   @starting-style { .blatt[open] { opacity: 0; transform: none; } }
   .lader { animation-duration: 2.4s; }
 }
+
+/* ---------------- Ratings ---------------- */
+/* Five stars as one strip: a quiet track and the accent fill clipped to the value; the number beside it. */
+.sterne { display: inline-flex; align-items: center; gap: 6px; margin: 4px 4px 0; font-size: 12.5px; color: var(--bleistift); font-variant-numeric: tabular-nums; }
+.sterne__balken { position: relative; display: inline-block; line-height: 1; letter-spacing: 1px; font-size: 13px; }
+.sterne__balken::before { content: '★★★★★'; color: var(--flaeche-2); }
+.sterne__balken::after { content: '★★★★★'; position: absolute; inset: 0 auto 0 0; width: var(--fuell); overflow: hidden; white-space: nowrap; color: var(--akzent); }
+.sterne__zahl { font-weight: 600; color: var(--tinte); }
+.sterne--gross { margin: 0; font-size: 14px; }
+.sterne--gross .sterne__balken { font-size: 18px; letter-spacing: 2px; }
+.beliebt { display: inline-block; margin: 4px 4px 0; font-size: 12.5px; color: var(--bleistift); font-variant-numeric: tabular-nums; }
+.info__bewertung { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 6px 0 2px; }
+.info__bewertung .beliebt { margin: 0; }
