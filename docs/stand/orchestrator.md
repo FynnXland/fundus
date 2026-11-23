@@ -102,7 +102,7 @@ Linkprüfung: erst 1.698 Einträge geprüft (1.594 ok, 234 unklar, 0 tot). Die n
   SMITHSONIAN_API_KEY, EUROPEANA_API_KEY. Danach Openverse-Budget in `config.json` hochsetzen.
 - To-do `fundus:betreiberangaben`: Impressum/Datenschutz-Angaben in `src/betreiber.js` fehlen.
 - Vorschaubilder überschreiten bald 20.000 Dateien (Grenze von Cloudflare Pages): Speicher wie R2 einplanen.
-- Git seit 23.11. (Branch `main`, erster Commit `79495f7`, mit Fynns Zustimmung). Nur der Orchestrator committet,
+- Git seit 23.11. (Branch `main`, erster Commit `79495f7`, mit Fynns Zustimmung). Nur der Orchestrator committet (Fynn erlaubt Commits auf main nach jedem fertigen Schritt ohne Rückfrage, Push nicht),
   Unterchats nicht. Kein Remote: die nächtliche Action in `.github/workflows/katalog.yml` läuft erst, wenn Fynn ein
   GitHub-Repo anlegt und pusht (und die Variable FUNDUS_KONTAKT setzt). `g.html` (fremde Webseite, Debug-Rest) liegt
   bewusst ungetrackt.
