@@ -78,9 +78,8 @@ und LGPLv2 (1), im Log gezählt. Openclipart ist CC0 laut FAQ; Einträge mit Tag
 
 ## Offen für den Orchestrator
 
-1. **Openclipart, großer Weg**: 38 Sitemaps (`openclipart.org/sitemap.xml`), rund 186.000 Grafiken. Dort gibt es nur SVG-Link,
-   PNG-Link und Lizenz je Bild, keinen Urheber und keine Tags. Ob das gewünscht ist, entscheidet Fynn; die Frage steht noch
-   offen. Gebaut ist nur der Feed (32 je Lauf). Der Weg ließe sich in Etappen wie bei Openverse mit `data/crawlstand/openclipart.json` bauen.
+1. **Openclipart, Sitemaps: entschieden (23.11.2026, Fynn: „Nein, nur Feed“).** Die 38 Sitemaps (rund 186.000 Grafiken ohne
+   Urheber und Tags) werden nicht gelesen. Openclipart bleibt beim Atom-Feed (32 neueste je Lauf). Erledigt, nicht wieder aufmachen.
 2. **`merge` entfernt nie Einträge**: wird ein Godot-Asset später Proprietary oder gelöscht, bleibt der alte Eintrag, bis die
    Linkprüfung ihn wegnimmt.
 3. **Godot-Prüfsummen**: `download_hash` war in allen 44 gelesenen Detailantworten leer; der Adapter übernimmt ihn nur, wenn

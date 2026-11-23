@@ -60,7 +60,8 @@ Alle fünf Unterchats sind fertig (Stand-Dateien `docs/stand/fundus-*.md`). Eing
   Archive, Suche, Khronos-Detail, Meldeseite mit `?id=`. Danach thumbs-Lauf für die neuen Einträge, dann Linkprüfung.
 
 Noch offen aus den Stand-Dateien: Videoprobe in der Detailansicht (`PREVIEW_TYPES` um `video`, Zweig in `karte.js`,
-`preview.video` in `check-links.mjs`), `minisearch` aus `package.json` entfernen, Openclipart-Sitemap (Entscheidung Fynn).
+`preview.video` in `check-links.mjs`), `minisearch` aus `package.json` entfernen. Openclipart-Sitemap: entschieden, nur der Feed
+(Fynn, 23.11.2026), kein Eintrag mehr offen.
 
 ## Wenn ein Unterchat seinen Bericht schickt: einbinden
 

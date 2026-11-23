@@ -109,7 +109,7 @@ async function route() {
       if (k && !hat(k, was)) {
         // the index of a folder loads when it is first needed
         const lauf = ++zustand.lauf;
-        ladeanzeige(was === 'alle' ? 'Alle Ordner werden geladen …' : `${ARTEN[was]?.label ?? 'Ordner'} wird geladen …`);
+        ladeanzeige(ladetext(was));
         await hole(k, was).catch(() => {});
         if (lauf !== zustand.lauf) return; // a newer navigation took over
       }
@@ -363,6 +363,13 @@ function listenzeile(o) {
     <td>${esc(o.quellname)}</td>
     <td class="mono">${esc(o.formate.split(' ').slice(0, 3).join(' ').toUpperCase())}</td>
   </tr>`;
+}
+
+// needs look like 'bild', 'bild!', 'bild|Holz', 'alle', 'alle!' or 's|<art>|<unter>|<suche>' (see bedarf in katalog.js)
+function ladetext(was) {
+  if (was.startsWith('s|')) return 'Suche läuft …';
+  const art = was.split(/[|!]/)[0];
+  return art === 'alle' ? 'Alle Ordner werden geladen …' : `${ARTEN[art]?.label ?? 'Ordner'} wird geladen …`;
 }
 
 function ladeanzeige(text) {

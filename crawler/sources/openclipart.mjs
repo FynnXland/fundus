@@ -4,7 +4,7 @@
 // lists the sitemap. This adapter reads the public Atom feed https://openclipart.org/feed: the 32 newest
 // uploads with title, author, tags, the SVG and a PNG rendering. The feed is not pageable, so a nightly run
 // collects the newest 32; the 38 sitemap files (about 186,000 clips) would give the whole collection, but
-// carry no author and no tags. Whether to take that route is the operator's decision, it is not built here.
+// carry no author and no tags. The operator decided against that route (23.11.2026): feed only.
 //
 // Left out: clips tagged pd_issue (the public-domain status is in doubt) or nsfw. Remix tags
 // ("remix+<id>") are references, not subjects, and are not kept as tags.
