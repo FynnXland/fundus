@@ -1,0 +1,151 @@
+{
+ "blocklist": [],
+ "data": [
+  {
+   "id": "universal_transform_gizmo",
+   "schema_version": "1.0.0",
+   "name": "Universal Transform Gizmo",
+   "version": "1.6.4",
+   "tagline": "Improved universal transform gizmo",
+   "archive_hash": "sha256:8e5966cabaf64dc50b114abb9189acb952be99b252a945c7e9f4396508e35faa",
+   "archive_size": 40580,
+   "archive_url": "https://extensions.blender.org/download/sha256:8e5966cabaf64dc50b114abb9189acb952be99b252a945c7e9f4396508e35faa/add-on-universal-transform-gizmo-v1.6.4.zip",
+   "type": "add-on",
+   "blender_version_min": "5.2.0",
+   "website": "https://extensions.blender.org/add-ons/universal-transform-gizmo/",
+   "maintainer": "Nathaniel-Sabanski",
+   "license": [
+    "SPDX:GPL-3.0-or-later"
+   ],
+   "tags": [
+    "3D View",
+    "Modeling",
+    "User Interface"
+   ]
+  },
+  {
+   "id": "carbon_fiber_black",
+   "schema_version": "1.0.0",
+   "name": "Carbon Fiber Black",
+   "version": "0.1.2",
+   "tagline": "A custom ultra-dark theme for Blender utilizing gray accents",
+   "archive_hash": "sha256:beba09f2a07ad36762be81b75712f6612f94b3abb80230295d9dbe3af2b1fc29",
+   "archive_size": 18887,
+   "archive_url": "https://extensions.blender.org/download/sha256:beba09f2a07ad36762be81b75712f6612f94b3abb80230295d9dbe3af2b1fc29/theme-carbon-fiber-black-v0.1.2.zip",
+   "type": "theme",
+   "blender_version_min": "5.0.0",
+   "website": "https://extensions.blender.org/themes/carbon-fiber-black/",
+   "maintainer": "SurfInCA",
+   "license": [
+    "SPDX:GPL-3.0-or-later"
+   ],
+   "tags": [
+    "Dark"
+   ]
+  },
+  {
+   "id": "quick_n_panel",
+   "schema_version": "1.0.0",
+   "name": "Quick N-panel",
+   "version": "1.1.0",
+   "tagline": "Open add-on tabs quickly from the 3D View N-panel",
+   "archive_hash": "sha256:72ab386b4102a58286c9fea569cad3c0368a6f50b0d5035f99698ffcd7ec72b6",
+   "archive_size": 149545,
+   "archive_url": "https://extensions.blender.org/download/sha256:72ab386b4102a58286c9fea569cad3c0368a6f50b0d5035f99698ffcd7ec72b6/add-on-quick-n-panel-v1.1.0.zip",
+   "type": "add-on",
+   "blender_version_min": "5.0.0",
+   "website": "https://extensions.blender.org/add-ons/quick-n-panel/",
+   "maintainer": "DudeHTM",
+   "license": [
+    "SPDX:GPL-3.0-or-later",
+    "SPDX:CC0-1.0"
+   ],
+   "permissions": {
+    "files": "Store settings, import icons, and export configuration"
+   },
+   "tags": [
+    "User Interface"
+   ]
+  },
+  {
+   "id": "alex_chamberlain",
+   "schema_version": "1.0.0",
+   "name": "Alex Chamberlain",
+   "version": "1.0.0",
+   "tagline": "Digital Paleontology",
+   "archive_hash": "sha256:10ebae3d47939beef44ff3335bc1cd39e2de7d9778f8da6fd2def1d218a7748f",
+   "archive_size": 425,
+   "archive_url": "https://extensions.blender.org/download/sha256:10ebae3d47939beef44ff3335bc1cd39e2de7d9778f8da6fd2def1d218a7748f/asset-library-alex-chamberlain-v1.0.0.zip",
+   "type": "asset-library",
+   "blender_version_min": "5.3.0",
+   "website": "https://extensions.blender.org/asset-libraries/alex-chamberlain/",
+   "maintainer": "AlexanderChamberlain",
+   "license": [
+    "SPDX:CC0-1.0"
+   ],
+   "permissions": {
+    "scripts": "Required for the rigged T. rex"
+   },
+   "tags": [
+    "Model"
+   ]
+  },
+  {
+   "id": "id_renderflo",
+   "schema_version": "1.0.0",
+   "name": "ID RenderFlo",
+   "version": "3.3.0",
+   "tagline": "KeyShot-style studio and CAD pipeline for industrial designers",
+   "archive_hash": "sha256:03765994040cfd106c6b65679765c3dbdd5f0f717c2ec05c34a7fcb3e64fb890",
+   "archive_size": 38990486,
+   "archive_url": "https://extensions.blender.org/download/sha256:03765994040cfd106c6b65679765c3dbdd5f0f717c2ec05c34a7fcb3e64fb890/add-on-id-renderflo-v3.3.0-windows-x64.zip",
+   "type": "add-on",
+   "blender_version_min": "4.2.0",
+   "website": "https://extensions.blender.org/add-ons/id-renderflo/",
+   "maintainer": "Sahitya-Kashyap",
+   "license": [
+    "SPDX:GPL-3.0-or-later",
+    "SPDX:MIT"
+   ],
+   "permissions": {
+    "files": "Import CAD models and export studio batch renders"
+   },
+   "platforms": [
+    "windows-x64"
+   ],
+   "tags": [
+    "Render",
+    "Import-Export"
+   ]
+  },
+  {
+   "id": "id_renderflo",
+   "schema_version": "1.0.0",
+   "name": "ID RenderFlo",
+   "version": "3.3.0",
+   "tagline": "KeyShot-style studio and CAD pipeline for industrial designers",
+   "archive_hash": "sha256:9f6ea84ab620a0ef27df5676c6594b83c5312b1487141038b9c6ae49c2abf8b6",
+   "archive_size": 61823382,
+   "archive_url": "https://extensions.blender.org/download/sha256:9f6ea84ab620a0ef27df5676c6594b83c5312b1487141038b9c6ae49c2abf8b6/add-on-id-renderflo-v3.3.0-macos-arm64.zip",
+   "type": "add-on",
+   "blender_version_min": "4.2.0",
+   "website": "https://extensions.blender.org/add-ons/id-renderflo/",
+   "maintainer": "Sahitya-Kashyap",
+   "license": [
+    "SPDX:GPL-3.0-or-later",
+    "SPDX:MIT"
+   ],
+   "permissions": {
+    "files": "Import CAD models and export studio batch renders"
+   },
+   "platforms": [
+    "macos-arm64"
+   ],
+   "tags": [
+    "Render",
+    "Import-Export"
+   ]
+  }
+ ],
+ "version": "v1"
+}

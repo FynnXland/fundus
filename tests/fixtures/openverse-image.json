@@ -1,0 +1,40 @@
+{
+ "id": "1c5442f6-6bb6-4ab7-b603-f598e7579dd2",
+ "title": "Cat Fish 2",
+ "foreign_landing_url": "https://www.flickr.com/photos/32426194@N00/3481540500",
+ "url": "https://live.staticflickr.com/3313/3481540500_c846c62863_b.jpg",
+ "thumbnail": "https://api.openverse.org/v1/images/1c5442f6-6bb6-4ab7-b603-f598e7579dd2/thumb/",
+ "creator": "admiller",
+ "creator_url": "https://www.flickr.com/photos/32426194@N00",
+ "license": "by",
+ "license_version": "2.0",
+ "provider": "flickr",
+ "source": "flickr",
+ "width": 716,
+ "height": 1024,
+ "filetype": null,
+ "filesize": null,
+ "mature": false,
+ "tags": [
+  {
+   "name": "cat",
+   "accuracy": null,
+   "unstable__provider": "flickr"
+  },
+  {
+   "name": "cat",
+   "accuracy": 0.90604,
+   "unstable__provider": "clarifai"
+  },
+  {
+   "name": "glass",
+   "accuracy": 0.95701,
+   "unstable__provider": "clarifai"
+  },
+  {
+   "name": "one",
+   "accuracy": 0.94012,
+   "unstable__provider": "clarifai"
+  }
+ ]
+}

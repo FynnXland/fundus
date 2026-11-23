@@ -1,0 +1,84 @@
+# Stand der Steuerzentrale (Orchestrator)
+
+Zuletzt aktualisiert: 23.11.2026, mittags (nach Limit-Pause). Dieser Chat steuert mehrere Unterchats; diese Datei reicht, um ohne den
+alten Verlauf weiterzumachen. Die Unterchats führen je eine eigene Datei in diesem Ordner (`docs/stand/<name>.md`).
+
+## Projekt in drei Sätzen
+
+Fundus ist ein Katalog freier Assets (`README.md`, `DESIGN.md`, `docs/RECHT.md`, `CLAUDE.md`): Node-Crawler holt
+Metadaten aus offenen Quellen, die statische Vite-Seite zeigt sie. Dateien bleiben bei der Quelle; einzige Ausnahme sind
+eigene Mini-Vorschaubilder (320 px). Ziel des Besitzers (Fynn): Katalog so groß wie möglich, alle Asset-Arten,
+besonders Musik und Sounds.
+
+## Entscheidungen des Besitzers (nicht neu verhandeln)
+
+- Design: modern, schlank, rund, Claude-Farben. Karteikarten und Retro-Rechner wurden verworfen.
+  Design-System in Claude Design: https://claude.ai/artifact/PbB1SVi6UF7Svba5Hn8fc9 (aus `src/styles.css` abgeleitet).
+- Kein Proxy für Dateien; eigene Mini-Vorschaubilder ja.
+- Schalter „Vorschauen von Quellen“: lädt große Vorschauen, Hörproben, 3D-Ansicht und für Objekte ohne eigenes
+  Vorschaubild ein kleines Bild der Quelle, jeweils erst kurz bevor die Karte sichtbar wird; 3D im Raster nur als Bild.
+- Dieser Chat orchestriert; neue Arbeitspakete laufen als echte Unterchats (nicht als Hilfsagenten).
+
+## Unterchats (alle im selben Ordner, kein Git, feste Dateizuständigkeiten)
+
+| Name | Session-ID | Auftrag | darf ändern |
+|---|---|---|---|
+| fundus-index | local_0eccb925-dcf6-41cc-9bf3-ae2ba6ebce72 | Index für 100.000+ Einträge aufteilen, schlanke Suche | `crawler/publish.mjs` (Ausgabeteil, `FELDER`/`zeile`), `src/katalog.js`, eigene neue `crawler/lib/*`, `tests/index.test.mjs` |
+| fundus-arten | local_c3b5337d-7203-4c40-ac5a-a0a3db328176 | neue Asset-Arten (Video, Pinsel, Paletten, LUTs, Shader …) | `crawler/lib/schema.mjs` (KINDS ergänzen), `crawler/lib/taxonomy.mjs`, `src/symbole.js` (ergänzen), eigene Adapter, `tests/adapters-arten.test.mjs` |
+| fundus-audio | local_5e1212c6-cd93-4413-a157-b2d8fab39af5 | Musik und Sounds (Commons-Audio, Internet Archive in Etappen, Incompetech, FreePD …) | `crawler/sources/internetarchive.mjs`, eigene Adapter (Kürzel A1–A9), `tests/adapters-audio.test.mjs` |
+| fundus-2d | local_45c1eeb9-00a8-4018-8d4c-03d3c2faec1a | 2D-Grafik, Spiele-Assets, Code (Kenney, OpenGameArt, Openclipart, Godot, Blender …) | eigene Adapter (Kürzel B1–B9), `tests/adapters-2d.test.mjs` |
+| fundus-bilder | local_bb5076b3-2542-44ae-8eb6-dec1c7ffb5c4 | Bilder, Materialien, 3D (Commons in Etappen, Museen, Texturen) | `crawler/sources/wikimedia.mjs`, eigene Adapter (Kürzel C1–C9), `tests/adapters-bilder.test.mjs` |
+
+Nur der Orchestrator ändert: `crawler/sources/index.mjs`, `crawler/config.json`, `src/main.js`, `src/karte.js`,
+`src/styles.css`, `src/seiten.js` (Datenschutz-Hosts in `VORSCHAU_HOSTS`), `crawler/crawl.mjs`, `crawler/thumbs.mjs`,
+`crawler/check-links.mjs`, `crawler/lib/store.mjs`, `crawler/lib/dedupe.mjs`, Doku.
+
+Seit 23.11. mittags laufen alle fünf Unterchats auf Sonnet 5.5 (Wunsch des Besitzers: Unterchats günstiger, Haiku
+nur für wirklich einfache Aufgaben). Bis dahin hatte keiner eine Stand-Datei geschrieben.
+
+Hinweis: Die drei Quellen-Pakete liefen vorher als Hilfsagenten mit Fable und sind am Fable-Limit abgebrochen, ohne
+Dateien zu hinterlassen. Sie wurden als Unterchats mit Opus neu gestartet.
+
+## Wenn ein Unterchat seinen Bericht schickt: einbinden
+
+1. Bericht und `docs/stand/<name>.md` lesen, neue Dateien ansehen.
+2. Adapter in `crawler/sources/index.mjs` eintragen (direkte Quellen VOR `openverse`), `config.json`-Eintrag ergänzen.
+3. Hosts für Vorschau und Download in `VORSCHAU_HOSTS` in `src/seiten.js` nachtragen.
+4. Neue Lizenzen (z. B. OGA-BY) erst nach Lesen des Lizenztexts in `crawler/lib/licenses.mjs`, Entscheidung in
+   `docs/RECHT.md` notieren.
+5. Neue Arten: `ARTEN` in `src/katalog.js` ergänzen (gehört fundus-index, solange der läuft: dort abstimmen).
+6. `npm test` mit allen Testdateien, dann `node crawler/crawl.mjs --quelle <id>`, `node crawler/thumbs.mjs`
+   (NUR wenn kein anderer thumbs-Lauf läuft), `node crawler/publish.mjs`, im Browser prüfen.
+
+## Datenhaltung (seit dieser Nacht)
+
+- `data/katalog/<quelle>.json`: Bestand je Quelle (`crawler/lib/store.mjs`). Die alte Einzeldatei liegt als
+  `data/katalog.alt.json` (kann weg, sobald alles läuft).
+- `data/crawlstand/<id>.json`: Fortschritt von Quellen, die in Etappen arbeiten (Openverse, bald Commons, Internet Archive).
+- `data/vorschauen.json`: Register der Mini-Vorschaubilder (Pfad, Größe, dHash, Fehler; `endgueltig` nur bei 404/410
+  oder unlesbarem Bild, sonst nächster Lauf versucht erneut).
+- `data/linkstatus.json`: Linkprüfung. Massenhafte 403/429 eines Hosts zählen als „unklar“, nicht als tot.
+- `public/data/`: von `publish.mjs` erzeugt (`stand.json`, `start.json`, `index/<art>.json`, `karten/<xx>.json`).
+
+## Zahlen zuletzt
+
+17.881 veröffentlichte Objekte (Commons 5.787, Openverse 2.949, ambientCG 2.724, Poly Haven 2.392, Fontsource 2.074,
+GitHub ~1.700, Iconify 263). Vorschaubilder: 12.376 fertig, 344 Fehler (303 Schriften ohne darstellbare Buchstaben,
+29 Netzfehler), Nachlauf am 23.11. mittags gestartet.
+Linkprüfung: erst 1.698 Einträge geprüft (1.594 ok, 234 unklar, 0 tot). Die nächtliche Prüfung steckt in
+`.github/workflows/katalog.yml` und lief nie, weil es noch kein Git-Repo gibt.
+
+## Laufende oder offene Dinge
+
+- Ein langer Vorschaubild-Lauf (`crawler/thumbs.mjs`) aus der ersten Crawl-Kette läuft eventuell noch mit älterem Code.
+  NICHT parallel einen zweiten starten (sie würden sich das Register und Dateien gegenseitig löschen). Prüfen mit
+  `tasklist | grep node` bzw. ob `data/vorschauen.json` deutlich mehr als 432 Einträge hat.
+- Nachladen der Kartenbilder beim Scrollen am 23.11. im sichtbaren Browser geprüft: lädt jeweils rund eine
+  Bildschirmhöhe voraus, nichts auf Vorrat.
+- API-Schlüssel: To-do für Fynn in Discord (`fundus:api-schluessel`): GITHUB_TOKEN, OPENVERSE_CLIENT_ID/SECRET,
+  SMITHSONIAN_API_KEY, EUROPEANA_API_KEY. Danach Openverse-Budget in `config.json` hochsetzen.
+- To-do `fundus:betreiberangaben`: Impressum/Datenschutz-Angaben in `src/betreiber.js` fehlen.
+- Vorschaubilder überschreiten bald 20.000 Dateien (Grenze von Cloudflare Pages): Speicher wie R2 einplanen.
+- Projekt hat kein Git. Am Ende dieser Runde Fynn `git init` und einen ersten Commit anbieten (nur mit Zustimmung).
+- Fehler in der Browser-Konsole „menueListenFuellen“ stammen von einer alten, längst ersetzten Seitenversion im Cache
+  der Vorschau, nicht vom aktuellen Code.

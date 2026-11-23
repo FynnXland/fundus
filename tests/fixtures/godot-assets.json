@@ -1,0 +1,193 @@
+{
+ "list": {
+  "result": [
+   {
+    "asset_id": "5588",
+    "title": "Watermark Example - Steganography",
+    "author": "Twister",
+    "author_id": "17618",
+    "category": "Demos",
+    "category_id": "10",
+    "godot_version": "4.7",
+    "rating": "0",
+    "cost": "MIT",
+    "support_level": "community",
+    "icon_url": "https://github.com/CodeNameTwister/GDWatermark-Example/blob/main/page/icon.png?raw=true",
+    "version": "1",
+    "version_string": "1.0",
+    "modify_date": "2026-11-06 01:47:31"
+   },
+   {
+    "asset_id": "3328",
+    "title": "Steam Template",
+    "author": "malco",
+    "author_id": "16738",
+    "category": "Templates",
+    "category_id": "8",
+    "godot_version": "4.5",
+    "rating": "0",
+    "cost": "CC0",
+    "support_level": "community",
+    "icon_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png",
+    "version": "3",
+    "version_string": "1.1",
+    "modify_date": "2025-11-03 18:32:54"
+   },
+   {
+    "asset_id": "5538",
+    "title": "Detachable Inspector",
+    "author": "JoenTNT",
+    "author_id": "17202",
+    "category": "Tools",
+    "category_id": "5",
+    "godot_version": "4.7",
+    "rating": "0",
+    "cost": "GPLv3",
+    "support_level": "community",
+    "icon_url": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/icon.png",
+    "version": "1",
+    "version_string": "0.1.0",
+    "modify_date": "2026-10-20 20:20:53"
+   },
+   {
+    "asset_id": "5585",
+    "title": "LLM Toolkit Lite",
+    "author": "debugalot",
+    "author_id": "31576",
+    "category": "Scripts",
+    "category_id": "6",
+    "godot_version": "4.7",
+    "rating": "0",
+    "cost": "Proprietary",
+    "support_level": "community",
+    "icon_url": "https://raw.githubusercontent.com/debugalot/llm-toolkit-lite/main/assetlib/icon.png",
+    "version": "1",
+    "version_string": "1.0.0",
+    "modify_date": "2026-11-03 20:10:22"
+   }
+  ],
+  "page": 0,
+  "pages": 11,
+  "page_length": 500,
+  "total_items": 5464
+ },
+ "details": [
+  {
+   "asset_id": "5588",
+   "type": "project",
+   "title": "Watermark Example - Steganography",
+   "author": "Twister",
+   "author_id": "17618",
+   "version": "1",
+   "version_string": "1.0",
+   "category": "Demos",
+   "category_id": "10",
+   "godot_version": "4.7",
+   "rating": "0",
+   "cost": "MIT",
+   "description": "Example of use steganography with godot\r\n\r\nProject Support\r\n\r\n* PNG\r\n* WAV - 16 PCM\r\n* ArrayMesh - Resource\r\n\r\nRemember to check the import settings if you are using a resource located inside the project. ",
+   "support_level": "community",
+   "download_provider": "GitHub",
+   "download_commit": "f96d3b68fbe2f6b2cb0c862dec56d6a6864e66cd",
+   "browse_url": "https://github.com/CodeNameTwister/GDWatermark-Example",
+   "issues_url": "https://github.com/CodeNameTwister/GDWatermark-Example/issues",
+   "icon_url": "https://github.com/CodeNameTwister/GDWatermark-Example/blob/main/page/icon.png?raw=true",
+   "searchable": "1",
+   "modify_date": "2026-11-06 01:47:31",
+   "download_url": "https://github.com/CodeNameTwister/GDWatermark-Example/archive/f96d3b68fbe2f6b2cb0c862dec56d6a6864e66cd.zip",
+   "previews": [
+    {
+     "preview_id": "6737",
+     "type": "video",
+     "link": "https://youtu.be/__Q_aVPtIKQ?si=mUP-tcLisxrehQh6",
+     "thumbnail": "https://i.ytimg.com/an_webp/__Q_aVPtIKQ/mqdefault_6s.webp?du=3000&sqp=CLjXrtcG&rs=AOn4CLCRNmq1q1jImKU4yDl4OeilGVFrfA"
+    }
+   ],
+   "download_hash": ""
+  },
+  {
+   "asset_id": "3328",
+   "type": "project",
+   "title": "Steam Template",
+   "author": "malco",
+   "author_id": "16738",
+   "version": "3",
+   "version_string": "1.1",
+   "category": "Templates",
+   "category_id": "8",
+   "godot_version": "4.5",
+   "rating": "0",
+   "cost": "CC0",
+   "description": "This is an easy to modify / expand template project that uses Gramps' GodotSteam and Expresso Bits' SteamMultiplayerPeer.\r\nThis has a main menu with applied and saved settings, ui and music audio, and LAN and Steam lobbies. Invite a friend through steam to join.",
+   "support_level": "community",
+   "download_provider": "GitHub",
+   "download_commit": "af3750da805300be821bf2db5f9c66a1e83085e7",
+   "browse_url": "https://github.com/Malcolm-Q/SteamGodotTemplate",
+   "issues_url": "https://github.com/Malcolm-Q/SteamGodotTemplate/issues",
+   "icon_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2048px-Steam_icon_logo.svg.png",
+   "searchable": "1",
+   "modify_date": "2025-11-03 18:32:54",
+   "download_url": "https://github.com/Malcolm-Q/SteamGodotTemplate/archive/af3750da805300be821bf2db5f9c66a1e83085e7.zip",
+   "previews": [
+    {
+     "preview_id": "3976",
+     "type": "image",
+     "link": "https://github.com/user-attachments/assets/e96f0b55-0593-45da-8cd1-3a9c38fc5de6",
+     "thumbnail": "https://github.com/user-attachments/assets/e96f0b55-0593-45da-8cd1-3a9c38fc5de6"
+    },
+    {
+     "preview_id": "3977",
+     "type": "image",
+     "link": "https://github.com/user-attachments/assets/853d9b53-aee4-4c3f-bafe-bb4b0b122371",
+     "thumbnail": "https://github.com/user-attachments/assets/853d9b53-aee4-4c3f-bafe-bb4b0b122371"
+    }
+   ],
+   "download_hash": ""
+  },
+  {
+   "asset_id": "5538",
+   "type": "addon",
+   "title": "Detachable Inspector",
+   "author": "JoenTNT",
+   "author_id": "17202",
+   "version": "1",
+   "version_string": "0.1.0",
+   "category": "Tools",
+   "category_id": "5",
+   "godot_version": "4.7",
+   "rating": "0",
+   "cost": "GPLv3",
+   "description": "Keep a scene node's Inspector open in a separate native window while selecting other nodes in Godot.",
+   "support_level": "community",
+   "download_provider": "GitHub",
+   "download_commit": "e9a31d81d64a7b541a40ff2e9b1ee830479b42ad",
+   "browse_url": "https://github.com/JoenTNT/godot-detachable-inspector",
+   "issues_url": "https://github.com/JoenTNT/godot-detachable-inspector/issues",
+   "icon_url": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/icon.png",
+   "searchable": "1",
+   "modify_date": "2026-10-20 20:20:53",
+   "download_url": "https://github.com/JoenTNT/godot-detachable-inspector/archive/e9a31d81d64a7b541a40ff2e9b1ee830479b42ad.zip",
+   "previews": [
+    {
+     "preview_id": "6648",
+     "type": "image",
+     "link": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/sample_projects/screenshots/preview.gif",
+     "thumbnail": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/sample_projects/screenshots/preview.gif"
+    },
+    {
+     "preview_id": "6649",
+     "type": "image",
+     "link": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/sample_projects/screenshots/window-merge.gif",
+     "thumbnail": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/sample_projects/screenshots/window-merge.gif"
+    },
+    {
+     "preview_id": "6650",
+     "type": "image",
+     "link": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/sample_projects/screenshots/detachable-window.png",
+     "thumbnail": "https://raw.githubusercontent.com/JoenTNT/godot-detachable-inspector/main/addons/detachable-inspector/sample_projects/screenshots/detachable-window.png"
+    }
+   ],
+   "download_hash": ""
+  }
+ ]
+}

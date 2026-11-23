@@ -1,0 +1,46 @@
+{
+ "name": "claude-mem",
+ "full_name": "thedotmack/claude-mem",
+ "html_url": "https://github.com/thedotmack/claude-mem",
+ "description": "Persistent Context Across Sessions for Every Agent \u00e2\u20ac\u201c  Captures everything your agent does during sessions, compresses it with AI, and injects relevant context back into future sessions. Works with Claude Code, OpenClaw, Codex, Gemini, Hermes, Copilot, OpenCode + More",
+ "fork": false,
+ "archived": false,
+ "disabled": false,
+ "license": {
+  "key": "apache-2.0",
+  "name": "Apache License 2.0",
+  "spdx_id": "Apache-2.0",
+  "url": "https://api.github.com/licenses/apache-2.0",
+  "node_id": "MDc6TGljZW5zZTI="
+ },
+ "topics": [
+  "ai",
+  "ai-agents",
+  "ai-memory",
+  "anthropic",
+  "artificial-intelligence",
+  "chromadb",
+  "claude",
+  "claude-agent-sdk",
+  "claude-agents",
+  "claude-code",
+  "claude-code-plugin",
+  "claude-skills",
+  "embeddings",
+  "long-term-memory",
+  "mem0",
+  "memory-engine",
+  "openmemory",
+  "rag",
+  "sqlite",
+  "supermemory"
+ ],
+ "default_branch": "main",
+ "stargazers_count": 119078,
+ "language": "TypeScript",
+ "pushed_at": "2026-11-22T19:23:32Z",
+ "owner": {
+  "login": "thedotmack",
+  "html_url": "https://github.com/thedotmack"
+ }
+}

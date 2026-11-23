@@ -1,0 +1,254 @@
+{
+ "_hinweis": "Echte, gekuerzte Antworten von commons.wikimedia.org/w/api.php vom 23.11.2026 (prop=imageinfo, titles=...); continue stammt aus einer echten categorymembers-Antwort fuer Category:Tileable_textures.",
+ "continue": {
+  "gcmcontinue": "file|4441524b20475245592044495254592047525542425920445553545920535045434b4c454420425249434b20424c4f434b205041545445524e2047524f554e4420464c4f4f5220544558545552452e4a5047|122394685",
+  "continue": "gcmcontinue||"
+ },
+ "query": {
+  "pages": [
+   {
+    "pageid": 199158660,
+    "ns": 6,
+    "title": "File:Lemmling-Cartoon-cow.svg",
+    "imagerepository": "local",
+    "imageinfo": [
+     {
+      "size": 8105,
+      "width": 512,
+      "height": 579,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Lemmling-Cartoon-cow.svg/500px-Lemmling-Cartoon-cow.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "thumbwidth": 480,
+      "thumbheight": 543,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Lemmling-Cartoon-cow.svg/960px-Lemmling-Cartoon-cow.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Lemmling-Cartoon-cow.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Lemmling-Cartoon-cow.svg",
+      "sha1": "57a51be6fee32995e6a07e87c3375941fa46202c",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Lemmling-Cartoon-cow"
+       },
+       "Categories": {
+        "value": "Cows|CC-Zero|PD OpenClipart|Cows in art"
+       },
+       "Artist": {
+        "value": "lemmling"
+       },
+       "LicenseShortName": {
+        "value": "CC0"
+       },
+       "LicenseUrl": {
+        "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+       }
+      },
+      "mime": "image/svg+xml",
+      "mediatype": "DRAWING"
+     }
+    ]
+   },
+   {
+    "pageid": 67106444,
+    "ns": 6,
+    "title": "File:High quality skull.stl",
+    "imagerepository": "local",
+    "imageinfo": [
+     {
+      "size": 43049784,
+      "width": 5120,
+      "height": 2880,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/High_quality_skull.stl/500px-High_quality_skull.stl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "thumbwidth": 480,
+      "thumbheight": 360,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d8/High_quality_skull.stl/960px-High_quality_skull.stl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/d/d8/High_quality_skull.stl?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:High_quality_skull.stl",
+      "sha1": "86694afd386c3f317e07945478090dd16d1d51e6",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "High quality skull"
+       },
+       "Categories": {
+        "value": "University of L'Aquila|Self-published work|Human skulls|3D data of human skull|STL files of human skeletons"
+       },
+       "Artist": {
+        "value": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:DrCoretti&amp;action=edit&amp;redlink=1\" class=\"new\" title=\"User:DrCoretti (page does not exist)\">Mariano Coretti</a>"
+       },
+       "LicenseShortName": {
+        "value": "CC BY-SA 4.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/4.0"
+       }
+      },
+      "mime": "application/sla",
+      "mediatype": "3D"
+     }
+    ]
+   },
+   {
+    "pageid": 122184145,
+    "ns": 6,
+    "title": "File:Beige wavy slate seamless stone surface texture.jpg",
+    "imagerepository": "local",
+    "imageinfo": [
+     {
+      "size": 800683,
+      "width": 1567,
+      "height": 1567,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Beige_wavy_slate_seamless_stone_surface_texture.jpg/500px-Beige_wavy_slate_seamless_stone_surface_texture.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "thumbwidth": 480,
+      "thumbheight": 480,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/Beige_wavy_slate_seamless_stone_surface_texture.jpg/960px-Beige_wavy_slate_seamless_stone_surface_texture.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Beige_wavy_slate_seamless_stone_surface_texture.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Beige_wavy_slate_seamless_stone_surface_texture.jpg",
+      "sha1": "66719b76a039623802d24126e734d4e8aeeb9636",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Beige wavy slate seamless stone surface texture"
+       },
+       "Categories": {
+        "value": "CC-Zero|Self-published work|Rock textures|Tileable textures"
+       },
+       "Artist": {
+        "value": "<a href=\"//commons.wikimedia.org/wiki/User:Sisters.seamless\" title=\"User:Sisters.seamless\">Sisters.seamless</a>"
+       },
+       "LicenseShortName": {
+        "value": "CC0"
+       },
+       "LicenseUrl": {
+        "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+       }
+      },
+      "mime": "image/jpeg",
+      "mediatype": "BITMAP"
+     }
+    ]
+   },
+   {
+    "pageid": 11954879,
+    "ns": 6,
+    "title": "File:Buff Terra-Cotta.jpg",
+    "imagerepository": "local",
+    "imageinfo": [
+     {
+      "size": 189960,
+      "width": 800,
+      "height": 566,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Buff_Terra-Cotta.jpg/500px-Buff_Terra-Cotta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "thumbwidth": 480,
+      "thumbheight": 340,
+      "responsiveUrls": {
+       "2": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Buff_Terra-Cotta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/Buff_Terra-Cotta.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Buff_Terra-Cotta.jpg",
+      "sha1": "a8e785a9685301d31be021c4b6d0bcb907876434",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Buff Terra-Cotta"
+       },
+       "Categories": {
+        "value": "PD-user|Ashlar|Stamped concrete|Tileable textures|Computer-generated stone textures"
+       },
+       "Artist": {
+        "value": "<a href=\"https://en.wikipedia.org/wiki/User:Lewisleraner\" class=\"extiw\" title=\"wikipedia:User:Lewisleraner\">Lewisleraner</a> at <a href=\"https://en.wikipedia.org/wiki/\" class=\"extiw\" title=\"wikipedia:\">English Wikipedia</a>"
+       },
+       "LicenseShortName": {
+        "value": "Public domain"
+       }
+      },
+      "mime": "image/jpeg",
+      "mediatype": "BITMAP"
+     }
+    ]
+   },
+   {
+    "pageid": 49263660,
+    "ns": 6,
+    "title": "File:Insigne Falklandiae.svg",
+    "imagerepository": "local",
+    "imageinfo": [
+     {
+      "size": 314795,
+      "width": 203,
+      "height": 253,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Insigne_Falklandiae.svg/500px-Insigne_Falklandiae.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "thumbwidth": 480,
+      "thumbheight": 598,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Insigne_Falklandiae.svg/960px-Insigne_Falklandiae.svg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Insigne_Falklandiae.svg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Insigne_Falklandiae.svg",
+      "sha1": "56f8fe7cca02a43c0b5d009b6e765921c65827d6",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Insigne Falklandiae"
+       },
+       "Categories": {
+        "value": "SVG coats of arms of the British Overseas Territories|CC-Zero|Sheep in heraldry|PD OpenClipart|SVG images with poorly traced elements|Government of the Falkland Islands|Sailing ships in heraldry|With insignia|Wavy ordinaries|Files with derivative versions|SVG coats of arms of the Falkland Islands|Argent two bars wavy azure|Galleons in heraldry"
+       },
+       "Artist": {
+        "value": "<a href=\"//commons.wikimedia.org/wiki/User:Ssolbergj\" title=\"User:Ssolbergj\">Ssolbergj</a>"
+       },
+       "LicenseShortName": {
+        "value": "CC0"
+       },
+       "LicenseUrl": {
+        "value": "http://creativecommons.org/publicdomain/zero/1.0/deed.en"
+       }
+      },
+      "mime": "image/svg+xml",
+      "mediatype": "DRAWING"
+     }
+    ]
+   },
+   {
+    "pageid": 66067594,
+    "ns": 6,
+    "title": "File:164 of 'The Serpent Symbol and the worship of the reciprocal symbols of nature in America' (11013594023).jpg",
+    "imagerepository": "local",
+    "imageinfo": [
+     {
+      "size": 212783,
+      "width": 805,
+      "height": 767,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/164_of_%27The_Serpent_Symbol_and_the_worship_of_the_reciprocal_symbols_of_nature_in_America%27_%2811013594023%29.jpg/500px-164_of_%27The_Serpent_Symbol_and_the_worship_of_the_reciprocal_symbols_of_nature_in_America%27_%2811013594023%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+      "thumbwidth": 480,
+      "thumbheight": 457,
+      "responsiveUrls": {
+       "2": "https://upload.wikimedia.org/wikipedia/commons/6/66/164_of_%27The_Serpent_Symbol_and_the_worship_of_the_reciprocal_symbols_of_nature_in_America%27_%2811013594023%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/6/66/164_of_%27The_Serpent_Symbol_and_the_worship_of_the_reciprocal_symbols_of_nature_in_America%27_%2811013594023%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:164_of_%27The_Serpent_Symbol_and_the_worship_of_the_reciprocal_symbols_of_nature_in_America%27_(11013594023).jpg",
+      "sha1": "2813de2574d76e16c973f469e81b231e36f60b2b",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "164 of 'The Serpent Symbol and the worship of the reciprocal symbols of nature in America' (11013594023)"
+       },
+       "Categories": {
+        "value": "Images from the British Library|Illustrations|Images released by British Library Images Online|Set of Maps|Files from Flickr's 'The Commons'|Files uploaded by Artix Kreiger|Flickr images reviewed by FlickreviewR 2|Uploaded by the British Library"
+       },
+       "Artist": {
+        "value": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/12403504@N02\">The British Library</a>"
+       },
+       "LicenseShortName": {
+        "value": "No restrictions"
+       },
+       "LicenseUrl": {
+        "value": "https://www.flickr.com/commons/usage/"
+       }
+      },
+      "mime": "image/jpeg",
+      "mediatype": "BITMAP"
+     }
+    ]
+   }
+  ]
+ }
+}

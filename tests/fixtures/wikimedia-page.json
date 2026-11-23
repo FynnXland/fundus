@@ -1,0 +1,55 @@
+{
+ "pageid": 9437797,
+ "ns": 6,
+ "title": "File:Felis catus-cat on snow.jpg",
+ "imagerepository": "local",
+ "imageinfo": [
+  {
+   "size": 2125399,
+   "width": 3000,
+   "height": 2000,
+   "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Felis_catus-cat_on_snow.jpg/500px-Felis_catus-cat_on_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "thumbwidth": 480,
+   "thumbheight": 320,
+   "responsiveUrls": {
+    "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Felis_catus-cat_on_snow.jpg/960px-Felis_catus-cat_on_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail"
+   },
+   "thumbattribs": {
+    "src": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Felis_catus-cat_on_snow.jpg/500px-Felis_catus-cat_on_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+    "decoding": "async",
+    "loading": "lazy",
+    "width": 480,
+    "height": 320,
+    "srcset": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b6/Felis_catus-cat_on_snow.jpg/960px-Felis_catus-cat_on_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail 2x"
+   },
+   "url": "https://upload.wikimedia.org/wikipedia/commons/b/b6/Felis_catus-cat_on_snow.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+   "descriptionurl": "https://commons.wikimedia.org/wiki/File:Felis_catus-cat_on_snow.jpg",
+   "descriptionshorturl": "https://commons.wikimedia.org/wiki/Special:Redirect/page/9437797",
+   "extmetadata": {
+    "ObjectName": {
+     "value": "Felis catus-cat on snow",
+     "source": "mediawiki-metadata"
+    },
+    "Categories": {
+     "value": "GFDL|Taken with Canon EOS 450D|Photographs with aspect ratio of 3:2|License migration redundant|Female cats|Cats of Poland|Self-published work|Images with extracted images|Amber-eyed cats|Brown and white|Featured pictures on Wikipedia, Polish|Featured pictures on Wikipedia, Turkish|Featured pictures of cats|Cats looking at viewer|Files with coordinates missing SDC location of creation|Corrected by Jacek Halicki|Assessment tagged pages marked as POTY candidates|Cats in snow|Cats looking back|Black tortoiseshell mackerel tabby domestic short-haired cats|Cats on white background|Black tortoiseshell tabby cat portraits|Side views of cats - walking",
+     "source": "commons-categories",
+     "hidden": ""
+    },
+    "Artist": {
+     "value": "<a href=\"//commons.wikimedia.org/wiki/User:Von.grzanka\" title=\"User:Von.grzanka\">Von.grzanka</a>",
+     "source": "commons-desc-page"
+    },
+    "LicenseShortName": {
+     "value": "CC BY-SA 3.0",
+     "source": "commons-desc-page",
+     "hidden": ""
+    },
+    "LicenseUrl": {
+     "value": "https://creativecommons.org/licenses/by-sa/3.0",
+     "source": "commons-desc-page"
+    }
+   },
+   "mime": "image/jpeg"
+  }
+ ]
+}

@@ -1,0 +1,100 @@
+{
+ "id": "ld1-1643381040022-1643381061142-0",
+ "title": "Ruins of the Charleston Lighthouse, Morris Island, South Carolina",
+ "unitCode": "SAAM",
+ "type": "edanmdm",
+ "url": "edanmdm:saam_1994.91.52",
+ "content": {
+  "freetext": {
+   "name": [
+    {
+     "label": "Artist",
+     "content": "J. R. Foster, active 1860s-1870s"
+    }
+   ],
+   "objectRights": [
+    {
+     "label": "Restrictions & Rights",
+     "content": "CC0"
+    }
+   ]
+  },
+  "descriptiveNonRepeating": {
+   "title": {
+    "label": "Title",
+    "content": "Ruins of the Charleston Lighthouse, Morris Island, South Carolina"
+   },
+   "record_ID": "saam_1994.91.52",
+   "unit_code": "SAAM",
+   "data_source": "Smithsonian American Art Museum",
+   "record_link": "https://americanart.si.edu/collections/search/artwork/?id=34214",
+   "online_media": {
+    "media": [
+     {
+      "id": "media:SAAM-1994.91.52_1",
+      "guid": "http://n2t.net/ark:/65665/bj9fd52cc39-4710-4925-a925-bfc11b8a167a",
+      "type": "Images",
+      "idsId": "SAAM-1994.91.52_1",
+      "usage": {
+       "access": "CC0"
+      },
+      "width": 6400,
+      "height": 4459,
+      "content": "https://ids.si.edu/ids/deliveryService?id=SAAM-1994.91.52_1",
+      "maxsize": 3000,
+      "thumbnail": "https://ids.si.edu/ids/deliveryService?id=SAAM-1994.91.52_1",
+      "altTextAccessibility": "",
+      "extDescrAccessibility": "",
+      "resources": [
+       {
+        "label": "High-resolution TIFF",
+        "url": "https://ids.si.edu/ids/download?id=SAAM-1994.91.52_1.tif",
+        "width": 3000,
+        "height": 2090,
+        "dimensions": "3000x2090"
+       },
+       {
+        "label": "High-resolution JPEG",
+        "url": "https://ids.si.edu/ids/download?id=SAAM-1994.91.52_1.jpg",
+        "width": 3000,
+        "height": 2090,
+        "dimensions": "3000x2090"
+       },
+       {
+        "label": "Screen Image",
+        "url": "https://ids.si.edu/ids/download?id=SAAM-1994.91.52_1_screen"
+       },
+       {
+        "label": "Thumbnail Image",
+        "url": "https://ids.si.edu/ids/download?id=SAAM-1994.91.52_1_thumb"
+       }
+      ]
+     }
+    ],
+    "mediaCount": 1
+   },
+   "metadata_usage": {
+    "access": "CC0"
+   }
+  },
+  "indexedStructured": {
+   "topic": [
+    "Ruins",
+    "Landscapes",
+    "Civil War, 1861-1865",
+    "Architecture",
+    "Charleston Lighthouse",
+    "American Civil War (1861-1865)",
+    "History",
+    "Lighthouses",
+    "Morris Island"
+   ],
+   "object_type": [
+    "Photographs"
+   ],
+   "online_media_type": [
+    "Images"
+   ]
+  }
+ }
+}

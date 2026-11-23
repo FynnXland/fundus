@@ -1,0 +1,686 @@
+{
+ "version": 1,
+ "zyklus": 1,
+ "zyklusStart": "2026-11-23",
+ "begriffe": {
+  "bilder:landscape": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:15.628Z",
+   "seiten": 12
+  },
+  "bilder:mountain": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:18.759Z",
+   "seiten": 12
+  },
+  "bilder:forest": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:21.764Z",
+   "seiten": 12
+  },
+  "bilder:beach": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:24.824Z",
+   "seiten": 12
+  },
+  "bilder:ocean": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:28.091Z",
+   "seiten": 12
+  },
+  "bilder:desert": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:31.241Z",
+   "seiten": 12
+  },
+  "bilder:river": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:34.591Z",
+   "seiten": 12
+  },
+  "bilder:waterfall": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:37.555Z",
+   "seiten": 12
+  },
+  "bilder:sky clouds": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:41.460Z",
+   "seiten": 12
+  },
+  "bilder:sunset": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:44.088Z",
+   "seiten": 12
+  },
+  "bilder:night sky": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:47.476Z",
+   "seiten": 12
+  },
+  "bilder:architecture": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:50.340Z",
+   "seiten": 12
+  },
+  "bilder:bridge": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:53.994Z",
+   "seiten": 12
+  },
+  "bilder:castle": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:56.890Z",
+   "seiten": 12
+  },
+  "bilder:church": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:00.695Z",
+   "seiten": 12
+  },
+  "bilder:city street": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:03.313Z",
+   "seiten": 12
+  },
+  "bilder:skyline": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:06.329Z",
+   "seiten": 12
+  },
+  "bilder:interior": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:10.040Z",
+   "seiten": 12
+  },
+  "bilder:texture": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:12.923Z",
+   "seiten": 12
+  },
+  "bilder:wood texture": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:15.997Z",
+   "seiten": 12
+  },
+  "bilder:stone texture": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:19.170Z",
+   "seiten": 12
+  },
+  "bilder:metal texture": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:22.424Z",
+   "seiten": 12
+  },
+  "bilder:fabric": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:26.178Z",
+   "seiten": 12
+  },
+  "bilder:animal": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:28.730Z",
+   "seiten": 12
+  },
+  "bilder:bird": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:32.116Z",
+   "seiten": 12
+  },
+  "bilder:cat": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:35.427Z",
+   "seiten": 12
+  },
+  "bilder:dog": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:38.677Z",
+   "seiten": 12
+  },
+  "bilder:insect": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:42.238Z",
+   "seiten": 12
+  },
+  "bilder:flower": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:45.947Z",
+   "seiten": 12
+  },
+  "bilder:tree": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:48.328Z",
+   "seiten": 12
+  },
+  "bilder:plant": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:51.748Z",
+   "seiten": 12
+  },
+  "bilder:food": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:54.689Z",
+   "seiten": 12
+  },
+  "bilder:fruit": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:17:57.740Z",
+   "seiten": 12
+  },
+  "bilder:vegetable": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:01.230Z",
+   "seiten": 12
+  },
+  "bilder:people working": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:04.260Z",
+   "seiten": 12
+  },
+  "bilder:portrait": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:07.362Z",
+   "seiten": 12
+  },
+  "bilder:machine": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:10.408Z",
+   "seiten": 12
+  },
+  "bilder:car": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:13.583Z",
+   "seiten": 12
+  },
+  "bilder:train": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:17.158Z",
+   "seiten": 12
+  },
+  "bilder:vintage poster": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:19.889Z",
+   "seiten": 12
+  },
+  "bilder:map": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:23.306Z",
+   "seiten": 12
+  },
+  "bilder:botanical illustration": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:27.214Z",
+   "seiten": 12
+  },
+  "musik:ambient": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:29.395Z",
+   "seiten": 10
+  },
+  "musik:piano": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:33.048Z",
+   "seiten": 12
+  },
+  "musik:electronic": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:35.853Z",
+   "seiten": 11
+  },
+  "musik:acoustic guitar": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": true,
+   "zuletzt": "2026-11-23T01:13:28.564Z",
+   "seiten": 1
+  },
+  "musik:orchestral": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:38.979Z",
+   "seiten": 3
+  },
+  "musik:jazz": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:42.196Z",
+   "seiten": 8
+  },
+  "musik:classical": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:45.433Z",
+   "seiten": 3
+  },
+  "musik:folk": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": true,
+   "zuletzt": "2026-11-23T01:18:48.537Z",
+   "seiten": 2
+  },
+  "musik:rock": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:51.801Z",
+   "seiten": 12
+  },
+  "musik:hip hop": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:55.091Z",
+   "seiten": 7
+  },
+  "musik:lofi": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": true,
+   "zuletzt": "2026-11-23T01:13:51.025Z",
+   "seiten": 1
+  },
+  "musik:cinematic": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:18:58.172Z",
+   "seiten": 12
+  },
+  "musik:chiptune": {
+   "seite": 3,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:19:01.514Z",
+   "seiten": 4
+  },
+  "musik:drum and bass": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:00.966Z",
+   "seiten": 12
+  },
+  "musik:meditation": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:04.264Z",
+   "seiten": 12
+  },
+  "sounds:rain": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:06.475Z",
+   "seiten": 12
+  },
+  "sounds:thunder": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:10.322Z",
+   "seiten": 12
+  },
+  "sounds:wind": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:13.381Z",
+   "seiten": 12
+  },
+  "sounds:water": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:16.736Z",
+   "seiten": 12
+  },
+  "sounds:river": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:19.808Z",
+   "seiten": 12
+  },
+  "sounds:ocean waves": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:23.323Z",
+   "seiten": 12
+  },
+  "sounds:fire": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:26.391Z",
+   "seiten": 12
+  },
+  "sounds:birds": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:29.422Z",
+   "seiten": 12
+  },
+  "sounds:forest ambience": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:33.080Z",
+   "seiten": 12
+  },
+  "sounds:city ambience": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:35.847Z",
+   "seiten": 12
+  },
+  "sounds:traffic": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:39.055Z",
+   "seiten": 12
+  },
+  "sounds:crowd": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:42.198Z",
+   "seiten": 12
+  },
+  "sounds:footsteps": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:45.364Z",
+   "seiten": 12
+  },
+  "sounds:door": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:48.527Z",
+   "seiten": 12
+  },
+  "sounds:door knock": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:51.874Z",
+   "seiten": 12
+  },
+  "sounds:glass": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:54.965Z",
+   "seiten": 12
+  },
+  "sounds:metal impact": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:14:58.692Z",
+   "seiten": 12
+  },
+  "sounds:wood impact": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:01.711Z",
+   "seiten": 12
+  },
+  "sounds:explosion": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:04.577Z",
+   "seiten": 12
+  },
+  "sounds:gunshot": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:07.796Z",
+   "seiten": 12
+  },
+  "sounds:whoosh": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:10.970Z",
+   "seiten": 12
+  },
+  "sounds:swoosh": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:14.191Z",
+   "seiten": 12
+  },
+  "sounds:click": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:17.447Z",
+   "seiten": 12
+  },
+  "sounds:button": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:20.972Z",
+   "seiten": 12
+  },
+  "sounds:beep": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:23.785Z",
+   "seiten": 12
+  },
+  "sounds:alarm": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:26.687Z",
+   "seiten": 12
+  },
+  "sounds:bell": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:30.187Z",
+   "seiten": 12
+  },
+  "sounds:clock": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:33.344Z",
+   "seiten": 12
+  },
+  "sounds:engine": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:36.624Z",
+   "seiten": 12
+  },
+  "sounds:car": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:39.770Z",
+   "seiten": 12
+  },
+  "sounds:train": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:43.028Z",
+   "seiten": 12
+  },
+  "sounds:airplane": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:46.173Z",
+   "seiten": 12
+  },
+  "sounds:dog": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:49.370Z",
+   "seiten": 12
+  },
+  "sounds:cat": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:52.793Z",
+   "seiten": 12
+  },
+  "sounds:horse": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:55.782Z",
+   "seiten": 12
+  },
+  "sounds:applause": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:15:58.947Z",
+   "seiten": 12
+  },
+  "sounds:laughter": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:02.083Z",
+   "seiten": 12
+  },
+  "sounds:heartbeat": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:05.474Z",
+   "seiten": 12
+  },
+  "sounds:typing keyboard": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:08.673Z",
+   "seiten": 12
+  },
+  "sounds:paper": {
+   "seite": 2,
+   "proSeite": 20,
+   "fertig": false,
+   "zuletzt": "2026-11-23T01:16:11.817Z",
+   "seiten": 12
+  }
+ }
+}

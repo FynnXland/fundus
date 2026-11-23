@@ -1,0 +1,111 @@
+{
+ "search": {
+  "response": {
+   "numFound": 5887,
+   "docs": [
+    {
+     "downloads": 979564,
+     "identifier": "2014-02-12Bigwords",
+     "item_size": 3072122222
+    },
+    {
+     "downloads": 145287,
+     "identifier": "NicolasFalcon-NicolasFalconaaahh011",
+     "item_size": 56275474
+    },
+    {
+     "downloads": 62217,
+     "identifier": "Unounoou",
+     "item_size": 280083044
+    }
+   ]
+  }
+ },
+ "metadata": {
+  "metadata": {
+   "identifier": "Unounoou",
+   "title": "Unounoou",
+   "creator": "Yukiga Futte Uresii",
+   "mediatype": "audio",
+   "subject": "Drone",
+   "licenseurl": "http://creativecommons.org/licenses/by/3.0/",
+   "collection": [
+    "oloil",
+    "netlabels"
+   ]
+  },
+  "item_size": 280083044,
+  "files_count": 20,
+  "files": [
+   {
+    "name": "01_Oonoon.flac",
+    "source": "original",
+    "title": "Oonoon",
+    "track": "01",
+    "length": "1806.14",
+    "format": "Flac",
+    "size": "70731970",
+    "md5": "aa92ab0d9160840224e1715b2a910e77",
+    "sha1": "be0bb564b93c681b85b9a43d336632f93c815c4b"
+   },
+   {
+    "name": "01_Oonoon.mp3",
+    "source": "derivative",
+    "title": "Oonoon",
+    "track": "01",
+    "length": "30:06",
+    "format": "VBR MP3",
+    "original": "01_Oonoon.flac",
+    "size": "30943618",
+    "md5": "2edabc37ba38dfcade614d3a35cf9cb3",
+    "sha1": "f8be44c6b06429697b26248c3aa0d0c52529d2f4"
+   },
+   {
+    "name": "02_Nuuoonnuo.flac",
+    "source": "original",
+    "title": "Nuuoonnuo",
+    "track": "02",
+    "length": "1123.15",
+    "format": "Flac",
+    "size": "43328835",
+    "md5": "61a016c293b6809ea9f07012df719523",
+    "sha1": "e98273d20d4e964fa9c6ee7b807693925a5ff91f"
+   },
+   {
+    "name": "02_Nuuoonnuo.mp3",
+    "source": "derivative",
+    "title": "Nuuoonnuo",
+    "track": "02",
+    "length": "18:43",
+    "format": "VBR MP3",
+    "original": "02_Nuuoonnuo.flac",
+    "size": "18841177",
+    "md5": "9ecdcb4088082f15963422d32e5ceb60",
+    "sha1": "546c21f7550fb8553d5a8c526afb9b6318c9dd25"
+   },
+   {
+    "name": "03_Uuoonnonn.flac",
+    "source": "original",
+    "title": "Uuoonnonn",
+    "track": "03",
+    "length": "1514.03",
+    "format": "Flac",
+    "size": "58236488",
+    "md5": "5f76fe9440eebb553dd6d88d7d36dc51",
+    "sha1": "e69ae487541e0a9f577f51887a46773de2f62929"
+   },
+   {
+    "name": "03_Uuoonnonn.mp3",
+    "source": "derivative",
+    "title": "Uuoonnonn",
+    "track": "03",
+    "length": "25:14",
+    "format": "VBR MP3",
+    "original": "03_Uuoonnonn.flac",
+    "size": "25058497",
+    "md5": "3f23c33bd892e16a83f0b1736cf48ea4",
+    "sha1": "555516c0ba52f81fc88083de16029c9cac941542"
+   }
+  ]
+ }
+}

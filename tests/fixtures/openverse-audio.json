@@ -1,0 +1,18 @@
+{
+ "id": "a8f2b7c4-0000-4000-8000-000000401275",
+ "title": "Rain on window",
+ "foreign_landing_url": "https://freesound.org/people/example/sounds/401275",
+ "url": "https://cdn.freesound.org/previews/401/401275_5121236-hq.mp3",
+ "thumbnail": null,
+ "creator": "example",
+ "creator_url": "https://freesound.org/people/example",
+ "license": "by",
+ "license_version": "4.0",
+ "provider": "freesound",
+ "source": "freesound",
+ "filetype": "mp3",
+ "filesize": null,
+ "duration": 61000,
+ "mature": false,
+ "tags": [{ "name": "rain" }, { "name": "window" }]
+}

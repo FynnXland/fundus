@@ -1,0 +1,290 @@
+{
+ "continue": {
+  "gsroffset": 20,
+  "continue": "gsroffset||"
+ },
+ "query": {
+  "pages": [
+   {
+    "pageid": 38322846,
+    "ns": 6,
+    "title": "File:Stars at night Mt. Hood Oregon USA. Time Lapse Video by Steven Koch Photography.webm",
+    "index": 16,
+    "videoinfo": [
+     {
+      "size": 19388638,
+      "width": 1920,
+      "height": 1080,
+      "duration": 25.568,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm/500px--Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 270,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm/960px--Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm",
+      "sha1": "1048beebbaf1d9361edd406b9073d67dc279884b",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Stars at night Mt. Hood Oregon USA. Time Lapse Video by Steven Koch Photography"
+       },
+       "Artist": {
+        "value": "<a rel=\"nofollow\" class=\"external free\" href=\"https://vimeo.com/40973642\">https://vimeo.com/40973642</a> - <a rel=\"nofollow\" class=\"external free\" href=\"https://vimeo.com/stevenkochphotography\">https://vimeo.com/stevenkochphotography</a>"
+       },
+       "LicenseShortName": {
+        "value": "CC BY-SA 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by-sa/3.0"
+       },
+       "Categories": {
+        "value": "Files from external sources with reviewed licenses|Media of the day|Videos from Oregon|Time-lapse videos from the United States|Videos of 2012 from the United States|Mount Hood in 2012"
+       },
+       "Assessments": {
+        "value": ""
+       }
+      },
+      "mime": "video/webm",
+      "mediatype": "VIDEO",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 426,
+        "height": 240,
+        "bandwidth": 336560
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 640,
+        "height": 360,
+        "bandwidth": 966424
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm.480p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "480p.vp9.webm",
+        "width": 854,
+        "height": 480,
+        "bandwidth": 1154080
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/f/fd/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm/Stars_at_night_Mt._Hood_Oregon_USA._Time_Lapse_Video_by_Steven_Koch_Photography.webm.1080p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "1080p.vp9.webm",
+        "width": 1920,
+        "height": 1080,
+        "bandwidth": 4504352
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "pageid": 40130491,
+    "ns": 6,
+    "title": "File:Time-lapse images of Mount St. Helens dome growth 2004-2008.webm",
+    "index": 20,
+    "videoinfo": [
+     {
+      "size": 13586999,
+      "width": 1280,
+      "height": 720,
+      "duration": 86.653,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm/500px--Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 270,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/34/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm/960px--Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm",
+      "sha1": "e4d09644471ef87b5bc847094562e02ddb5d2c97",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Time-lapse images of Mount St. Helens dome growth 2004-2008"
+       },
+       "Artist": {
+        "value": "USGS"
+       },
+       "LicenseShortName": {
+        "value": "Public domain"
+       },
+       "Categories": {
+        "value": "Volcanic eruptions in the United States|Lava domes|Volcanic eruptions in Washington (state)|PD USGS|Media of the day|Volcanic eruptions in 2004|Volcanic eruptions in 2005|Volcanic eruptions in 2006|Volcanic eruptions in 2007|Volcanic eruptions in 2008|Files with coordinates missing SDC location of creation|Time-lapse videos of nature|Volcanism of Mount St. Helens|Lava dome extrusion at Mount St. Helens|Mt St. Helens Lava dome growth|Lava dome extrusions in 2006|Videos of Mount St. Helens"
+       },
+       "Assessments": {
+        "value": ""
+       }
+      },
+      "mime": "video/webm",
+      "mediatype": "VIDEO",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 426,
+        "height": 240,
+        "bandwidth": 290752
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 640,
+        "height": 360,
+        "bandwidth": 1002712
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/3/34/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm/Time-lapse_images_of_Mount_St._Helens_dome_growth_2004-2008.webm.480p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "480p.vp9.webm",
+        "width": 854,
+        "height": 480,
+        "bandwidth": 1165816
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "pageid": 155108965,
+    "ns": 6,
+    "title": "File:Time-lapse imaging of WJMSCs on DWJM in different Z planes. rat.ogv",
+    "index": 17,
+    "videoinfo": [
+     {
+      "size": 12366453,
+      "width": 2088,
+      "height": 1040,
+      "duration": 11.833333333333334,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv/500px--Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 239,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv/960px--Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv",
+      "sha1": "53b1a7f7b6d42620443e36c6be8fd8537423098d",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Time-lapse imaging of WJMSCs on DWJM in different Z planes. rat"
+       },
+       "Artist": {
+        "value": "Jadalannagari S, Converse G, McFall C, Buse E, Filla M, Villar MT, et al."
+       },
+       "LicenseShortName": {
+        "value": "CC BY 4.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by/4.0"
+       },
+       "Categories": {
+        "value": "Human embryonic stem cells|License review needed (video)|Histology of the umbilical cord"
+       },
+       "Assessments": {
+        "value": ""
+       }
+      },
+      "mime": "application/ogg",
+      "mediatype": "VIDEO",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv.240p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "240p.vp9.webm",
+        "width": 426,
+        "height": 212,
+        "bandwidth": 206496
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv.360p.mpeg4.mov",
+        "type": "video/quicktime; codecs=\"mp4v\"",
+        "transcodekey": "360p.mpeg4.mov",
+        "width": 640,
+        "height": 318,
+        "bandwidth": 816016
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv.480p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "480p.vp9.webm",
+        "width": 854,
+        "height": 426,
+        "bandwidth": 784976
+       },
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/transcoded/0/07/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv/Time-lapse_imaging_of_WJMSCs_on_DWJM_in_different_Z_planes._rat.ogv.1080p.vp9.webm",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "transcodekey": "1080p.vp9.webm",
+        "width": 1920,
+        "height": 956,
+        "bandwidth": 3167104
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "pageid": 191309553,
+    "ns": 6,
+    "title": "File:Google Timelapse - Whitesville, West Virginia-R8HPaKD6Ci8.webm",
+    "index": 1,
+    "videoinfo": [
+     {
+      "size": 23757549,
+      "width": 3840,
+      "height": 2160,
+      "duration": 12.328,
+      "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Google_Timelapse_-_Whitesville%2C_West_Virginia-R8HPaKD6Ci8.webm/500px--Google_Timelapse_-_Whitesville%2C_West_Virginia-R8HPaKD6Ci8.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo",
+      "thumbwidth": 480,
+      "thumbheight": 270,
+      "responsiveUrls": {
+       "2": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/ed/Google_Timelapse_-_Whitesville%2C_West_Virginia-R8HPaKD6Ci8.webm/960px--Google_Timelapse_-_Whitesville%2C_West_Virginia-R8HPaKD6Ci8.webm.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo"
+      },
+      "url": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Google_Timelapse_-_Whitesville%2C_West_Virginia-R8HPaKD6Ci8.webm?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "descriptionurl": "https://commons.wikimedia.org/wiki/File:Google_Timelapse_-_Whitesville,_West_Virginia-R8HPaKD6Ci8.webm",
+      "sha1": "cbb85a8257027fbd53fe044d30bd2236dc33ce59",
+      "extmetadata": {
+       "ObjectName": {
+        "value": "Google Timelapse - Whitesville, West Virginia-R8HPaKD6Ci8"
+       },
+       "Artist": {
+        "value": "Google Earth"
+       },
+       "LicenseShortName": {
+        "value": "CC BY 3.0"
+       },
+       "LicenseUrl": {
+        "value": "https://creativecommons.org/licenses/by/3.0"
+       },
+       "Categories": {
+        "value": "West Virginia in the 2000s|2010 in West Virginia|2011 in West Virginia|2012 in West Virginia|2013 in West Virginia|2014 in West Virginia|2015 in West Virginia|2016 in West Virginia|West Virginia in the 1990s|1986 in West Virginia|1985 in West Virginia|1984 in West Virginia|1987 in West Virginia|1988 in West Virginia|Whitesville, West Virginia|Videos from YouTube|1989 in West Virginia|Time-lapse videos from the United States|Files with coordinates missing SDC location of creation|Google Earth Timelapse|Satellite videos of the United States"
+       },
+       "Assessments": {
+        "value": ""
+       }
+      },
+      "mime": "video/webm",
+      "mediatype": "VIDEO",
+      "derivatives": [
+       {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/e/ed/Google_Timelapse_-_Whitesville%2C_West_Virginia-R8HPaKD6Ci8.webm?utm_source=commons.wikimedia.org&utm_campaign=api&utm_content=original",
+        "type": "video/webm; codecs=\"vp9, opus\"",
+        "width": 3840,
+        "height": 2160,
+        "bandwidth": 15416968
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

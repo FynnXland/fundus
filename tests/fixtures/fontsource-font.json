@@ -1,0 +1,29 @@
+{
+ "id": "fraunces",
+ "family": "Fraunces",
+ "subsets": [
+  "latin",
+  "latin-ext",
+  "vietnamese"
+ ],
+ "weights": [
+  100,
+  200,
+  300,
+  400,
+  500,
+  600,
+  700,
+  800,
+  900
+ ],
+ "styles": [
+  "italic",
+  "normal"
+ ],
+ "variable": true,
+ "category": "serif",
+ "license": "OFL-1.1",
+ "type": "google",
+ "lastModified": "2025-09-10"
+}

@@ -1,0 +1,45 @@
+{
+ "count": 2,
+ "next": null,
+ "previous": null,
+ "results": [
+  {
+   "id": 401275,
+   "name": "Rain on window",
+   "username": "example",
+   "url": "https://freesound.org/people/example/sounds/401275/",
+   "license": "https://creativecommons.org/licenses/by/4.0/",
+   "tags": ["rain", "window", "field-recording"],
+   "type": "wav",
+   "duration": 61.2,
+   "filesize": 10794024,
+   "is_explicit": false,
+   "md5": "0f343b0931126a20f133d67c2b018a3b",
+   "previews": {
+    "preview-hq-mp3": "https://cdn.freesound.org/previews/401/401275_5121236-hq.mp3",
+    "preview-lq-mp3": "https://cdn.freesound.org/previews/401/401275_5121236-lq.mp3",
+    "preview-hq-ogg": "https://cdn.freesound.org/previews/401/401275_5121236-hq.ogg",
+    "preview-lq-ogg": "https://cdn.freesound.org/previews/401/401275_5121236-lq.ogg"
+   }
+  },
+  {
+   "id": 401276,
+   "name": "Door creak",
+   "username": "example",
+   "url": "https://freesound.org/people/example/sounds/401276/",
+   "license": "http://creativecommons.org/publicdomain/zero/1.0/",
+   "tags": ["door", "creak"],
+   "type": "flac",
+   "duration": 3.4,
+   "filesize": 412880,
+   "is_explicit": false,
+   "md5": "9b1c6d2f7e8a4b3c5d6e7f8091a2b3c4",
+   "previews": {
+    "preview-hq-mp3": "https://cdn.freesound.org/previews/401/401276_5121236-hq.mp3",
+    "preview-lq-mp3": "https://cdn.freesound.org/previews/401/401276_5121236-lq.mp3",
+    "preview-hq-ogg": "https://cdn.freesound.org/previews/401/401276_5121236-hq.ogg",
+    "preview-lq-ogg": "https://cdn.freesound.org/previews/401/401276_5121236-lq.ogg"
+   }
+  }
+ ]
+}

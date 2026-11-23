@@ -1,0 +1,45 @@
+name: Katalog
+
+# Nightly: crawl the sources, check every link, run the tests and commit the updated data.
+# Needs repository variable FUNDUS_KONTAKT (site URL for the User-Agent). GITHUB_TOKEN is provided by Actions.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  katalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run crawl
+        env:
+          FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENVERSE_CLIENT_ID: ${{ secrets.OPENVERSE_CLIENT_ID }}
+          OPENVERSE_CLIENT_SECRET: ${{ secrets.OPENVERSE_CLIENT_SECRET }}
+          FREESOUND_TOKEN: ${{ secrets.FREESOUND_TOKEN }}
+          SMITHSONIAN_API_KEY: ${{ secrets.SMITHSONIAN_API_KEY }}
+      - run: npm run vorschau
+      # rotating: the entries checked longest ago; the whole catalogue comes round every few nights
+      - run: node crawler/check-links.mjs --max 5000
+        env:
+          FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
+      - run: npm test
+      - name: Daten committen
+        run: |
+          git config user.name "fundus-bot"
+          git config user.email "fundus-bot@users.noreply.github.com"
+          git add data reports
+          # public/vorschau is not committed; deploy it from this job or a bucket
+          git diff --cached --quiet || git commit -m "Katalog: nächtlicher Abgleich"
+          git push

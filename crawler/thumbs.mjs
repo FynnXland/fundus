@@ -1,0 +1,185 @@
+// Mini previews: for every entry with a preview picture the crawler fetches the source's thumbnail once,
+// scales it to 320 px, stores it as WebP in public/vorschau/ and computes a 64-bit difference hash (dHash)
+// of the picture. The site shows these small previews without asking the source; the files themselves
+// stay at the source. The dHash feeds the duplicate check (two sources, same picture).
+//
+//   node crawler/thumbs.mjs            new entries only
+//   node crawler/thumbs.mjs --alle     regenerate everything
+
+import { readFile, writeFile, mkdir, readdir, unlink, access } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import sharp from 'sharp';
+import { politeFetch, setHostGap } from './lib/http.mjs';
+import { ladeKatalog } from './lib/store.mjs';
+import { SOURCES } from './sources/index.mjs';
+
+export const BREITE = 320;
+const ZIEL = 'public/vorschau';
+
+/** Stable file name for an entry: two hex characters as a folder keep each folder small. */
+export function vorschauPfad(id) {
+  const h = createHash('sha1').update(id).digest('hex');
+  return `${h.slice(0, 2)}/${h.slice(2, 16)}.webp`;
+}
+
+/** 64-bit difference hash from a 9×8 greyscale version of the picture, as 16 hex characters. */
+export async function dHash(buffer) {
+  const { data } = await sharp(buffer).flatten({ background: '#ffffff' }).greyscale().resize(9, 8, { fit: 'fill' }).raw().toBuffer({ resolveWithObject: true });
+  let bits = 0n;
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      bits = (bits << 1n) | (data[y * 9 + x] > data[y * 9 + x + 1] ? 1n : 0n);
+    }
+  }
+  return bits.toString(16).padStart(16, '0');
+}
+
+export function hamming(a, b) {
+  let x = BigInt(`0x${a}`) ^ BigInt(`0x${b}`);
+  let n = 0;
+  while (x) { n += Number(x & 1n); x >>= 1n; }
+  return n;
+}
+
+export async function vorschauBauen(buffer) {
+  const bild = sharp(buffer, { density: 144 }).flatten({ background: '#f0eee6' });
+  const meta = await bild.metadata();
+  const webp = await bild.resize({ width: BREITE, height: BREITE, fit: 'inside', withoutEnlargement: false }).webp({ quality: 62, effort: 5 }).toBuffer({ resolveWithObject: true });
+  return { webp: webp.data, breite: webp.info.width, hoehe: webp.info.height, quelle: { breite: meta.width, hoehe: meta.height } };
+}
+
+/** Where the picture for an entry comes from: the source's thumbnail, or for fonts the TTF file to render. */
+export function bildquelle(it) {
+  if (it.preview?.thumb) return it.preview.thumb;
+  if (it.preview?.type === 'font' && /\.woff2$/.test(it.preview.url ?? '')) return it.preview.url.replace(/\.woff2$/, '.ttf');
+  return null;
+}
+
+/**
+ * Font sample: "Aa" set in the font itself. Pango falls back to a default face without telling when the
+ * family name does not match the file, so the result is compared with a rendering in a made-up family:
+ * identical pixels mean the font was not used, and the entry gets no sample rather than a wrong one.
+ */
+let ersatzbild;
+async function aa(font, fontfile, text = 'Aa') {
+  return sharp({ text: { text: `<span foreground="#1f1e1d">${text}</span>`, font, fontfile, rgba: true, dpi: 1100 } }).png().toBuffer();
+}
+// Pango registers font files process-wide; two renderings at the same time mix up their files and
+// produce empty boxes. Font samples therefore run one after another.
+let schlange = Promise.resolve();
+export function schriftmuster(familie, ttfPfad) {
+  const lauf = schlange.then(() => schriftmusterJetzt(familie, ttfPfad));
+  schlange = lauf.catch(() => {});
+  return lauf;
+}
+async function schriftmusterJetzt(familie, ttfPfad) {
+  ersatzbild ??= await aa('Fundus Ersatzschrift Gibtsnicht');
+  const text = await aa(familie, ttfPfad);
+  if (text.equals(ersatzbild)) throw new Error('Schrift nicht erkannt');
+  // Some files load but render as empty boxes; then every pair of letters looks the same.
+  if (text.equals(await aa(familie, ttfPfad, 'Qg'))) throw new Error('Schrift ohne darstellbare Buchstaben');
+  const probe = await sharp(text).resize({ width: 236, height: 200, fit: 'inside' }).toBuffer();
+  const webp = await sharp({ create: { width: BREITE, height: BREITE, channels: 3, background: '#f0eee6' } }).composite([{ input: probe, gravity: 'centre' }]).webp({ quality: 70, effort: 5 }).toBuffer();
+  return { webp, breite: BREITE, hoehe: BREITE };
+}
+
+async function existiert(p) {
+  try { await access(p); return true; } catch { return false; }
+}
+
+async function pool(items, size, fn) {
+  let i = 0;
+  await Promise.all(Array.from({ length: size }, async () => {
+    while (i < items.length) await fn(items[i++]);
+  }));
+}
+
+async function main() {
+  const alle = process.argv.includes('--alle');
+  const { items } = await ladeKatalog(SOURCES.map((s) => s.id));
+  let register = {};
+  let gesperrtVorab = {};
+  try { gesperrtVorab = JSON.parse(await readFile('data/gesperrt.json', 'utf8')); } catch {}
+  try { register = JSON.parse(await readFile('data/vorschauen.json', 'utf8')); } catch {}
+
+  for (const host of ['thumb.wikimedia.org', 'upload.wikimedia.org']) setHostGap(host, 700);
+  for (const host of ['cdn.polyhaven.org', 'acg-media.struffelproductions.com', 'api.openverse.org', 'api.iconify.design', 'archive.org', 'ids.si.edu']) setHostGap(host, 250);
+  setHostGap('cdn.jsdelivr.net', 120);
+
+  // The register can be committed while the image files are not (CI), so a missing file counts as new.
+  // --quelle <id> and --max <n> limit a run (handy for a first look or for splitting a big backlog)
+  const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : undefined);
+  const nurQuelle = arg('--quelle');
+  const max = Number(arg('--max')) || Infinity;
+  const offen = items.filter((it) => {
+    const von = bildquelle(it);
+    if (!von || gesperrtVorab[it.id] || (nurQuelle && it.source.id !== nurQuelle)) return false;
+    const r = register[it.id];
+    if (alle || !r || r.von !== von) return true;
+    // final failures (file gone, picture unreadable) are not repeated; throttling and timeouts are
+    if (!r.pfad) return !r.endgueltig;
+    // a missing file is regenerated (the register can outlive the files)
+    return !existsSync(`${ZIEL}/${r.pfad}`);
+  });
+  offen.splice(max);
+  console.log(`Vorschaubilder: ${offen.length} neu von ${items.length} Einträgen`);
+  let ok = 0, fehler = 0, seitSichern = 0;
+  // the register is saved every few hundred pictures, so a long run that is interrupted loses little
+  const sichern = () => writeFile('data/vorschauen.json', JSON.stringify(register));
+  await pool(offen, 6, async (it) => {
+    const von = bildquelle(it);
+    try {
+      const istSchrift = it.preview.type === 'font' && !it.preview.thumb;
+      const res = await politeFetch(von, { timeout: 30000, retries: 2, headers: istSchrift ? {} : { Accept: 'image/avif,image/webp,image/*;q=0.8' } });
+      if (!res.ok) throw Object.assign(new Error(`HTTP ${res.status}`), { endgueltig: res.status === 404 || res.status === 410 });
+      const buf = Buffer.from(await res.arrayBuffer());
+      let v;
+      if (istSchrift) {
+        const tmp = `.cache/schrift-${vorschauPfad(it.id).slice(3, 17)}.ttf`;
+        await mkdir('.cache', { recursive: true });
+        await writeFile(tmp, buf);
+        try { v = await schriftmuster(it.title, tmp); } finally { await unlink(tmp).catch(() => {}); }
+      } else {
+        v = await vorschauBauen(buf);
+      }
+      const pfad = vorschauPfad(it.id);
+      await mkdir(`${ZIEL}/${pfad.slice(0, 2)}`, { recursive: true });
+      await writeFile(`${ZIEL}/${pfad}`, v.webp);
+      register[it.id] = { pfad, von, b: v.breite, h: v.hoehe, dhash: istSchrift ? undefined : await dHash(buf), kb: Math.round(v.webp.length / 102.4) / 10 };
+      if (++ok % 500 === 0) console.log(`  ${ok} fertig`);
+      if (++seitSichern >= 400) { seitSichern = 0; await sichern(); }
+    } catch (err) {
+      fehler++;
+      // sharp throws on data that is no picture (an HTML challenge page, a broken file): that is final too
+      const endgueltig = err.endgueltig ?? /unsupported image|corrupt|Input buffer|Schrift/i.test(String(err.message));
+      register[it.id] = { fehler: String(err.message ?? err).slice(0, 120), von, endgueltig: endgueltig || undefined };
+    }
+  });
+
+  // Previews of entries that left the catalogue or were reported (data/gesperrt.json) are deleted.
+  let gesperrt = {};
+  try { gesperrt = JSON.parse(await readFile('data/gesperrt.json', 'utf8')); } catch {}
+  const ids = new Set(items.map((it) => it.id).filter((id) => !gesperrt[id]));
+  const behalten = new Set();
+  for (const [id, r] of Object.entries(register)) {
+    if (!ids.has(id)) delete register[id];
+    else if (r.pfad) behalten.add(r.pfad);
+  }
+  let geloescht = 0;
+  try {
+    for (const ordner of await readdir(ZIEL)) {
+      for (const datei of await readdir(`${ZIEL}/${ordner}`)) {
+        if (!behalten.has(`${ordner}/${datei}`) && (await existiert(`${ZIEL}/${ordner}/${datei}`))) { await unlink(`${ZIEL}/${ordner}/${datei}`); geloescht++; }
+      }
+    }
+  } catch {}
+
+  await writeFile('data/vorschauen.json', JSON.stringify(register));
+  const kb = Object.values(register).reduce((s, r) => s + (r.kb ?? 0), 0);
+  console.log(`Fertig: ${ok} erzeugt, ${fehler} fehlgeschlagen, ${geloescht} verwaiste gelöscht. Gesamt ${Object.values(register).filter((r) => r.pfad).length} Vorschaubilder, ${(kb / 1024).toFixed(1)} MB.`);
+}
+
+if (process.argv[1]?.endsWith('thumbs.mjs')) {
+  main().catch((err) => { console.error(err); process.exit(1); });
+}

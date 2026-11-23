@@ -1,0 +1,281 @@
+{
+  "openverse": {
+    "bilder": [
+      "landscape",
+      "mountain",
+      "forest",
+      "beach",
+      "ocean",
+      "desert",
+      "river",
+      "waterfall",
+      "sky clouds",
+      "sunset",
+      "night sky",
+      "architecture",
+      "bridge",
+      "castle",
+      "church",
+      "city street",
+      "skyline",
+      "interior",
+      "texture",
+      "wood texture",
+      "stone texture",
+      "metal texture",
+      "fabric",
+      "animal",
+      "bird",
+      "cat",
+      "dog",
+      "insect",
+      "flower",
+      "tree",
+      "plant",
+      "food",
+      "fruit",
+      "vegetable",
+      "people working",
+      "portrait",
+      "machine",
+      "car",
+      "train",
+      "vintage poster",
+      "map",
+      "botanical illustration"
+    ],
+    "musik": [
+      "ambient",
+      "piano",
+      "electronic",
+      "acoustic guitar",
+      "orchestral",
+      "jazz",
+      "classical",
+      "folk",
+      "rock",
+      "hip hop",
+      "lofi",
+      "cinematic",
+      "chiptune",
+      "drum and bass",
+      "meditation"
+    ],
+    "sounds": [
+      "rain",
+      "thunder",
+      "wind",
+      "water",
+      "river",
+      "ocean waves",
+      "fire",
+      "birds",
+      "forest ambience",
+      "city ambience",
+      "traffic",
+      "crowd",
+      "footsteps",
+      "door",
+      "door knock",
+      "glass",
+      "metal impact",
+      "wood impact",
+      "explosion",
+      "gunshot",
+      "whoosh",
+      "swoosh",
+      "click",
+      "button",
+      "beep",
+      "alarm",
+      "bell",
+      "clock",
+      "engine",
+      "car",
+      "train",
+      "airplane",
+      "dog",
+      "cat",
+      "horse",
+      "applause",
+      "laughter",
+      "heartbeat",
+      "typing keyboard",
+      "paper"
+    ],
+    "budget": 150,
+    "maxMinuten": 40
+  },
+  "wikimedia": {
+    "kategorien": [
+      "Category:Featured_pictures_on_Wikimedia_Commons",
+      "Category:Valued_images_sorted_by_promotion_date"
+    ],
+    "limit": 3000
+  },
+  "polyhaven": {
+    "models": 2000,
+    "textures": 2000,
+    "hdris": 2000
+  },
+  "ambientcg": {
+    "typen": [
+      "Material",
+      "Decal",
+      "Atlas",
+      "PlainTexture",
+      "Terrain",
+      "HDRI",
+      "HDRIElement",
+      "3DModel"
+    ],
+    "limit": 10000
+  },
+  "github": {
+    "projekte": [
+      "topic:game stars:>300",
+      "topic:boilerplate stars:>800",
+      "topic:self-hosted stars:>2000",
+      "topic:game-engine stars:>500",
+      "topic:open-source-game stars:>100",
+      "topic:godot-game stars:>100",
+      "topic:pixel-art stars:>200",
+      "topic:creative-coding stars:>300",
+      "topic:generative-art stars:>200",
+      "topic:threejs stars:>1500",
+      "topic:p5js stars:>300"
+    ],
+    "skripte": [
+      "topic:blender-addon stars:>150",
+      "topic:userscript stars:>200",
+      "topic:shell-scripts stars:>200",
+      "topic:automation-scripts stars:>100",
+      "topic:blender-scripts stars:>50",
+      "topic:photoshop-scripts stars:>50",
+      "topic:obs-scripts stars:>30",
+      "topic:autohotkey stars:>300",
+      "topic:powershell-scripts stars:>100",
+      "topic:python-scripts stars:>300",
+      "topic:bookmarklet stars:>100",
+      "topic:greasemonkey-script stars:>50"
+    ],
+    "skillSuchen": [
+      "topic:claude-skills stars:>30",
+      "topic:agent-skills stars:>30",
+      "topic:claude-code-skills stars:>30",
+      "topic:claude-skill stars:>10",
+      "topic:skills stars:>200 claude",
+      "SKILL.md claude in:readme stars:>50",
+      "topic:anthropic-skills"
+    ],
+    "skillRepos": [
+      "anthropics/skills"
+    ],
+    "proSuche": 50,
+    "skillsProRepo": 120,
+    "skillReposMax": 40,
+    "weitere": [
+      {
+        "q": "topic:game-assets stars:>20",
+        "art": "grafik"
+      },
+      {
+        "q": "topic:sprites stars:>20",
+        "art": "grafik"
+      },
+      {
+        "q": "topic:spritesheet stars:>30",
+        "art": "grafik"
+      },
+      {
+        "q": "topic:tileset stars:>10",
+        "art": "grafik"
+      },
+      {
+        "q": "topic:pixel-art stars:>100 assets",
+        "art": "grafik"
+      },
+      {
+        "q": "topic:svg-illustrations",
+        "art": "grafik"
+      },
+      {
+        "q": "topic:sound-effects stars:>10",
+        "art": "sound"
+      },
+      {
+        "q": "topic:sfx stars:>20",
+        "art": "sound"
+      },
+      {
+        "q": "topic:royalty-free-music",
+        "art": "musik"
+      },
+      {
+        "q": "topic:textures stars:>30",
+        "art": "textur"
+      },
+      {
+        "q": "topic:pbr-textures",
+        "art": "textur"
+      },
+      {
+        "q": "topic:3d-models stars:>50",
+        "art": "3d"
+      },
+      {
+        "q": "topic:shaders stars:>300",
+        "art": "skript"
+      },
+      {
+        "q": "topic:godot-addon stars:>100",
+        "art": "skript"
+      },
+      {
+        "q": "topic:unity-package stars:>300",
+        "art": "skript"
+      },
+      {
+        "q": "topic:obs-plugin stars:>100",
+        "art": "skript"
+      },
+      {
+        "q": "topic:figma-plugin stars:>200",
+        "art": "skript"
+      }
+    ]
+  },
+  "fontsource": {
+    "limit": 3000
+  },
+  "iconify": {
+    "limit": 300,
+    "mehrBeispiele": false,
+    "auslassen": []
+  },
+  "internetarchive": {
+    "sammlungen": [
+      "netlabels"
+    ],
+    "limit": 400,
+    "maxSeiten": 8
+  },
+  "smithsonian": {
+    "bilder": [
+      "landscape",
+      "botanical",
+      "bird",
+      "map",
+      "poster",
+      "portrait",
+      "photograph",
+      "textile",
+      "ceramic",
+      "aircraft"
+    ],
+    "modelle": 200,
+    "proSuche": 100,
+    "seiten": 1,
+    "budget": 60
+  }
+}

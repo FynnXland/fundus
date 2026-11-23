@@ -1,0 +1,56 @@
+{
+ "assetId": "Wood099",
+ "displayName": "Wood 099",
+ "displayCategory": "Wood",
+ "dataType": "Material",
+ "tags": [
+  "099",
+  "99",
+  "pattern",
+  "wood",
+  "wood099"
+ ],
+ "shortLink": "https://ambientcg.com/a/Wood099",
+ "previewImage": {
+  "256-PNG": "https://acg-media.struffelproductions.com/file/ambientCG-Web/media/thumbnail/256-PNG/Wood099.png",
+  "512-PNG": "https://acg-media.struffelproductions.com/file/ambientCG-Web/media/thumbnail/512-PNG/Wood099.png"
+ },
+ "downloadFolders": {
+  "default": {
+   "title": "default",
+   "downloadFiletypeCategories": {
+    "zip": {
+     "downloads": [
+      {
+       "fullDownloadPath": "https://ambientcg.com/get?file=Wood099_1K-JPG.zip",
+       "downloadLink": "https://ambientcg.com/get?file=Wood099_1K-JPG.zip",
+       "fileName": "Wood099_1K-JPG.zip",
+       "size": 2906408,
+       "filetype": "zip",
+       "attribute": "1K-JPG",
+       "zipContent": []
+      },
+      {
+       "fullDownloadPath": "https://ambientcg.com/get?file=Wood099_2K-JPG.zip",
+       "downloadLink": "https://ambientcg.com/get?file=Wood099_2K-JPG.zip",
+       "fileName": "Wood099_2K-JPG.zip",
+       "size": 7562357,
+       "filetype": "zip",
+       "attribute": "2K-JPG",
+       "zipContent": []
+      },
+      {
+       "fullDownloadPath": "https://ambientcg.com/get?file=Wood099_1K-PNG.zip",
+       "downloadLink": "https://ambientcg.com/get?file=Wood099_1K-PNG.zip",
+       "fileName": "Wood099_1K-PNG.zip",
+       "size": 7448789,
+       "filetype": "zip",
+       "attribute": "1K-PNG",
+       "zipContent": []
+      }
+     ]
+    }
+   }
+  }
+ }
+}

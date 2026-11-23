@@ -1,0 +1,31 @@
+{
+  "name": "fundus",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Katalog freier Assets: Bilder, 3D, Texturen, Musik, Sounds, Code, Projekte und Claude-Code-Skills. Vorschau und Download kommen direkt von der Quelle.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node crawler/publish.mjs && vite build",
+    "preview": "vite preview",
+    "crawl": "node crawler/crawl.mjs",
+    "links": "node crawler/check-links.mjs",
+    "daten": "node crawler/publish.mjs",
+    "test": "node --test tests/",
+    "vorschau": "node crawler/thumbs.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.5",
+    "vite": "^6.4.6"
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "fflate": "^0.8.3",
+    "minisearch": "^7.2.0",
+    "three": "^0.187.0"
+  }
+}

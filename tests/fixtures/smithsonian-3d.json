@@ -1,0 +1,187 @@
+{
+ "id": "con-1593513032533-1594131465087-0",
+ "title": "Mantis shrimp",
+ "unitCode": "OCIO_DPO3D",
+ "type": "edanmdm",
+ "url": "edanmdm:dpo_3d_200039",
+ "content": {
+  "freetext": {},
+  "descriptiveNonRepeating": {
+   "title": {
+    "label": "Title",
+    "content": "Mantis shrimp"
+   },
+   "record_ID": "dpo_3d_200039",
+   "unit_code": "DPO",
+   "data_source": "NMNH - Invertebrate Zoology Dept.",
+   "online_media": {
+    "media": [
+     {
+      "id": "3d_package:62040f38-ba84-413b-9a24-5b9054e64759",
+      "type": "3d_voyager",
+      "usage": {
+       "text": "",
+       "codes": "",
+       "access": "CC0"
+      },
+      "content": "https://3d-api.si.edu/voyager/3d_package:62040f38-ba84-413b-9a24-5b9054e64759",
+      "resources": [
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/mantis_shrimp-100k-2048-gltf_std.zip",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (Low Resolution 3D mesh, gltf, scale in m)",
+        "category": "Low Resolution",
+        "filename": "mantis_shrimp-100k-2048-gltf_std.zip",
+        "attributes": [
+         {
+          "UNITS": "m",
+          "FILE_TYPE": "zip",
+          "MODEL_FILE_TYPE": "gltf",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 2333084
+         }
+        ]
+       },
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/mantis_shrimp-full_resolution-obj_std.zip",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (Full Resolution 3D mesh, obj, scale in m)",
+        "category": "Full Resolution",
+        "filename": "mantis_shrimp-full_resolution-obj_std.zip",
+        "attributes": [
+         {
+          "UNITS": "m",
+          "FILE_TYPE": "zip",
+          "MODEL_FILE_TYPE": "obj",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 16081299
+         }
+        ]
+       },
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/mantis_shrimp-100k-2048_std.glb",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (Low Resolution 3D mesh, glb, scale in m)",
+        "category": "Low Resolution",
+        "filename": "mantis_shrimp-100k-2048_std.glb",
+        "attributes": [
+         {
+          "UNITS": "m",
+          "FILE_TYPE": "glb",
+          "MODEL_FILE_TYPE": "glb",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 2961248
+         }
+        ]
+       },
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/mantis_shrimp-150k.usdz",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (iOS AR model 3D mesh, usdz, scale in m)",
+        "category": "iOS AR model",
+        "filename": "mantis_shrimp-150k.usdz",
+        "attributes": [
+         {
+          "UNITS": "m",
+          "FILE_TYPE": "usdz",
+          "MODEL_FILE_TYPE": "usdz",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 3048026
+         }
+        ]
+       },
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/mantis_shrimp-100k-2048_std_draco.glb",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (Low Resolution 3D mesh, draco compression glb, scale in m)",
+        "category": "Low Resolution",
+        "filename": "mantis_shrimp-100k-2048_std_draco.glb",
+        "attributes": [
+         {
+          "UNITS": "m",
+          "FILE_TYPE": "draco compression glb",
+          "MODEL_FILE_TYPE": "draco compression glb",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 804556
+         }
+        ]
+       },
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/mantis_shrimp-100k-2048-obj_std.zip",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (Low Resolution 3D mesh, obj, scale in m)",
+        "category": "Low Resolution",
+        "filename": "mantis_shrimp-100k-2048-obj_std.zip",
+        "attributes": [
+         {
+          "UNITS": "m",
+          "FILE_TYPE": "zip",
+          "MODEL_FILE_TYPE": "obj",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 2638991
+         }
+        ]
+       },
+       {
+        "url": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/resources/usnm_mantis_shrimp-print_ready.zip",
+        "name": "Stomatopoda",
+        "type": "3D mesh",
+        "title": "Stomatopoda (Watertight 3D mesh, stl, scale in mm)",
+        "category": "Watertight",
+        "filename": "usnm_mantis_shrimp-print_ready.zip",
+        "attributes": [
+         {
+          "UNITS": "mm",
+          "FILE_TYPE": "zip",
+          "MODEL_FILE_TYPE": "stl",
+          "DRACO_COMPRESSED": false,
+          "GLTF_STANDARDIZED": false
+         },
+         {
+          "FILE_SIZE": 15011156
+         }
+        ]
+       }
+      ],
+      "thumbnail": "https://3d-api.si.edu/content/document/3d_package:62040f38-ba84-413b-9a24-5b9054e64759/scene-image-thumb.jpg",
+      "voyagerId": "3d_package:62040f38-ba84-413b-9a24-5b9054e64759"
+     }
+    ],
+    "mediaCount": 1
+   },
+   "metadata_usage": {
+    "access": "CC0",
+    "content": "Some additional rights text"
+   }
+  },
+  "indexedStructured": {
+   "topic": [
+    "Invertebrate Zoology"
+   ]
+  }
+ }
+}
