@@ -60,7 +60,12 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
   öffentlichen Listenseiten `/add-ons/?page=N`, robots.txt erlaubt `/`, Content-Signal `search=yes, ai-train=no, use=reference`;
   Fundus trainiert nichts und verlinkt die Quelle). Abschaltbar mit `"blender": { "bewertungen": false }`.
 - Mini-Vorschaubilder: eigene Kopie auf dem Server, siehe Matrix. Bei Meldungen das Vorschaubild mit entfernen
-  (passiert automatisch beim nächsten `npm run vorschau`, sobald der Eintrag gesperrt ist).
+  (passiert automatisch beim nächsten `npm run vorschau`, sobald der Eintrag gesperrt ist; danach löscht
+  `npm run vorschau:r2` es aus dem R2-Bucket, im Cloudflare-Cache lebt es höchstens noch einen Tag).
+- Entscheidung Fynn 23.11.2026 für fundus.fynn.land: Fundus liefert die eigenen Vorschaubilder für alle Einträge weiter
+  selbst aus („So, dass wir sie weiterhin anzeigen können“), nicht nur für gemeinfreie. Der Meldeweg ist in der
+  Fußzeile („Eintrag melden“, `#/melden`), auf jeder Karte und im Fundus-Abschnitt von Impressum und Datenschutz auf
+  fynn.land verlinkt.
 
 ## Quellen
 
