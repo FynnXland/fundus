@@ -26,11 +26,39 @@ export function lizenzSatz(l) {
 }
 
 /* ---------------- Bausteine ---------------- */
-const NAMEN = { abmessung: 'Abmessung', original: 'Original', dauer: 'Dauer', polygone: 'Polygone', aufloesung: 'Auflösung', art: 'Art', sterne: 'Sterne auf GitHub', sprache: 'Sprache', zuletzt: 'Letzte Änderung', repository: 'Repository', sammlung: 'Sammlung', dateien: 'Dateien', schnitte: 'Schnitte', kategorie: 'Kategorie', icons: 'Icons' };
+const NAMEN = { abmessung: 'Abmessung', original: 'Original', dauer: 'Dauer', polygone: 'Polygone', aufloesung: 'Auflösung', art: 'Art', sterne: 'Sterne auf GitHub', sprache: 'Sprache', zuletzt: 'Letzte Änderung', repository: 'Repository', sammlung: 'Sammlung', dateien: 'Dateien', schnitte: 'Schnitte', kategorie: 'Kategorie', icons: 'Icons', abrufe: 'Downloads', version: 'Version', blender: 'Blender', godot: 'Godot', stil: 'Stil', gestalter: 'Gestaltung' };
+
+/* ---------------- 3D: which file the viewer can show ---------------- */
+const MODELL_FORMATE = ['glb', 'gltf', 'dae', 'obj', 'stl', 'ply'];
+const MODELL_MAX = 80 * 1024 * 1024;
+const endungVon = (u) => (u ?? '').split('?')[0].split('#')[0].split('.').pop().toLowerCase();
+
+/**
+ * Source for the 3D viewer, or null: the source's own glTF preview, a Gazebo Fuel model (meshes fetched one by
+ * one, the ZIP is never needed), or a single mesh file among the downloads (STL from Commons and the like).
+ */
+export function modellQuelleVon(it) {
+  if (it.kind !== '3d') return null;
+  const p = it.preview;
+  if (p.type === 'model' && p.url) return { teile: [{ url: p.url, format: endungVon(p.url) }], dateien: p.dateien };
+  if (it.source.id === 'fuel') {
+    const zip = it.downloads.find((d) => /\/models\/[^/]+\.zip$/.test(d.url));
+    if (zip) return { fuel: zip.url.replace(/\.zip$/, '') };
+  }
+  const datei = it.downloads.find((d) => !d.paket && MODELL_FORMATE.includes((d.format ?? endungVon(d.url)).toLowerCase()));
+  if (datei) {
+    const f = (datei.format ?? endungVon(datei.url)).toLowerCase();
+    // STL from 3D printing is Z up; glTF is Y up by definition. Very large files load only on request.
+    return { teile: [{ url: datei.url, format: f }], zHoch: f === 'stl', zuGross: datei.size > MODELL_MAX ? datei.size : 0 };
+  }
+  return null;
+}
 
 function grossVorschauHosts(it) {
   const p = it.preview;
-  return [...new Set([p.url, p.thumb, ...Object.values(p.dateien ?? {}).slice(0, 1)].filter(Boolean).map(host))].join(' und ');
+  const m = modellQuelleVon(it);
+  const modellUrls = m ? (m.fuel ? [m.fuel] : m.teile.map((t) => t.url)) : [];
+  return [...new Set([...modellUrls, p.url, p.thumb, ...Object.values(p.dateien ?? {}).slice(0, 1)].filter(Boolean).map(host))].join(' und ');
 }
 
 function brauchtQuelle(it) {
@@ -41,7 +69,7 @@ function vorschauFlaeche(it, mitVorschau) {
   const lokal = it.vorschau ? `<img class="info__mini" src="/vorschau/${esc(it.vorschau.pfad)}" alt="Vorschau: ${esc(it.title)}" width="${it.vorschau.b}" height="${it.vorschau.h}" />` : `<span class="info__symbol">${symbol(it.kind, 64)}</span>`;
   if (!brauchtQuelle(it)) return textVorschau(it);
   if (mitVorschau) return `${lokal}<p class="info__hinweis" role="status">Lädt von ${esc(grossVorschauHosts(it))} …</p>`;
-  const was = { model: '3D-Ansicht', audio: 'Hörprobe', font: 'Schriftprobe' }[it.preview.type] ?? 'Große Vorschau';
+  const was = modellQuelleVon(it) ? '3D-Ansicht' : { model: '3D-Ansicht', audio: 'Hörprobe', font: 'Schriftprobe' }[it.preview.type] ?? 'Große Vorschau';
   return `${lokal}
     <div class="info__zustimmung">
       <p>${esc(was)} kommt direkt von ${esc(grossVorschauHosts(it))}. Dabei erfährt der Server deine IP-Adresse.</p>
@@ -167,7 +195,7 @@ function infoHtml(it, katalog, mitVorschau) {
 }
 
 /* ---------------- Große Vorschau von der Quelle ---------------- */
-async function grossLaden(fenster, it) {
+async function grossLaden(fenster, it, { grossesModell = false } = {}) {
   const ziel = fenster.querySelector('#info-vorschau');
   const p = it.preview;
   const alt = `Vorschau: ${it.title}`;
@@ -181,6 +209,22 @@ async function grossLaden(fenster, it) {
   if (p.icons?.length) {
     // icon sets: a sheet of example icons, each an SVG from the source
     ziel.innerHTML = `<ul class="iconblatt">${p.icons.slice(0, 12).map((u) => `<li><img src="${esc(safeUrl(u))}" alt="" referrerpolicy="no-referrer" loading="lazy" /></li>`).join('')}</ul><p class="info__hinweis">Beispiele aus dem Set, geladen von ${esc(host(p.icons[0]))}</p>`;
+    return;
+  }
+  const mq = modellQuelleVon(it);
+  if (mq?.zuGross && !grossesModell) {
+    // show the still picture now and offer the model, so a 137 MB file never loads by surprise
+    queueMicrotask(() => ziel.insertAdjacentHTML('afterend', `<p class="info__klein modell-gross">Das 3D-Modell ist ${esc(bytes(mq.zuGross))} groß. <button type="button" class="knopf knopf--klein" data-modell-gross>3D-Modell trotzdem laden</button></p>`));
+  } else if (mq) {
+    try {
+      const { modellZeigen, fuelQuelle } = await import('./modell.js');
+      const quelle = mq.fuel ? await fuelQuelle(mq.fuel) : mq;
+      if (!fenster.open) return;
+      aufraeumen = await modellZeigen(ziel, quelle, alt);
+    } catch (err) {
+      console.warn(err);
+      fehler('Das 3D-Modell ließ sich nicht laden.');
+    }
     return;
   }
   if (p.type === 'image' || (p.type === 'audio' && !p.url)) {
@@ -232,6 +276,12 @@ async function grossLaden(fenster, it) {
 }
 
 function verdrahten(fenster, it, mitVorschau) {
+  // on the content, which is rebuilt for every entry (the dialog itself stays, its listeners would pile up)
+  fenster.querySelector('.info')?.addEventListener('click', (e) => {
+    if (!e.target.closest('[data-modell-gross]')) return;
+    e.target.closest('.modell-gross')?.remove();
+    grossLaden(fenster, it, { grossesModell: true });
+  });
   if (brauchtQuelle(it) && mitVorschau) grossLaden(fenster, it);
   fenster.querySelector('[data-einmal]')?.addEventListener('click', () => grossLaden(fenster, it));
   fenster.querySelector('[data-immer]')?.addEventListener('click', () => { vorschau.setzen(true); grossLaden(fenster, it); });
