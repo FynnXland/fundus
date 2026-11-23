@@ -83,6 +83,30 @@ const bis = (x, n = 9999) => Math.max(0, Math.min(n, Math.round(x * n)));
  * A group with fewer than MIN_GRUPPE counts has no meaningful top (its only entry would be its own p99 and get the
  * full score): it takes the p99 of its whole source, and if that is small too, of all counts.
  */
+/**
+ * Skills carry the stars of their collection, so every skill of a collection has the same rank and a whole
+ * collection would sit in one block. Interleave instead: the first skill of each collection (collections by
+ * stars), then the second of each, and so on. The ranks are renumbered downwards from the highest one, so the
+ * head of the folder and the browser's sort both follow this order. Mutates the items.
+ */
+export function reihumNachSammlung(skills) {
+  if (skills.length < 2) return;
+  const gruppen = new Map();
+  for (const it of skills) {
+    const k = it.popularity?.source?.url ?? it.collection?.id ?? it.id;
+    if (!gruppen.has(k)) gruppen.set(k, []);
+    gruppen.get(k).push(it);
+  }
+  const reihen = [...gruppen.values()]
+    .map((l) => l.sort((a, b) => a.id.localeCompare(b.id)))
+    .sort((a, b) => b[0].rang - a[0].rang || a[0].id.localeCompare(b[0].id));
+  const oben = Math.max(...skills.map((it) => it.rang));
+  let i = 0;
+  for (let stufe = 0; reihen.some((l) => l.length > stufe); stufe++) {
+    for (const l of reihen) if (l[stufe]) l[stufe].rang = Math.max(10000, oben - i++);
+  }
+}
+
 export function rangwerte(items) {
   const mittel = new Map(); // source -> [sum, n]
   const zaehlungen = new Map(); // source|kind -> counts
@@ -143,5 +167,6 @@ export function rangwerte(items) {
       it.rang = 0;
     }
   }
+  reihumNachSammlung(items.filter((it) => it.kind === 'skill' && it.rang >= 10000 && it.rang < 20000));
   return items;
 }

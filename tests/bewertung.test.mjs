@@ -122,11 +122,11 @@ test('Rang: eine Stimme mit 5,0 steht nicht vor 4,8 bei 1.000 Stimmen', () => {
 test('Rang: Bewertung vor Beliebtheit vor nichts; Beliebtheit je Quelle und Art normalisiert', () => {
   const liste = rangwerte([
     item('b', 'ia', 'musik', { rating: rated(3, 2), popularity: pop(5) }),
-    item('p-hoch', 'gh', 'skill', { popularity: pop(200000) }),
-    item('p-niedrig', 'gh', 'skill', { popularity: pop(40) }),
+    item('p-hoch', 'gh', 'skript', { popularity: pop(200000) }),
+    item('p-niedrig', 'gh', 'skript', { popularity: pop(40) }),
     item('ph-hoch', 'ph', '3d', { popularity: pop(30000) }),
     item('nichts', 'wm', 'bild'),
-    ...Array.from({ length: 100 }, (_, i) => item(`g${i}`, 'gh', 'skill', { popularity: pop(10 + i * 100) })),
+    ...Array.from({ length: 100 }, (_, i) => item(`g${i}`, 'gh', 'skript', { popularity: pop(10 + i * 100) })),
     ...Array.from({ length: 100 }, (_, i) => item(`h${i}`, 'ph', '3d', { popularity: pop(10 + i * 10) })),
   ]);
   const r = Object.fromEntries(liste.map((x) => [x.id, x.rang]));
@@ -342,4 +342,14 @@ test('Nachtragen: Internet-Archive-Treffer und Fuel-Abrufe landen im vorhandenen
   const f = fuelAnwenden([{ id: 'fuel:a/b', source: { url: 'https://app.gazebosim.org/a/fuel/models/b' }, meta: { abrufe: '326' } }, { id: 'fuel:c/d', source: { url: 'https://x.org/' } }]);
   assert.equal(f.items[0].popularity.value, 326);
   assert.equal(f.items[1].popularity, undefined);
+});
+
+test('Skills: Sammlungen mit gleichen Sternen werden reihum gemischt', async () => {
+  const { reihumNachSammlung } = await import('../crawler/lib/bewertung.mjs');
+  const sk = (id, repo, rang) => ({ id, kind: 'skill', rang, popularity: { value: 1, source: { url: `https://github.com/${repo}` } } });
+  const l = [sk('a1', 'gross', 19000), sk('a2', 'gross', 19000), sk('a3', 'gross', 19000), sk('b1', 'mittel', 15000), sk('b2', 'mittel', 15000), sk('c1', 'klein', 12000)];
+  reihumNachSammlung(l);
+  const folge = [...l].sort((x, y) => y.rang - x.rang).map((x) => x.id);
+  assert.deepEqual(folge, ['a1', 'b1', 'c1', 'a2', 'b2', 'a3']);
+  assert.ok(l.every((x) => x.rang >= 10000 && x.rang < 20000));
 });

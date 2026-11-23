@@ -89,7 +89,7 @@ Noch offen aus den Stand-Dateien: Videoprobe in der Detailansicht (`PREVIEW_TYPE
   Tooltip, Beliebtheit als Zahl, bei Skills „der Sammlung“.
 - Skills: 44 Sammlungen in `github.skillRepos`, Ausschlussliste. Ohne `GITHUB_TOKEN` bricht der Lauf nach rund 55
   Anfragen ab: 1.430 Skills, nur 343 mit Sternen. Mit Token neu crawlen.
-- Offen: Kopf der Skills zeigt eine Sammlung am Stück (gleiche Sterne); im Kopf reihum nach Sammlung mischen.
+- Skills werden reihum nach Sammlung gemischt (`reihumNachSammlung` in `crawler/lib/bewertung.mjs`).
 - Katalog: 59.971 Objekte.
 
 ## Wenn ein Unterchat seinen Bericht schickt: einbinden
