@@ -22,11 +22,11 @@ async function waitForHost(host) {
 
 /**
  * @param {string} url
- * @param {{method?: string, headers?: object, timeout?: number, retries?: number, body?: any}} [opts]
+ * @param {{method?: string, headers?: object, timeout?: number, retries?: number, body?: any, redirect?: RequestRedirect}} [opts]
  * @returns {Promise<Response>}
  */
 export async function politeFetch(url, opts = {}) {
-  const { method = 'GET', headers = {}, timeout = 20000, retries = 3, body } = opts;
+  const { method = 'GET', headers = {}, timeout = 20000, retries = 3, body, redirect = 'follow' } = opts;
   const host = new URL(url).host;
   let attempt = 0;
   for (;;) {
@@ -36,7 +36,7 @@ export async function politeFetch(url, opts = {}) {
       res = await fetch(url, {
         method,
         body,
-        redirect: 'follow',
+        redirect,
         headers: { 'User-Agent': USER_AGENT, Accept: '*/*', ...headers },
         signal: AbortSignal.timeout(timeout),
       });

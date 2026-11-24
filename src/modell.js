@@ -56,6 +56,13 @@ async function teilLaden(teil, manager) {
     }
     const g = await obj.loadAsync(teil.url);
     if (!teil.mtl) g.traverse((o) => { if (o.isMesh) o.material = neutral(); });
+    if (teil.bumpAlsNormal) {
+      g.traverse((o) => {
+        for (const m of o.isMesh ? [o.material].flat() : []) {
+          if (m.bumpMap) { m.normalMap = m.bumpMap; m.bumpMap = null; m.needsUpdate = true; }
+        }
+      });
+    }
     return g;
   }
   if (f === 'dae') {
@@ -201,6 +208,37 @@ export async function modellZeigen(ziel, quelle, beschriftung) {
     });
     renderer.dispose();
   };
+}
+
+/* ---------------- ZIP (ambientCG) ---------------- */
+// ambientCG ships each model only as a ZIP: OBJ + MTL + textures, plus .blend and .usdc the viewer has no use for.
+// The ZIP is fetched once, the needed files become blob URLs, and freigeben() releases them when the window closes.
+
+const ZIP_NOETIG = /\.(obj|mtl|jpe?g|png|gltf|glb|bin|stl|ply|dae)$/i;
+
+/** Builds the source for modellZeigen from a ZIP address. */
+export async function zipQuelle(url) {
+  const [{ unzip }, antwort] = await Promise.all([import('fflate'), fetch(url, { referrerPolicy: 'no-referrer', credentials: 'omit' })]);
+  if (!antwort.ok) throw new Error(`ZIP ${antwort.status}`);
+  const daten = new Uint8Array(await antwort.arrayBuffer());
+  const inhalt = await new Promise((ok, nein) => unzip(daten, { filter: (f) => ZIP_NOETIG.test(f.name) && !f.name.startsWith('__MACOSX/') }, (err, r) => (err ? nein(err) : ok(r))));
+  const pfade = Object.keys(inhalt);
+  const endung = (p) => p.split('.').pop().toLowerCase();
+  const urls = [];
+  const dateien = {};
+  for (const p of pfade) {
+    const typ = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png' }[endung(p)] ?? 'application/octet-stream';
+    const u = URL.createObjectURL(new Blob([inhalt[p]], { type: typ }));
+    urls.push(u);
+    dateien[p] = u;
+  }
+  const freigeben = () => urls.forEach((u) => URL.revokeObjectURL(u));
+  const mesh = FORMATE.map((f) => pfade.find((p) => endung(p) === f && !/collision/i.test(p))).find(Boolean);
+  if (!mesh) { freigeben(); throw new Error('Kein darstellbares Mesh im ZIP'); }
+  const f = endung(mesh);
+  const mtl = f === 'obj' ? pfade.find((p) => p.toLowerCase() === mesh.toLowerCase().replace(/\.obj$/, '.mtl')) ?? pfade.find((p) => endung(p) === 'mtl') : undefined;
+  // ambientCG writes its OpenGL normal map as map_bump; it is used as a normal map, not as a height map
+  return { teile: [{ url: dateien[mesh], format: f, mtl: mtl && dateien[mtl], bumpAlsNormal: true }], dateien, zHoch: f === 'stl', freigeben };
 }
 
 /* ---------------- Gazebo Fuel ---------------- */

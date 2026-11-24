@@ -41,6 +41,8 @@ export function modellQuelleVon(it) {
   if (it.kind !== '3d') return null;
   const p = it.preview;
   if (p.type === 'model' && p.url) return { teile: [{ url: p.url, format: endungVon(p.url) }], dateien: p.dateien };
+  // ambientCG: only a ZIP; the crawler stored the direct address of the smallest one
+  if (p.zip?.url) return { zip: p.zip.url, zuGross: p.zip.size > MODELL_MAX ? p.zip.size : 0 };
   if (it.source.id === 'fuel') {
     const zip = it.downloads.find((d) => /\/models\/[^/]+\.zip$/.test(d.url));
     if (zip) return { fuel: zip.url.replace(/\.zip$/, '') };
@@ -57,7 +59,7 @@ export function modellQuelleVon(it) {
 function grossVorschauHosts(it) {
   const p = it.preview;
   const m = modellQuelleVon(it);
-  const modellUrls = m ? (m.fuel ? [m.fuel] : m.teile.map((t) => t.url)) : [];
+  const modellUrls = m ? (m.fuel ? [m.fuel] : m.zip ? [m.zip] : m.teile.map((t) => t.url)) : [];
   return [...new Set([...modellUrls, p.url, p.thumb, ...Object.values(p.dateien ?? {}).slice(0, 1)].filter(Boolean).map(host))].join(' und ');
 }
 
@@ -218,10 +220,12 @@ async function grossLaden(fenster, it, { grossesModell = false } = {}) {
     queueMicrotask(() => ziel.insertAdjacentHTML('afterend', `<p class="info__klein modell-gross">Das 3D-Modell ist ${esc(bytes(mq.zuGross))} groß. <button type="button" class="knopf knopf--klein" data-modell-gross>3D-Modell trotzdem laden</button></p>`));
   } else if (mq) {
     try {
-      const { modellZeigen, fuelQuelle } = await import('./modell.js');
-      const quelle = mq.fuel ? await fuelQuelle(mq.fuel) : mq;
-      if (!fenster.open) return;
-      aufraeumen = await modellZeigen(ziel, quelle, alt);
+      const { modellZeigen, fuelQuelle, zipQuelle } = await import('./modell.js');
+      const quelle = mq.fuel ? await fuelQuelle(mq.fuel) : mq.zip ? await zipQuelle(mq.zip) : mq;
+      if (!fenster.open) { quelle.freigeben?.(); return; }
+      let weg;
+      try { weg = await modellZeigen(ziel, quelle, alt); } catch (err) { quelle.freigeben?.(); throw err; }
+      aufraeumen = quelle.freigeben ? () => { weg(); quelle.freigeben(); } : weg;
     } catch (err) {
       console.warn(err);
       fehler('Das 3D-Modell ließ sich nicht laden.');

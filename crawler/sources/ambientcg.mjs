@@ -1,6 +1,6 @@
 // ambientCG: CC0 materials and HDRIs. A one-person project, so the crawler asks for one page per type
 // and caches nothing else. Downloads are ZIP files at the source.
-import { getJson, setHostGap } from '../lib/http.mjs';
+import { getJson, politeFetch, setHostGap } from '../lib/http.mjs';
 import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem, q } from '../lib/item.mjs';
 
@@ -76,6 +76,20 @@ source.crawl = async function crawl(cfg, log) {
       if (it) out.push(it);
     }
     if (gefunden.length < seite) break;
+  }
+  // 3D models: the browser cannot follow ambientcg.com/get (the redirect has no CORS header), but the file
+  // server behind it allows any origin. The direct address of the smallest ZIP (OBJ with 1K textures) is
+  // looked up once per model so the 3D view can unpack it.
+  for (const it of out.filter((x) => x.kind === '3d')) {
+    const zip = [...it.downloads].filter((d) => /JPG/i.test(d.label)).sort((a, b) => (a.size ?? Infinity) - (b.size ?? Infinity))[0];
+    if (!zip) continue;
+    try {
+      const res = await politeFetch(zip.url, { method: 'HEAD', redirect: 'manual' });
+      const ziel = res.headers.get('location');
+      if (ziel && /^https:\/\//.test(ziel)) it.preview.zip = { url: ziel, size: zip.size };
+    } catch (err) {
+      log(`  ambientcg ${it.id}: ${err.message}`);
+    }
   }
   return out;
 };
