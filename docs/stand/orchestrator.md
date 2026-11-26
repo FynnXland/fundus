@@ -169,3 +169,15 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   aus lokalem R2, `/mcp` (Suche, Vorschau), Prius und Toy Car in 3D unter der CSP.
 
 - 23.11.2026 abends: Linkprüfung `--max 5000` lief beim Herunterfahren noch, Ergebnis verloren (schreibt erst am Ende). Nach dem Neustart erneut starten. Cloudflare: R2 im Konto noch nicht freigeschaltet, Bucket und Tokens folgen.
+
+## Test mit echter KI, 26.11.2026
+
+- `npm run build:web`, dann `npx wrangler dev` (Port 4572, wie in Produktion). Claude Code (`claude -p`, Sonnet 5.5)
+  bekam nur `http://127.0.0.1:4572/mcp` als HTTP-Server. Auftrag „drei CC0-Stühle als glTF, ansehen, schönsten
+  auswählen, Lizenz und Links“: Suche, Details, Namensnennung und Download-Links kamen richtig an (10 Schritte, rund 35 s).
+- Vorschauen fehlten zuerst, weil im lokalen R2 nur 7 Testbilder lagen (kein Code-Fehler). Nach
+  `npx wrangler r2 object put fundus-vorschau/<pfad> --local` sah die KI die drei Bilder und beschrieb sie richtig.
+- Cloudflare: wrangler ist angemeldet (OAuth), R2 meldet weiter „Please enable R2“ (Code 10042). `fynnland-admin` mit
+  `Guard` läuft schon für fynn.land. Ratelimit-Namespaces dort: 2001 bis 2003, Fundus nimmt 3001.
+- Offenes Risiko: Gratis-Tarif erlaubt 10 ms CPU je Anfrage. Eine Suche parst bis zu 12 Indexteile; nach dem ersten
+  Deploy prüfen, ob `/mcp` Fehler 1102 bekommt. Sonst Workers Paid (5 US-Dollar im Monat), dann auch `KONTAKTBOGEN=1`.
