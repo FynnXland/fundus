@@ -12,8 +12,8 @@ import { baueServer } from './werkzeuge.mjs';
 import { erstelleDownloader, erstelleQuellbild } from './laden.mjs';
 import { nodeCodec } from './codec-node.mjs';
 
-// TODO(Hosting): replace by the public address once the site is online (docs/stand/fundus-mcp.md)
-export const STANDARD_URL = 'http://localhost:4570';
+// the public site; FUNDUS_URL=http://localhost:4570 for a local copy (npm run dev)
+export const STANDARD_URL = 'https://fundus.fynn.land';
 
 const url = (process.env.FUNDUS_URL || STANDARD_URL).replace(/\/+$/, '');
 const kern = erstelleKern({ daten: process.env.FUNDUS_DATEN || `${url}/data`, vorschau: process.env.FUNDUS_VORSCHAU || `${url}/vorschau` });

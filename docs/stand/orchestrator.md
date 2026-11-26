@@ -181,3 +181,17 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   `Guard` läuft schon für fynn.land. Ratelimit-Namespaces dort: 2001 bis 2003, Fundus nimmt 3001.
 - Offenes Risiko: Gratis-Tarif erlaubt 10 ms CPU je Anfrage. Eine Suche parst bis zu 12 Indexteile; nach dem ersten
   Deploy prüfen, ob `/mcp` Fehler 1102 bekommt. Sonst Workers Paid (5 US-Dollar im Monat), dann auch `KONTAKTBOGEN=1`.
+
+## Live seit 26.11.2026 abends
+
+- R2 im Konto aktiviert (0 $, Gratis-Kontingent, Fynn), Bucket `fundus-vorschau` angelegt, erster Upload der 50.100
+  Vorschaubilder mit `wrangler r2 bulk put` über die OAuth-Anmeldung (Liste `.cache/r2-bulk.json`, kein R2-Token nötig).
+  Für den nächtlichen Abgleich in CI braucht es weiterhin einen R2-Token als Secret.
+- `npx wrangler deploy`: Worker `fundus`, Version 45d2a962, Domain `fundus.fynn.land`. `/mcp` antwortet live.
+- Ratenlimit: Anthropics Ausgangsnetze (160.79.104.0/21, 153.61.208.0/20) zählen in `RL_MCP_KI` (1.200/min,
+  Namespace 3002), alle anderen in `RL_MCP` (60/min). Grund: claude.ai- und Desktop-Connectors teilen sich wenige Adressen.
+- Claude Code beim Besitzer: `claude mcp add --transport http --scope user fundus https://fundus.fynn.land/mcp`.
+  claude.ai-Connector trägt Fynn selbst ein (Einstellungsseiten sind für die Chrome-Erweiterung gesperrt).
+- `docs/KI-ANBINDUNG.md` und `mcp/src/stdio.mjs` zeigen auf die echte Adresse.
+- Offen: fynn.land-Eintrag `status: "soon"` auf live stellen (fynn.land-Chat), Seite „KI anschließen“ in `src/`,
+  `fundus-mcp` auf npm (Entscheidung Fynn), CPU-Zeit im Gratis-Tarif beobachten.

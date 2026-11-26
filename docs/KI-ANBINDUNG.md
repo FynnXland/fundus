@@ -14,12 +14,9 @@ Dateien direkt in einen Ordner auf deinem Rechner speichern soll.
 | Herunterladen | KI bekommt die direkten Links | KI speichert in einen Ordner, mit Lizenzdatei daneben |
 | Vorschau als Kontaktbogen | je nach Betrieb, sonst Einzelbilder | ja |
 
-> Stand: Die öffentliche Adresse gibt es noch nicht. Bis dahin funktioniert nur der lokale Weg mit einer lokalen
-> Fundus-Kopie (`npm run dev`, Port 4570). Wo unten `https://FUNDUS-ADRESSE` steht, kommt später die echte Adresse hin.
-
 ## Entfernt: nur eine Adresse
 
-Adresse des Servers: `https://FUNDUS-ADRESSE/mcp`
+Adresse des Servers: `https://fundus.fynn.land/mcp`
 
 **Claude Desktop und claude.ai:** Einstellungen, Connectors, „Add custom connector“ (benutzerdefinierten Connector
 hinzufügen), Name `Fundus`, URL oben eintragen.
@@ -27,13 +24,13 @@ hinzufügen), Name `Fundus`, URL oben eintragen.
 **Claude Code:**
 
 ```
-claude mcp add --transport http fundus https://FUNDUS-ADRESSE/mcp
+claude mcp add --transport http fundus https://fundus.fynn.land/mcp
 ```
 
 **Cursor:** in `~/.cursor/mcp.json` (für alle Projekte) oder `.cursor/mcp.json` (nur dieses Projekt):
 
 ```json
-{ "mcpServers": { "fundus": { "url": "https://FUNDUS-ADRESSE/mcp" } } }
+{ "mcpServers": { "fundus": { "url": "https://fundus.fynn.land/mcp" } } }
 ```
 
 **Andere MCP-Clients:** Transport „Streamable HTTP“, URL wie oben. Eine Anmeldung gibt es nicht.
@@ -51,7 +48,7 @@ Projekt: einmal `npm install` im Ordner `mcp/`, dann zeigt der Befehl auf `mcp/s
 claude mcp add fundus -- npx -y fundus-mcp
 ```
 
-Aus dem Projekt (mit lokaler Fundus-Kopie auf Port 4570):
+Aus dem Projekt, mit einer lokalen Fundus-Kopie auf Port 4570 (`npm run dev`):
 
 ```
 claude mcp add fundus -e FUNDUS_URL=http://localhost:4570 -- node E:/Entwicklung/07_Tools/Medien/Fundus/mcp/src/stdio.mjs
@@ -80,7 +77,7 @@ Danach Claude Desktop neu starten. Unter Windows hilft bei Startproblemen `"comm
 | Variable | Bedeutung | Standard |
 |---|---|---|
 | `FUNDUS_ZIEL` | Ordner für Downloads | `Downloads/Fundus` in deinem Benutzerordner |
-| `FUNDUS_URL` | Adresse der Fundus-Seite | die öffentliche Adresse (bis dahin `http://localhost:4570`) |
+| `FUNDUS_URL` | Adresse der Fundus-Seite | `https://fundus.fynn.land` |
 | `FUNDUS_VORSCHAU` | Adresse der Vorschaubilder, falls sie woanders liegen | `<FUNDUS_URL>/vorschau` |
 
 ## Was deine KI damit kann
