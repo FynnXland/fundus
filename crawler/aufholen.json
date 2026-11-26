@@ -1,0 +1,6 @@
+{
+  "internetarchive": { "budget": 75000, "maxMinuten": 1440 },
+  "commonsaudio": { "budget": 8000, "maxMinuten": 600 },
+  "cleveland": { "budget": 500 },
+  "wellcome": { "budget": 800 }
+}

@@ -37,7 +37,8 @@ jobs:
           R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-      - run: npm run vorschau
+      # capped, so links, tests and deploy still fit in the job; a large backlog is worked off over several nights
+      - run: npm run vorschau -- --max-minuten 35
       # rotating: the entries checked longest ago; the whole catalogue comes round every few nights
       - run: node crawler/check-links.mjs --max 5000
         env:

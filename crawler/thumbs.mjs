@@ -5,6 +5,7 @@
 //
 //   node crawler/thumbs.mjs            new entries only
 //   node crawler/thumbs.mjs --alle     regenerate everything
+//   node crawler/thumbs.mjs --max-minuten 35   stop taking new pictures after 35 minutes (CI), the rest comes next run
 
 import { readFile, writeFile, mkdir, readdir, unlink, access } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -117,6 +118,7 @@ async function main() {
   const arg = (name) => (process.argv.includes(name) ? process.argv[process.argv.indexOf(name) + 1] : undefined);
   const nurQuelle = arg('--quelle');
   const max = Number(arg('--max')) || Infinity;
+  const ende = Number(arg('--max-minuten')) ? Date.now() + Number(arg('--max-minuten')) * 60000 : Infinity;
   // On a CI runner public/vorschau is empty: scripts/vorschau-r2.mjs liste writes what the bucket already holds.
   let imBucket = new Set();
   try { imBucket = new Set(JSON.parse(await readFile('.cache/r2-vorschau.json', 'utf8'))); } catch {}
@@ -132,10 +134,11 @@ async function main() {
   });
   offen.splice(max);
   console.log(`Vorschaubilder: ${offen.length} neu von ${items.length} Einträgen`);
-  let ok = 0, fehler = 0, seitSichern = 0;
+  let ok = 0, fehler = 0, seitSichern = 0, vertagt = 0;
   // the register is saved every few hundred pictures, so a long run that is interrupted loses little
   const sichern = () => writeFile('data/vorschauen.json', JSON.stringify(register));
   await pool(offen, 6, async (it) => {
+    if (Date.now() > ende) { vertagt++; return; }
     const von = bildquelle(it);
     try {
       const istSchrift = it.preview.type === 'font' && !it.preview.thumb;
@@ -186,7 +189,7 @@ async function main() {
 
   await writeFile('data/vorschauen.json', JSON.stringify(register));
   const kb = Object.values(register).reduce((s, r) => s + (r.kb ?? 0), 0);
-  console.log(`Fertig: ${ok} erzeugt, ${fehler} fehlgeschlagen, ${geloescht} verwaiste gelöscht. Gesamt ${Object.values(register).filter((r) => r.pfad).length} Vorschaubilder, ${(kb / 1024).toFixed(1)} MB.`);
+  console.log(`Fertig: ${ok} erzeugt, ${fehler} fehlgeschlagen, ${vertagt} auf den nächsten Lauf vertagt, ${geloescht} verwaiste gelöscht. Gesamt ${Object.values(register).filter((r) => r.pfad).length} Vorschaubilder, ${(kb / 1024).toFixed(1)} MB.`);
 }
 
 if (process.argv[1]?.endsWith('thumbs.mjs')) {

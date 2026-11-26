@@ -5,6 +5,7 @@
 //
 //   node crawler/crawl.mjs                     all sources
 //   node crawler/crawl.mjs --quelle polyhaven  one source (several: --quelle a,b)
+//   node crawler/crawl.mjs --zusatz x.json     settings per source that override config.json for this run
 //
 // Environment: FUNDUS_KONTAKT (contact URL for the User-Agent, Wikimedia asks for it), GITHUB_TOKEN and
 // the other optional keys listed in the README.
@@ -27,6 +28,12 @@ async function main() {
   const args = process.argv.slice(2);
   const only = args.includes('--quelle') ? args[args.indexOf('--quelle') + 1].split(',') : null;
   const config = JSON.parse(await readFile(new URL('./config.json', import.meta.url), 'utf8'));
+  // --zusatz <file>: per source settings that override config.json for this run only, e.g. a one-off catch-up
+  // with a large budget ({ "internetarchive": { "budget": 70000, "maxMinuten": 1200 } }); the nightly run stays small.
+  if (args.includes('--zusatz')) {
+    const zusatz = JSON.parse(await readFile(args[args.indexOf('--zusatz') + 1], 'utf8'));
+    for (const [id, werte] of Object.entries(zusatz)) config[id] = { ...(config[id] ?? {}), ...werte };
+  }
   await migriere();
 
   const log = (msg) => console.log(msg);
