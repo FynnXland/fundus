@@ -4,6 +4,7 @@
 //   public/data/index/<art>/kopf.json the first rows of a kind in mixed order (the folder shows them first)
 //   public/data/index/<art>/<nn>.json all rows of a kind in parts of 500, ordered by subfolder and tags
 //   public/data/suche/k_<key>.json    search tiles: term -> row numbers (crawler/lib/suchindex.mjs)
+//   public/data/index/<art>/gruppen.json groups of the kind (crawler/lib/gruppen.mjs), one folder card each
 //   public/data/karten/<xx>.json      full entries, 256 shards by the first two hex digits of sha1(id);
 //                                     the detail sheet loads one shard
 // Which parts and tiles exist is listed in stand.json under "index" (crawler/lib/ausgabe.mjs).
@@ -21,6 +22,7 @@ import { baueAusgabe } from './lib/ausgabe.mjs';
 import { rangwerte, sterne5 } from './lib/bewertung.mjs';
 import { beschreibungsWoerter } from './lib/suchindex.mjs';
 import { titelNormal, urteil } from './lib/rechte.mjs';
+import { bildeGruppen } from './lib/gruppen.mjs';
 
 export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, 2);
 export const STARTGROESSE = 240;
@@ -51,9 +53,11 @@ export const formate = (it) => [...new Set(it.downloads.flatMap((d) => (d.paket 
  * loading: art (the file belongs to one kind; start.json carries it as first field), quellname (from
  * stand.sources) and gruppe (from stand.index.lizenzgruppen).
  */
-export const FELDER = ['id', 'sig', 'unter', 'titel', 'urheber', 'quelle', 'lizenz', 'formate', 'tags', 'vorschau', 'vb', 'vh', 'neu', 'audio', 'sammlung', 'auch', 'text', 'fremd', 'bew', 'pop', 'rang'];
+export const FELDER = ['id', 'sig', 'unter', 'titel', 'urheber', 'quelle', 'lizenz', 'formate', 'tags', 'vorschau', 'vb', 'vh', 'neu', 'audio', 'sammlung', 'auch', 'text', 'fremd', 'bew', 'pop', 'rang', 'serie'];
 // The last three: bew = [stars out of five, votes, name of the rating source] or null, pop = [count, label] or null,
 // rang = the number that orders "empfohlen" (crawler/lib/bewertung.mjs), 0 for entries without rating and popularity.
+// serie = [group id, members] for members of a group (crawler/lib/gruppen.mjs), else null; name and pictures of the
+// group are in index/<art>/gruppen.json.
 
 // utm_* parameters only count clicks for the source; the picture is the same without them
 const ohneTracking = (url) => url.replace(/([?&])utm_[a-z]+=[^&#]*/gi, '$1').replace(/[?&]+(?=#|$)/, '').replace(/\?&+/, '?');
@@ -95,6 +99,7 @@ export function zeile(it, v = it.vorschau) {
     sterne5(it.rating) === null ? null : [sterne5(it.rating), it.rating.count, it.rating.source.name],
     it.popularity ? [it.popularity.value, it.popularity.label] : null,
     it.rang ?? 0,
+    it.serie ? [it.serie.id, it.serie.anzahl] : null,
   ];
 }
 
@@ -179,6 +184,7 @@ async function main() {
   }
   rangwerte(items);
   items.sort(mix);
+  const gruppen = bildeGruppen(items);
 
   const perKind = Object.fromEntries(Object.keys(KINDS).map((k) => [k, 0]));
   const perUnter = Object.fromEntries(Object.keys(KINDS).map((k) => [k, {}]));
@@ -197,7 +203,8 @@ async function main() {
   const sources = SOURCES.map((s) => ({ id: s.id, name: s.name, url: s.url, kinds: s.kinds, terms: s.terms, hinweis: s.hinweis, count: perSource[s.id] ?? 0 }));
 
   // index parts, search tiles and the block for stand.json (crawler/lib/ausgabe.mjs)
-  const { dateien, index, teilVon } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe });
+  const bild = (it) => { const f = ohneTracking(kleineFremdvorschau(it)); return f ? { f } : null; };
+  const { dateien, index, teilVon } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe, bild });
   const shards = new Map();
   for (const it of items) {
     it.indexTeil = teilVon.get(it.id); // the detail sheet loads this part for "similar entries"
@@ -216,7 +223,7 @@ async function main() {
     JSON.stringify({ crawledAt: katalog.crawledAt ?? null, total: items.length, zusammengefuehrt, perKind, mitBewertung, mitBeliebtheit, perUnter, perFormat, sources, index }, null, 1),
   );
   const mitBild = items.filter((it) => it.vorschau).length;
-  console.log(`Veröffentlicht: ${items.length} Einträge, ${mitBild} mit Vorschaubild, ${zusammengefuehrt} Doppelte zusammengeführt (ausgelassen: ${skipped.ungueltig} ungültig, ${skipped.kaputt} mit toten Links, ${skipped.gesperrt} gesperrt, ${skipped.rechte} fremde Lieder).`);
+  console.log(`Veröffentlicht: ${items.length} Einträge, ${mitBild} mit Vorschaubild, ${zusammengefuehrt} Doppelte zusammengeführt, ${gruppen.size} Gruppen mit ${[...gruppen.values()].reduce((n, g) => n + g.mitglieder.length, 0)} Einträgen (ausgelassen: ${skipped.ungueltig} ungültig, ${skipped.kaputt} mit toten Links, ${skipped.gesperrt} gesperrt, ${skipped.rechte} fremde Lieder).`);
 }
 
 if (process.argv[1]?.endsWith('publish.mjs')) {

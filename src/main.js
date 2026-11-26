@@ -1,5 +1,5 @@
 import './styles.css';
-import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN, STANDARD_SORT } from './katalog.js';
+import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, zusammenfassen, gruppeVon, artVonSerie, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN, STANDARD_SORT } from './katalog.js';
 import { vorschau, hoerprobe, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
@@ -16,8 +16,10 @@ const vorschauschalter = document.getElementById('vorschauschalter');
 const zustand = {
   katalog: null,
   fehler: null,
-  filter: { q: '', art: '', unter: '', lizenz: 'alle', format: '', quelle: '', sort: STANDARD_SORT },
+  filter: { q: '', art: '', unter: '', lizenz: 'alle', format: '', quelle: '', sort: STANDARD_SORT, serie: '' },
   ansicht: store.get('fundus.ansicht') === 'liste' ? 'liste' : 'raster',
+  // folders show a group of entries that belong together as one card; "einzeln" shows every entry
+  gruppiert: store.get('fundus.gruppen') !== 'einzeln',
   sichtbar: SEITENGROESSE,
   katalogHash: '#/',
   gerendert: null,
@@ -103,7 +105,10 @@ async function route() {
         format: params.get('format') ?? '',
         quelle: params.get('quelle') ?? '',
         sort: params.get('sort') ?? STANDARD_SORT,
+        serie: params.get('serie') ?? '',
       };
+      // a group belongs to one kind; the link may name only the group
+      if (zustand.filter.serie && !zustand.filter.art) zustand.filter.art = artVonSerie(zustand.filter.serie);
       zustand.katalogHash = location.hash || '#/';
     }
     if (!imKatalog()) {
@@ -116,10 +121,10 @@ async function route() {
     filterAbgleichen();
     startZeigen();
     // Opening or closing the detail sheet must not rebuild the grid: the card the visitor came from keeps its focus.
-    const schluessel = JSON.stringify([zustand.filter, zustand.wurzelAlle]);
+    const schluessel = JSON.stringify([zustand.filter, zustand.wurzelAlle, zustand.gruppiert]);
     if (schluessel !== zustand.gerendert || !main.querySelector('#ablage > *')) {
       const k = zustand.katalog;
-      const was = k ? bedarf(zustand.filter, zustand.wurzelAlle) : 'start';
+      const was = k ? brauche() : 'start';
       if (k && !hat(k, was)) {
         // the index of a folder loads when it is first needed
         const lauf = ++zustand.lauf;
@@ -154,12 +159,14 @@ async function katalogLaden() {
     zustand.katalog = await ladeKatalog();
     // a folder shows its head at once; when the rest arrives, the grid fills up without losing the place
     beimNachladen(zustand.katalog, (was) => {
-      if (imKatalog() && bedarf(zustand.filter, zustand.wurzelAlle) === was) trefferZeigen({ behalteAnzahl: true });
+      if (imKatalog() && brauche() === was) trefferZeigen({ behalteAnzahl: true });
     });
   } catch (err) {
     zustand.fehler = err;
   }
 }
+/** What the current view needs (katalog.js bedarf); groups only in the grouped view. */
+const brauche = () => bedarf(zustand.filter, zustand.wurzelAlle, zustand.gruppiert);
 
 /* ---------------- Katalog ---------------- */
 const SORT_TEXT = { empfohlen: 'Empfohlen', bewertung: 'Beste Bewertung', gemischt: 'Gemischt sortiert', neu: 'Neueste zuerst', name: 'Name A bis Z', quelle: 'Nach Quelle sortiert' };
@@ -282,6 +289,7 @@ function katalogBauen() {
   <div class="katalog">
     <nav class="leiste" id="leiste" aria-label="Ordner"></nav>
     <section class="inhalt" aria-labelledby="ordnertitel">
+      <a class="zurueck inhalt__zurueck" id="gruppezurueck" href="#/" hidden></a>
       <header class="inhalt__kopf">
         <h1 id="ordnertitel">Alle Objekte</h1>
         <p class="inhalt__anzahl" id="anzahl" aria-live="polite"></p>
@@ -294,9 +302,15 @@ function katalogBauen() {
         <label class="wahl"><span class="unsichtbar">Format</span><select id="formatwahl"><option value="">Alle Formate</option></select></label>
         <label class="wahl"><span class="unsichtbar">Quelle</span><select id="quellwahl"><option value="">Alle Quellen</option></select></label>
         <label class="wahl"><span class="unsichtbar">Sortierung</span><select id="sortwahl">${Object.keys(SORTIERUNGEN).map((k) => `<option value="${k}">${esc(SORT_TEXT[k])}</option>`).join('')}</select></label>
-        <div class="segmente filter__rechts" role="group" aria-label="Ansicht">
-          <button type="button" data-ansicht="raster" aria-pressed="true">Raster</button>
-          <button type="button" data-ansicht="liste" aria-pressed="false">Liste</button>
+        <div class="filter__rechts">
+          <div class="segmente" role="group" aria-label="Zusammengehörige Objekte" id="gruppenwahl">
+            <button type="button" data-gruppen="an" aria-pressed="true">Gruppiert</button>
+            <button type="button" data-gruppen="aus" aria-pressed="false">Einzeln</button>
+          </div>
+          <div class="segmente" role="group" aria-label="Ansicht">
+            <button type="button" data-ansicht="raster" aria-pressed="true">Raster</button>
+            <button type="button" data-ansicht="liste" aria-pressed="false">Liste</button>
+          </div>
         </div>
         <button type="button" class="knopf" id="zufallknopf">Zufälliges Objekt</button>
       </div>
@@ -318,6 +332,14 @@ function katalogBauen() {
       store.set('fundus.ansicht', zustand.ansicht);
       filterAbgleichen();
       trefferZeigen({ behalteAnzahl: true });
+    }),
+  );
+  main.querySelectorAll('[data-gruppen]').forEach((b) =>
+    b.addEventListener('click', () => {
+      zustand.gruppiert = b.dataset.gruppen === 'an';
+      store.set('fundus.gruppen', zustand.gruppiert ? 'gruppiert' : 'einzeln');
+      filterAbgleichen();
+      route(); // the grouped view also needs the groups of the folder
     }),
   );
   main.querySelector('#zufallknopf').addEventListener('click', zufall);
@@ -346,7 +368,7 @@ function katalogBauen() {
       });
     }
     if (e.target.closest('#nochmal')) route();
-    if (e.target.closest('#filterweg')) filterSetzen({ q: '', art: '', unter: '', lizenz: 'alle', format: '', quelle: '' });
+    if (e.target.closest('#filterweg')) filterSetzen({ q: '', art: '', unter: '', lizenz: 'alle', format: '', quelle: '', serie: '' });
   });
   // previews fade in once loaded; a missing preview file falls back to the kind glyph
   ablage.addEventListener('load', (e) => { if (e.target.tagName === 'IMG') e.target.classList.add('da'); }, true);
@@ -366,7 +388,9 @@ async function zufall() {
   location.hash = `#/karte/${encodeURIComponent(auswahl[Math.floor(Math.random() * auswahl.length)].id)}`;
 }
 
-const ordnername = () => zustand.filter.unter || (zustand.filter.art ? ARTEN[zustand.filter.art]?.label ?? zustand.filter.art : 'Alle Objekte');
+const ordnerVon = (f) => f.unter || (f.art ? ARTEN[f.art]?.label ?? f.art : 'Alle Objekte');
+const gruppe = () => (zustand.filter.serie && zustand.katalog ? gruppeVon(zustand.katalog, zustand.filter.serie) : null);
+const ordnername = () => (zustand.filter.serie ? gruppe()?.name ?? 'Gruppe' : ordnerVon(zustand.filter));
 const seitentitel = () => (zustand.filter.art ? `${ordnername()} · Fundus` : 'Fundus · freie Assets');
 
 function filterAbgleichen() {
@@ -375,6 +399,7 @@ function filterAbgleichen() {
   if (!imKatalog()) return;
   main.querySelectorAll('[data-lizenz]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lizenz === (f.lizenz in LIZENZGRUPPEN ? f.lizenz : 'alle'))));
   main.querySelectorAll('[data-ansicht]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ansicht === zustand.ansicht)));
+  main.querySelectorAll('[data-gruppen]').forEach((b) => b.setAttribute('aria-pressed', String((b.dataset.gruppen === 'an') === zustand.gruppiert)));
   main.querySelector('#sortwahl').value = f.sort in SORTIERUNGEN ? f.sort : STANDARD_SORT;
   const k = zustand.katalog;
   if (!k) return;
@@ -389,12 +414,19 @@ function filterAbgleichen() {
   fw.value = f.format;
 }
 
+/** The address of a filter. */
+function hashFuer(f) {
+  const p = new URLSearchParams();
+  for (const [k, v] of Object.entries(f)) if (v && !(k === 'lizenz' && v === 'alle') && !(k === 'sort' && v === STANDARD_SORT)) p.set(k, v);
+  return `#/${p.toString() ? `?${p}` : ''}`;
+}
+
 function filterSetzen(teil, ersetzen = false) {
   const f = { ...zustand.filter, ...teil };
   if (teil.art !== undefined && teil.unter === undefined) f.unter = '';
-  const p = new URLSearchParams();
-  for (const [k, v] of Object.entries(f)) if (v && !(k === 'lizenz' && v === 'alle') && !(k === 'sort' && v === STANDARD_SORT)) p.set(k, v);
-  const ziel = `#/${p.toString() ? `?${p}` : ''}`;
+  // another folder or a search leaves the group (the search finds single entries in the whole catalogue)
+  if (teil.serie === undefined && (teil.art !== undefined || teil.unter !== undefined || teil.q)) f.serie = '';
+  const ziel = hashFuer(f);
   zustand.sichtbar = SEITENGROESSE;
   if (ersetzen) {
     history.replaceState(null, '', ziel);
@@ -483,6 +515,39 @@ function karte(o, mitVorschau) {
   </li>`;
 }
 
+/*
+ * A group as one folder card: up to four member pictures as a mosaic, the name, the size here and the source.
+ * Our own mini previews always, pictures at the source only with "Vorschauen von Quellen" (like single cards).
+ * The link opens the members and keeps the filters of the folder.
+ */
+const gruppenLink = (g) => hashFuer({ ...zustand.filter, q: '', art: g.art, serie: g.id });
+function gruppenkarte({ gruppe: g, n, o }, mitVorschau) {
+  const foto = g.art === 'bild' ? ' karte__bild--foto' : '';
+  const bilder = g.bilder
+    .map((b) => (b.v ? `<img data-src="/vorschau/${esc(b.v)}" alt="" width="${b.b}" height="${b.h}" decoding="async" />` : b.f && mitVorschau ? `<img data-src="${esc(b.f)}" alt="" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />` : ''))
+    .filter(Boolean);
+  const flaeche = bilder.length
+    ? `<span class="karte__bild karte__mosaik karte__mosaik--${bilder.length}${foto}">${bilder.map((b) => `<span>${b}</span>`).join('')}</span>`
+    : `<span class="karte__bild karte__bild--zeichen">${symbol(g.art, 40)}</span>`;
+  return `<li class="karte karte--gruppe" data-art="${esc(g.art)}">
+    <a class="karte__link" href="${esc(gruppenLink(g))}">
+      <span class="karte__stapel">${flaeche}<span class="karte__zahl">${symbol('gruppe', 15)}${zahl(n)}<span class="unsichtbar"> Objekte</span></span></span>
+      <span class="karte__titel">${esc(g.name)}</span>
+      <span class="karte__meta">Gruppe · ${esc(o.quellname)}</span>
+    </a>
+  </li>`;
+}
+
+function gruppenzeile({ gruppe: g, n, o }) {
+  return `<tr class="liste__gruppe">
+    <td class="liste__name"><a href="${esc(gruppenLink(g))}">${symbol('gruppe', 18)}<span>${esc(g.name)}</span></a></td>
+    <td>Gruppe mit ${zahl(n)} Objekten</td>
+    <td class="mono">${esc(g.lizenz || 'verschieden')}</td>
+    <td>${esc(o.quellname)}</td>
+    <td></td>
+  </tr>`;
+}
+
 function listenzeile(o) {
   return `<tr>
     <td class="liste__name"><a href="#/karte/${encodeURIComponent(o.id)}">${symbol(o.art, 18)}<span>${esc(o.titel)}</span></a></td>
@@ -496,7 +561,8 @@ function listenzeile(o) {
 // needs look like 'bild', 'bild!', 'bild|Holz', 'alle', 'alle!' or 's|<art>|<unter>|<suche>' (see bedarf in katalog.js)
 function ladetext(was) {
   if (was.startsWith('s|')) return 'Suche läuft …';
-  const art = was.split(/[|!]/)[0];
+  if (was.startsWith('g|')) return 'Gruppe wird geladen …';
+  const art = was.split(/[|!+]/)[0];
   return art === 'alle' ? 'Alle Ordner werden geladen …' : `${ARTEN[art]?.label ?? 'Ordner'} wird geladen …`;
 }
 
@@ -522,29 +588,47 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   }
   const k = zustand.katalog;
   const f = zustand.filter;
-  zustand.gerendert = JSON.stringify([f, zustand.wurzelAlle]);
+  zustand.gerendert = JSON.stringify([f, zustand.wurzelAlle, zustand.gruppiert]);
   main.querySelector('#ordnertitel').textContent = ordnername();
   main.querySelector('#einleitung').hidden = Boolean(f.art || f.q);
+  const zurueck = main.querySelector('#gruppezurueck');
+  zurueck.hidden = !f.serie;
+  if (f.serie) {
+    zurueck.href = hashFuer({ ...f, serie: '' });
+    zurueck.innerHTML = `<span aria-hidden="true">‹</span> ${esc(ordnerVon(f))}`;
+  }
+  // opening or leaving a group from far down the grid starts at its title, below the sticky header
+  if (f.serie !== zustand.serieGezeigt) {
+    const kopf = main.querySelector('.inhalt');
+    const oben = kopf.getBoundingClientRect().top;
+    if (zustand.serieGezeigt !== undefined && oben < 0) window.scrollTo({ top: window.scrollY + oben - 80 });
+    zustand.serieGezeigt = f.serie;
+  }
   document.title = seitentitel();
   if (!k.stand.total) {
     main.querySelector('#anzahl').textContent = '';
     ablage.innerHTML = '<div class="zustand"><h2>Der Fundus ist noch leer</h2><p>Es wurde noch nichts eingesammelt. <code>npm run crawl</code> holt Einträge von den Quellen, <code>npm run daten</code> stellt sie bereit.</p></div>';
     return;
   }
-  if (!hat(k, bedarf(f, zustand.wurzelAlle))) {
+  if (!hat(k, brauche())) {
     main.querySelector('#anzahl').textContent = '';
     zustand.gerendert = null;
     ablage.innerHTML = '<div class="zustand" role="alert"><h2>Dieser Ordner ließ sich nicht laden</h2><p>Die Verbindung zum Katalog ist abgebrochen. Versuch es noch einmal; die anderen Ordner sind davon nicht betroffen.</p><button class="knopf knopf--haupt" type="button" id="nochmal">Noch einmal versuchen</button></div>';
     return;
   }
   const { liste, auswahl } = filtern(k, f, zustand.wurzelAlle);
+  // folders show a group as one card; a search, a group itself and the start sample show single entries
+  const gruppiert = zustand.gruppiert && !f.q && !f.serie && !auswahl;
+  main.querySelector('#gruppenwahl').hidden = Boolean(f.q || f.serie || auswahl);
+  const karten = gruppiert ? zusammenfassen(k, liste, f) : liste.map((o) => ({ o }));
   if (!behalteAnzahl) zustand.sichtbar = SEITENGROESSE;
-  const zeigen = liste.slice(0, zustand.sichtbar);
+  const zeigen = karten.slice(0, zustand.sichtbar);
   // while a folder is still loading, the list is shorter than the folder: the full count is in the data already
-  const ohneFilter = !f.unter && !f.q && (!f.lizenz || f.lizenz === 'alle') && !f.format && !f.quelle;
+  const ohneFilter = !f.unter && !f.q && !f.serie && (!f.lizenz || f.lizenz === 'alle') && !f.format && !f.quelle;
   const gesamt = auswahl || (zustand.wurzelAlle && !f.art && ohneFilter) ? k.stand.total
     : f.art && ohneFilter ? (k.stand.perKind[f.art] ?? liste.length) : liste.length;
-  main.querySelector('#anzahl').textContent = `${zahl(gesamt)} ${gesamt === 1 ? 'Objekt' : 'Objekte'}${f.q ? ` für „${f.q}“` : ''}`;
+  const urheber = f.serie && gruppe()?.urheber && !/^unbekannt$/i.test(gruppe().urheber) ? ` von ${gruppe().urheber}` : '';
+  main.querySelector('#anzahl').textContent = `${zahl(gesamt)} ${gesamt === 1 ? 'Objekt' : 'Objekte'}${f.q ? ` für „${f.q}“` : urheber}`;
   main.querySelector('#stand').textContent = `Stand der Daten: ${datum(k.stand.crawledAt)}. Vorschauen von den Quellen sind ${vorschau.an() ? 'eingeschaltet' : 'ausgeschaltet'}.`;
 
   if (!liste.length) {
@@ -553,13 +637,13 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   }
   const mitVorschau = vorschau.an();
   let mehr = '';
-  if (liste.length > zeigen.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">Weitere ${zahl(Math.min(SEITENGROESSE, liste.length - zeigen.length))} anzeigen</button></div>`;
+  if (karten.length > zeigen.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">Weitere ${zahl(Math.min(SEITENGROESSE, karten.length - zeigen.length))} anzeigen</button></div>`;
   // the first screen is a sample; everything else loads on request
   else if (auswahl && k.stand.total > liste.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="allesknopf">Alle ${zahl(k.stand.total)} Objekte laden</button></div>`;
   if (zustand.ansicht === 'liste') {
-    ablage.innerHTML = `<div class="liste-rahmen"><table class="liste"><thead><tr><th scope="col">Name</th><th scope="col">Art</th><th scope="col">Lizenz</th><th scope="col">Quelle</th><th scope="col">Formate</th></tr></thead><tbody>${zeigen.map(listenzeile).join('')}</tbody></table></div>${mehr}`;
+    ablage.innerHTML = `<div class="liste-rahmen"><table class="liste"><thead><tr><th scope="col">Name</th><th scope="col">Art</th><th scope="col">Lizenz</th><th scope="col">Quelle</th><th scope="col">Formate</th></tr></thead><tbody>${zeigen.map((c) => (c.gruppe ? gruppenzeile(c) : listenzeile(c.o))).join('')}</tbody></table></div>${mehr}`;
   } else {
-    ablage.innerHTML = `<ul class="raster">${zeigen.map((o) => karte(o, mitVorschau)).join('')}</ul>${mehr}`;
+    ablage.innerHTML = `<ul class="raster">${zeigen.map((c) => (c.gruppe ? gruppenkarte(c, mitVorschau) : karte(c.o, mitVorschau))).join('')}</ul>${mehr}`;
     nahe?.disconnect();
     bilderBeobachten(ablage);
   }

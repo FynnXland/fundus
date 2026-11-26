@@ -5,7 +5,7 @@
 import { ARTEN, ladeKarte, ladeArt, aehnliche, mehrAusSammlung } from './katalog.js';
 import { vorschau, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { symbol } from './symbole.js';
-import { esc, safeUrl, bytes, host, datum, sterneHtml, beliebtheitHtml, bewertungAusEintrag } from './util.js';
+import { esc, safeUrl, bytes, host, datum, zahl, sterneHtml, beliebtheitHtml, bewertungAusEintrag } from './util.js';
 
 const SCHRIFTPROBE = 'Fundus 1984: Quax jagt Wölfe über den Deich.';
 let ausloeser = null;
@@ -176,6 +176,7 @@ function infoHtml(it, katalog, mitVorschau) {
     <div class="info__haupt">
       <h2 class="info__titel" id="if-titel">${esc(it.title)}</h2>
       ${bewertungsZeile(it)}
+      ${it.serie ? `<p class="info__gruppe">Gehört zur Gruppe <a href="#/?art=${encodeURIComponent(it.kind)}&amp;serie=${encodeURIComponent(it.serie.id)}">${esc(it.serie.name)}</a> mit ${zahl(it.serie.anzahl)} Objekten</p>` : ''}
       ${it.description ? `<p class="info__beschreibung">${esc(it.description)}</p>` : ''}
       <div class="knopfreihe">${downloadsHtml(it)}</div>
       ${SOFTWARE.has(it.kind) ? '<p class="info__klein">Software von Dritten: Fundus prüft weder Sicherheit noch Datenschutz noch, ob die Lizenzangabe stimmt. Schau dir den Code an, bevor du ihn einsetzt.</p>' : ''}

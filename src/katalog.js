@@ -4,6 +4,7 @@
 //   index/<art>/<nn>.json              parts of 500 rows, ordered by subfolder: a subfolder or a search loads few
 //   suche/k_<key>.json                 search tiles, loaded for the words of a query; the hits are row numbers
 //   karten/<xx>.json                   one shard per opened detail sheet; it names the index part of its entry
+//   index/<art>/gruppen.json           the groups of a kind (name, size, pictures, parts), for the folder cards
 //
 // Two modes. Without beimNachladen() every need is complete before hole() resolves, so a filter always sees
 // all rows it needs. With beimNachladen(k, fn) a folder (or "alle") resolves after its head; the rest loads in
@@ -86,6 +87,10 @@ function zeileBauen(k, felder, z, art) {
   o.bewertung = o.bew ? { sterne: o.bew[0], anzahl: o.bew[1], quelle: o.bew[2] } : undefined;
   o.beliebtheit = o.pop ? { wert: o.pop[0], label: o.pop[1] } : undefined;
   o.rang ??= 0;
+  // member of a group: serie = group id, serieAnzahl = its size (name and pictures: gruppeVon)
+  const s = o.serie;
+  o.serie = s ? s[0] : '';
+  o.serieAnzahl = s ? s[1] : 0;
   delete o.bew;
   delete o.pop;
   return o;
@@ -133,6 +138,9 @@ export async function ladeKatalog() {
     nachladen: null,
     sortiert: new Map(),
     alleMerk: null,
+    serienArten: ix.gruppen ?? {}, // art -> number of groups, only kinds that have a gruppen.json
+    serien: new Map(), // art -> Map id -> group
+    serienLauf: new Map(),
   };
   let ref = 0;
   for (const e of ix.arten) {
@@ -199,6 +207,22 @@ const teileFuer = (a, unter) => {
   return u < 0 ? [] : a.teile.filter((t) => t.von <= u && u <= t.bis);
 };
 
+/** The groups of a kind (index/<art>/gruppen.json); kinds without groups need nothing. */
+function ladeSerien(k, art) {
+  if (k.serien.has(art) || !k.serienArten[art]) return Promise.resolve();
+  if (!k.serienLauf.has(art)) {
+    k.serienLauf.set(art, holeJson(`/data/index/${art}/gruppen.json`)
+      .then((d) => { k.serien.set(art, new Map(Object.entries(d).map(([id, g]) => [id, { id, art, ...g }]))); })
+      .finally(() => k.serienLauf.delete(art)));
+  }
+  return k.serienLauf.get(art);
+}
+const serienDa = (k, art) => !k.serienArten[art] || k.serien.has(art);
+/** The kind of a group from its id ("3d.4f2a9c1e"). */
+export const artVonSerie = (id) => String(id ?? '').split('.')[0];
+/** A group: { id, art, name, anzahl, unter, teile, bilder, urheber, lizenz }, or null when unknown or not loaded. */
+export const gruppeVon = (k, id) => k.serien.get(artVonSerie(id))?.get(id) ?? null;
+
 function ladeKachel(k, s) {
   if (k.kacheln.has(s)) return Promise.resolve();
   if (!k.kachelLauf.has(s)) {
@@ -245,42 +269,58 @@ async function sucheLaden(k, w, was) {
 //   '<art>' / 'alle'         the folder / everything; with '!' only when complete (filters that need every row)
 //   '<art>|<unter>'          the parts of one subfolder
 //   's|<art>|<unter>|<q>'    a search, restricted to the folder and subfolder when they are given
+//   'g|<serie>'              the members of one group
+// A folder shown grouped ends in '+g': the groups of its kinds load with it.
 function zerlege(was) {
   if (was === 'start') return { typ: 'start' };
   if (was.startsWith('s|')) {
     const [, art, unter, ...q] = was.split('|');
     return { typ: 'suche', art, unter, q: q.join('|') };
   }
+  if (was.startsWith('g|')) return { typ: 'serie', serie: was.slice(2), art: artVonSerie(was.slice(2)) };
+  const gruppen = was.endsWith('+g');
+  if (gruppen) was = was.slice(0, -2);
   if (was.includes('|')) {
     const [art, unter] = was.split('|');
-    return { typ: 'unter', art, unter };
+    return { typ: 'unter', art, unter, gruppen };
   }
   const voll = was.endsWith('!');
   const name = voll ? was.slice(0, -1) : was;
-  return name === 'alle' ? { typ: 'alle', voll } : { typ: 'art', art: name, voll };
+  return name === 'alle' ? { typ: 'alle', voll, gruppen } : { typ: 'art', art: name, voll, gruppen };
 }
 
-/** What a filter needs before it can be shown. */
-export function bedarf(f, wurzelAlle = false) {
+/** What a filter needs before it can be shown. gruppiert: folders show a group as one card (a search never does). */
+export function bedarf(f, wurzelAlle = false, gruppiert = false) {
   const q = f.q?.trim();
   if (q) return `s|${f.art ?? ''}|${f.art ? f.unter ?? '' : ''}|${q}`;
-  if (f.art && f.unter) return `${f.art}|${f.unter}`;
+  if (f.serie) return `g|${f.serie}`;
+  const g = gruppiert ? '+g' : '';
+  if (f.art && f.unter) return `${f.art}|${f.unter}${g}`;
   // the head of a folder is its best rows (empfohlen); every other order needs all rows to be right
   const voll = (f.lizenz && f.lizenz !== 'alle') || f.format || f.quelle || (f.sort && f.sort !== STANDARD_SORT) ? '!' : '';
-  if (f.art) return f.art + voll;
-  return voll ? 'alle!' : wurzelAlle ? 'alle' : 'start';
+  if (f.art) return f.art + voll + g;
+  // the start sample is a deliberate mix of all kinds and stays single cards
+  return voll ? `alle!${g}` : wurzelAlle ? `alle${g}` : 'start';
 }
 
 const genug = (k, a, voll) => !a || a.fertig || (Boolean(k.nachladen) && !voll && a.kopf);
 
+const teileDerSerie = (k, w) => {
+  const a = k.arten.get(w.art);
+  const g = gruppeVon(k, w.serie);
+  return a && g ? g.teile.map((n) => a.teile[n]).filter(Boolean) : [];
+};
+
 export function hat(k, was) {
   const w = zerlege(was);
+  const serien = (arten) => !w.gruppen || arten.every((art) => serienDa(k, art));
   switch (w.typ) {
     case 'start': return true;
     case 'suche': return k.suchen.has(was);
-    case 'unter': { const a = k.arten.get(w.art); return !a || a.fertig || teileFuer(a, w.unter).every((t) => t.zeilen); }
-    case 'art': return genug(k, k.arten.get(w.art), w.voll);
-    default: return [...k.arten.values()].every((a) => genug(k, a, w.voll));
+    case 'serie': { const a = k.arten.get(w.art); return !a || (serienDa(k, w.art) && (a.fertig || teileDerSerie(k, w).every((t) => t.zeilen))); }
+    case 'unter': { const a = k.arten.get(w.art); return serien([w.art]) && (!a || a.fertig || teileFuer(a, w.unter).every((t) => t.zeilen)); }
+    case 'art': return serien([w.art]) && genug(k, k.arten.get(w.art), w.voll);
+    default: return serien([...k.arten.keys()]) && [...k.arten.values()].every((a) => genug(k, a, w.voll));
   }
 }
 
@@ -298,6 +338,18 @@ function hintergrund(k, arten, was) {
 async function holeEcht(k, was) {
   const w = zerlege(was);
   if (w.typ === 'suche') return sucheLaden(k, w, was);
+  if (w.typ === 'serie') {
+    const a = k.arten.get(w.art);
+    if (!a) return undefined;
+    await ladeSerien(k, w.art);
+    if (a.fertig) return undefined;
+    // an unknown group (old link, newer data) has no parts and shows an empty folder
+    return pool(teileDerSerie(k, w).map((t) => () => ladeTeil(k, a, t)), VORDERGRUND);
+  }
+  if (w.gruppen) {
+    const welche = w.typ === 'alle' ? [...k.arten.keys()] : [w.art];
+    await pool(welche.map((art) => () => ladeSerien(k, art)), VORDERGRUND);
+  }
   if (w.typ === 'unter') {
     const a = k.arten.get(w.art);
     if (!a || a.fertig) return undefined;
@@ -366,14 +418,18 @@ const vergleiche = {
   quelle: (a, b) => a.quellname.localeCompare(b.quellname, 'de') || a.titel.localeCompare(b.titel, 'de'),
 };
 
+const titelOrdnung = (a, b) => a.titel.localeCompare(b.titel, 'de', { numeric: true, sensitivity: 'base' });
+
 /** Filters what is loaded; call hole() first. Returns { liste, auswahl } where auswahl marks the start sample. */
-export function filtern(k, { q, art, unter, lizenz, format, quelle, sort }, wurzelAlle = false) {
+export function filtern(k, { q, art, unter, lizenz, format, quelle, sort, serie }, wurzelAlle = false) {
   const was = bedarf({ q, art, unter, lizenz, format, quelle, sort }, wurzelAlle);
   let liste;
   if (q?.trim()) liste = (k.suchen.get(was) ?? []).map((r) => zeileVonRef(k, r)).filter(Boolean);
+  // the members of a group in their natural order: "Vase 2" before "Vase 10"
+  else if (serie) liste = (k.proArt.get(artVonSerie(serie)) ?? []).filter((o) => o.serie === serie).sort(titelOrdnung);
   else if (art) liste = geordnet(k, art);
   else liste = was === 'start' ? k.start : alleGeordnet(k);
-  if (art && unter) liste = liste.filter((o) => o.unter === unter);
+  if (art && unter && !serie) liste = liste.filter((o) => o.unter === unter);
   if (lizenz && lizenz !== 'alle') liste = liste.filter((o) => o.gruppe === lizenz);
   if (format) liste = liste.filter((o) => o.formate.split(' ').includes(format));
   if (quelle) liste = liste.filter((o) => o.quelle === quelle);
@@ -381,6 +437,33 @@ export function filtern(k, { q, art, unter, lizenz, format, quelle, sort }, wurz
   // visitor picks another order
   if (sort && sort !== STANDARD_SORT && vergleiche[sort]) liste = [...liste].sort(vergleiche[sort]);
   return { liste, auswahl: was === 'start' };
+}
+
+/**
+ * The cards of a folder: the members of a group become one card where its first member stands. Returns a list of
+ * { o } (single entry) and { gruppe, n, o } (folder card: the group, its size here, its first member here).
+ * Size here: with a licence, format or source filter the members in the list (it is complete then, and the opened
+ * group applies the same filters), else the whole group, also in a subfolder, because opening it shows every
+ * member. A group with one member here is a single card.
+ */
+export function zusammenfassen(k, liste, { lizenz, format, quelle } = {}) {
+  const zeilenfilter = (lizenz && lizenz !== 'alle') || format || quelle;
+  const karten = [];
+  const offen = new Map(); // group id -> card
+  for (const o of liste) {
+    const g = o.serie ? gruppeVon(k, o.serie) : null;
+    if (!g) { karten.push({ o }); continue; }
+    const da = offen.get(g.id);
+    if (da) { da.hier++; continue; }
+    const karte = { gruppe: g, o, hier: 1 };
+    offen.set(g.id, karte);
+    karten.push(karte);
+  }
+  return karten.map((c) => {
+    if (!c.gruppe) return c;
+    const n = zeilenfilter ? c.hier : c.gruppe.anzahl;
+    return n > 1 ? { gruppe: c.gruppe, n, o: c.o } : { o: c.o };
+  });
 }
 
 /* ---------------- Detail sheet ---------------- */

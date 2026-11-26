@@ -28,14 +28,17 @@ function vorschauSpalte(r) {
 export function suchzeilen(treffer, { rueckfall = false } = {}) {
   const kopf = `id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview${rueckfall ? '\tmissing' : ''}`;
   const zeilen = treffer.map((r) =>
-    [r.id, zeichen(r.titel, 70), `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
+    [r.id, `${zeichen(r.titel, 70)}${gruppenMarke(r)}`, `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
   );
   return [kopf, ...zeilen].join('\n');
 }
 
+/** A member of a group in a folded page: the row is its example, the mark names the group, its size and the hits here. */
+const gruppenMarke = (r) => (r.serie && r.hier ? ` [group ${r.serie}: ${r.serieAnzahl} entries${r.hier > 1 ? `, ${r.hier} here` : ''}]` : '');
+
 function suchkopf(e, { q, art, limit }) {
-  const was = `${q ? ` for "${q}"` : ''}${art ? ` in ${art}` : ''}`;
-  const zeige = e.ab ? `showing ${e.ab}-${e.ab + e.treffer.length - 1}` : `${e.treffer.length} on this page`;
+  const was = `${e.gruppe ? ` in group ${e.gruppe.id} "${e.gruppe.name}"${e.gruppe.urheber ? ` by ${e.gruppe.urheber}` : ''}` : ''}${q ? ` for "${q}"` : ''}${art && !e.gruppe ? ` in ${art}` : ''}`;
+  const zeige = e.ab ? `showing ${e.ab}-${e.bis ?? e.ab + e.treffer.length - 1}${e.gefaltet ? ` in ${e.treffer.length} rows` : ''}` : `${e.treffer.length} on this page`;
   const teile = [];
   if (e.rueckfall && e.gesamt == null) {
     // row filters: counts before them say nothing about this page
@@ -50,6 +53,7 @@ function suchkopf(e, { q, art, limit }) {
   } else if (!e.treffer.length) teile.push(`No matches${was}${e.weiter ? ' in the part searched so far' : ''}.`);
   else if (e.gesamt != null) teile.push(`${e.gesamt} matches${was}, ${zeige}.`);
   else teile.push(`${e.treffer.length} matches${was} on this page (total not counted with these filters).`);
+  if (e.treffer.some((r) => r.serie && r.hier)) teile.push('A row marked [group …] is one example for a group of related entries (series, set, one designer); pass group to list them.');
   if (e.teilweise) teile.push(`Stopped after ${e.abrufe} index files to stay cheap; continue with cursor "${e.weiter}" or narrow the search (kind, query).`);
   else if (e.weiter) teile.push(`More: cursor "${e.weiter}".`);
   if (!e.treffer.length && !e.weiter && limit) teile.push('Try another word (synonym, English or German), fewer filters or fundus_catalog for valid filter values.');
@@ -70,6 +74,7 @@ export function detailtext(it, { mitUrls = true } = {}) {
   if (it.description) zeilen.push(`Description: ${zeichen(it.description, 300)}`);
   if (it.collection?.name) zeilen.push(`Collection: ${it.collection.name}`);
   if (['projekt', 'skript', 'skill'].includes(it.kind)) zeilen.push('Note: third-party code. Fundus does not check security, privacy compliance or whether the license claim is right; review it before use.');
+  if (it.serie?.id) zeilen.push(`Group: ${it.serie.name} (${it.serie.anzahl} entries), list them with fundus_search group "${it.serie.id}"`);
   zeilen.push(`Preview: ${it.vorschau ? 'own thumbnail (fundus_preview)' : it.preview?.thumb ? `only at the source: ${ohneTracking(it.preview.thumb)}` : 'none'}${it.preview?.type === 'audio' && it.preview.url ? ` · audio sample: ${ohneTracking(it.preview.url)}` : ''}`);
   zeilen.push('Downloads (number = download option):');
   it.downloads.forEach((d, i) => {
@@ -131,7 +136,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     'fundus_search',
     {
       title: 'Fundus: search assets',
-      description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
+      description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Related entries (a numbered series, an icon set, one designer at game-icons) come as one example row marked [group id: size]; pass group to list the members. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
       inputSchema: z.object({
         query: z.string().optional().describe('search words, e.g. "wooden chair"; English and German titles exist'),
         kind: z.string().optional().describe('bild, grafik, 3d, textur, hdri, icon, musik, sound, schrift, skript, projekt, skill, video'),
@@ -143,13 +148,14 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
         source: z.string().optional().describe('source id or name, e.g. polyhaven, ambientcg, wikimedia'),
         has_preview: z.boolean().optional().describe('only entries with an own thumbnail (fundus_preview works for them)'),
         limit: z.number().int().min(1).max(50).optional().describe('rows per page, default 10'),
+        group: z.string().optional().describe('group id from a [group …] mark, e.g. "3d.4f2a9c1e": lists the members of that group'),
         cursor: z.string().optional().describe('from the previous answer'),
       }),
       annotations: NUR_LESEN,
     },
     async (a) => {
       try {
-        const e = await kern.suchen({ q: a.query, art: a.kind, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, limit: a.limit ?? 10, cursor: a.cursor });
+        const e = await kern.suchen({ q: a.query, art: a.kind, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, gruppe: a.group, limit: a.limit ?? 10, cursor: a.cursor });
         const kopf = suchkopf(e, { q: a.query, art: a.kind, limit: a.limit ?? 10 });
         return text(e.treffer.length ? `${kopf}\n${suchzeilen(e.treffer, { rueckfall: e.rueckfall })}` : kopf);
       } catch (err) { return fehler(err); }

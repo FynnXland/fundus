@@ -63,6 +63,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
   const kacheln = new Merker(200);
   const karten = new Merker(24); // shard -> { id: entry } (about 290 KB raw each)
   const zeilen = new Merker(5000); // id -> row, filled by everything that loads rows
+  const serien = new Merker(16); // art -> { <group id>: group } from index/<art>/gruppen.json, only for listing a group
 
   /** fehlend: value to return when the file does not exist (404, or index.html from a single-page host). */
   async function holeJson(pfad, { fehlend } = {}) {
@@ -88,7 +89,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     standLauf ??= holeJson('stand.json')
       .then((s) => {
         if (s.index?.version !== 2) throw new FundusFehler(`Unknown data format (stand.index.version ${s.index?.version ?? 'missing'}, expected 2)`);
-        if (k && k.stand.crawledAt !== s.crawledAt) { teile.clear(); kacheln.clear(); karten.clear(); zeilen.clear(); }
+        if (k && k.stand.crawledAt !== s.crawledAt) { teile.clear(); kacheln.clear(); karten.clear(); zeilen.clear(); serien.clear(); }
         k = baue(s);
         standZeit = Date.now();
         return k;
@@ -142,7 +143,48 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     o.art = art;
     o.quellname = k.quellen.get(o.quelle)?.name ?? o.quelle;
     o.gruppe = k.gruppen[o.lizenz] ?? '';
+    // member of a group (crawler/lib/gruppen.mjs): serie = group id, serieAnzahl = its size; older data has no field
+    const s = o.serie;
+    o.serie = Array.isArray(s) ? s[0] : '';
+    o.serieAnzahl = Array.isArray(s) ? s[1] : 0;
     return o;
+  }
+
+  /**
+   * The runs of groups in index order (index/gruppenbloecke.json, one small file per data version): von(ref) gives
+   * [first row number, rows, group id] for a row number inside a run, else null. null when the data has no groups.
+   */
+  async function gruppenLaeufe() {
+    if (!Object.keys(k.stand.index.gruppen ?? {}).length) return null;
+    if (k.laeufe === undefined) {
+      const roh = await holeJson('index/gruppenbloecke.json', { fehlend: [] });
+      k.laeufe = !Array.isArray(roh) || !roh.length ? null : {
+        von(ref) {
+          let lo = 0;
+          let hi = roh.length - 1;
+          while (lo < hi) {
+            const mitte = (lo + hi + 1) >> 1;
+            if (roh[mitte][0] <= ref) lo = mitte; else hi = mitte - 1;
+          }
+          const b = roh[lo];
+          return b[0] <= ref && ref < b[0] + b[1] ? b : null;
+        },
+      };
+    }
+    return k.laeufe;
+  }
+
+  /** A group by id ("3d.4f2a9c1e"): { id, art, name, anzahl, teile, urheber, lizenz }. One file per kind. */
+  async function gruppeVon(id) {
+    const artName = String(id).split('.')[0];
+    const a = k.arten.get(artName);
+    const fehlt = new FundusFehler(`Unknown group "${id}" (group ids look like "3d.4f2a9c1e"; take them from a [group …] mark in fundus_search)`);
+    if (!a || !k.stand.index.gruppen?.[artName]) throw fehlt;
+    let m = serien.get(artName);
+    if (!m) m = serien.set(artName, await holeJson(`index/${artName}/gruppen.json`, { fehlend: {} }));
+    const g = m[id];
+    if (!g) throw fehlt;
+    return { id, art: artName, ...g };
   }
 
   async function ladeTeil(t, zaehler) {
@@ -191,11 +233,19 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
    * One page of entries. Without q the rows come in index order (by subfolder and tags), with q by relevance.
    * Returns { treffer, weiter (cursor or null), gesamt (exact count or null), teilweise (stopped at the fetch cap),
    * voll (entries matching all words, before row filters), rueckfall (true when entries matching only some words
-   * follow them; such rows carry fehlt = the missing words) }.
+   * follow them; such rows carry fehlt = the missing words), gefaltet, gruppe }.
+   * Groups: with gruppe (a group id) only its members, in index order. Otherwise the members of one group on a
+   * page are folded into the first of them (zusammenfassen, default on): it carries hier = members on this page,
+   * the others count in gefaltet but not towards limit. The cursor stays a position, so a later page can show the
+   * same group again.
    */
-  async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, limit = 10, cursor } = {}) {
+  async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, gruppe, zusammenfassen = true, limit = 10, cursor } = {}) {
     await stand();
-    const a = art(artName);
+    const grp = gruppe ? await gruppeVon(gruppe) : null;
+    if (grp && artName && artName !== grp.art) throw new FundusFehler(`group ${grp.id} belongs to kind ${grp.art}, not ${artName}`);
+    const a = art(grp ? grp.art : artName);
+    const falten = zusammenfassen && !grp;
+    const gb = falten ? await gruppenLaeufe() : null;
     const ui = unterIndex(a, unter);
     const unterName = ui >= 0 ? a.unter[ui] : null;
     const qid = quelleId(quelle);
@@ -217,8 +267,9 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       (!formatN || r.formate.split(' ').includes(formatN)) &&
       (!qid || r.quelle === qid) &&
       (!mitVorschau || Boolean(r.vorschau)) &&
-      tagWoerter.every((ws) => { const t = woerter(`${r.tags} ${r.unter}`); return ws.every((w) => t.some((x) => x.startsWith(w))); });
-    const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length);
+      tagWoerter.every((ws) => { const t = woerter(`${r.tags} ${r.unter}`); return ws.every((w) => t.some((x) => x.startsWith(w))); }) &&
+      (!grp || r.serie === grp.id);
+    const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length || grp);
 
     // the sequence of refs to walk
     let refs = null; // ranked hits (search) or null (listing over blocks)
@@ -242,6 +293,10 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
         refs = refs.concat(teil.map(([r]) => r));
       }
       if (!zeilenfilter && ui < 0) gesamt = refs.length;
+    } else if (grp) {
+      // the parts that hold the members; the group size is exact unless other filters apply
+      bloecke = grp.teile.map((n) => a.teile[n]).filter((t) => t && deckt(t));
+      if (!(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length)) gesamt = ui >= 0 ? grp.unter?.[unterName] ?? 0 : grp.anzahl;
     } else {
       bloecke = (a ? a.teile : k.bloecke).filter(deckt);
       if (!zeilenfilter) gesamt = ui >= 0 ? k.stand.perUnter?.[a.art]?.[unterName] ?? null : a ? a.anzahl : k.gesamt;
@@ -259,18 +314,42 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     const ab = !zeilenfilter && ui < 0 ? pos + 1 : null;
     const zaehler = { n: 0 };
     const treffer = [];
+    const gezeigt = new Map(); // group id -> its line on this page
+    let gefaltet = 0;
     let teilweise = false;
     while (pos < laenge && treffer.length < limit) {
       const [t, i] = ortVon(pos);
+      // a hit of a group already on this page: fold it without loading its part; a listing jumps over the whole
+      // run of the group when the positions up to its end are the same rows (no part left out in between)
+      const ref = refs ? refs[pos] : t.start + i;
+      const lauf = gb?.von(ref);
+      const schonDa = lauf && gezeigt.get(lauf[2]);
+      if (schonDa) {
+        let n = 1;
+        if (!refs) {
+          const ziel = pos + lauf[0] + lauf[1] - ref;
+          const o = ziel <= laenge ? ortVon(ziel - 1) : null;
+          if (o && o[0].start + o[1] === lauf[0] + lauf[1] - 1) n = ziel - pos;
+        }
+        pos += n;
+        // with row filters the skipped rows are not checked, so they are not counted either
+        if (!zeilenfilter) { schonDa.hier += n; gefaltet += n; }
+        continue;
+      }
       if (!teile.get(t.datei)) {
         if (zaehler.n >= maxAbrufe) { teilweise = true; break; }
         // load this part and the next distinct parts the walk will need, a few at a time
         const vorne = [t];
         const platz = () => vorne.length < 4 && vorne.length + zaehler.n < maxAbrufe;
         if (refs) {
-          // without row filters only the refs of this page matter
-          const bis = pos + (zeilenfilter ? 2000 : limit - treffer.length);
-          for (let p = pos + 1; p < laenge && p < bis && platz(); p++) {
+          // without row filters only the refs of this page matter; of a group only its first hit needs a row
+          let noetig = zeilenfilter ? 2000 : limit - treffer.length - 1;
+          const gruppen = new Set([...gezeigt.keys(), ...(lauf ? [lauf[2]] : [])]);
+          for (let p = pos + 1; p < laenge && noetig > 0 && platz(); p++) {
+            const l = gb?.von(refs[p]);
+            if (l && gruppen.has(l[2])) continue;
+            if (l) gruppen.add(l[2]);
+            noetig--;
             const u = blockVon(refs[p]);
             if (!vorne.includes(u) && !teile.get(u.datei)) vorne.push(u);
           }
@@ -282,10 +361,30 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       const r = teile.get(t.datei)[i];
       const fehlend = fehlt?.get(refs[pos]);
       pos++;
-      if (r && passt(r)) treffer.push(fehlend ? { ...r, fehlt: fehlend } : r);
+      if (!r || !passt(r)) continue;
+      if (!falten || !r.serie) { treffer.push(fehlend ? { ...r, fehlt: fehlend } : r); continue; }
+      const da = gezeigt.get(r.serie);
+      if (da) { da.hier++; gefaltet++; continue; }
+      const zeile = { ...r, hier: 1, ...(fehlend ? { fehlt: fehlend } : {}) };
+      gezeigt.set(r.serie, zeile);
+      treffer.push(zeile);
     }
     const rueckfall = zeilenfilter ? treffer.some((r) => r.fehlt) : Boolean(fehlt?.size);
-    return { treffer, weiter: pos < laenge ? pos.toString(36) : null, gesamt, ab, teilweise, abrufe: zaehler.n, voll, rueckfall };
+    // a group page in natural order ("Vase 2" before "Vase 10"); the index orders by subfolder and tags
+    if (grp) treffer.sort((x, y) => x.titel.localeCompare(y.titel, 'de', { numeric: true, sensitivity: 'base' }));
+    return {
+      treffer,
+      weiter: pos < laenge ? pos.toString(36) : null,
+      gesamt,
+      ab,
+      bis: ab ? pos : null, // last match position shown or folded on this page
+      teilweise,
+      abrufe: zaehler.n,
+      voll,
+      rueckfall,
+      gefaltet,
+      gruppe: grp ? { id: grp.id, name: grp.name, anzahl: grp.anzahl, urheber: grp.urheber, lizenz: grp.lizenz } : null,
+    };
   }
 
   /* ---------------- Entries ---------------- */

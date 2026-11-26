@@ -165,8 +165,8 @@ const ITEMS = Array.from({ length: 700 }, (_, i) => {
 rangwerte(ITEMS);
 ITEMS.sort((a, b) => (a.sig.slice(-5) < b.sig.slice(-5) ? -1 : 1));
 
-test('Zeile: bew, pop und rang stehen am Ende von FELDER und in der Zeile', () => {
-  assert.deepEqual(FELDER.slice(-3), ['bew', 'pop', 'rang']);
+test('Zeile: bew, pop und rang stehen am Ende von FELDER (danach nur serie) und in der Zeile', () => {
+  assert.deepEqual(FELDER.slice(-4), ['bew', 'pop', 'rang', 'serie']);
   const r = ITEMS.find((it) => it.rating);
   const z = zeile(r);
   assert.equal(z.length, FELDER.length);
