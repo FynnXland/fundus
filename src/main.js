@@ -114,6 +114,7 @@ async function route() {
     await katalogLaden();
     leisteZeigen();
     filterAbgleichen();
+    startZeigen();
     // Opening or closing the detail sheet must not rebuild the grid: the card the visitor came from keeps its focus.
     const schluessel = JSON.stringify([zustand.filter, zustand.wurzelAlle]);
     if (schluessel !== zustand.gerendert || !main.querySelector('#ablage > *')) {
@@ -163,9 +164,119 @@ async function katalogLaden() {
 /* ---------------- Katalog ---------------- */
 const SORT_TEXT = { empfohlen: 'Empfohlen', bewertung: 'Beste Bewertung', gemischt: 'Gemischt sortiert', neu: 'Neueste zuerst', name: 'Name A bis Z', quelle: 'Nach Quelle sortiert' };
 
+/* ---------------- Start: MCP access first (Fundus is mainly a library for AI assistants) ---------------- */
+const MCP_URL = 'https://fundus.fynn.land/mcp';
+const KI_WEGE = [
+  { id: 'app', name: 'Claude-App', html: '<p>In claude.ai oder Claude Desktop: Einstellungen, Connectors, „Add custom connector“. Name <strong>Fundus</strong>, dann die Adresse einfügen.</p>' },
+  { id: 'code', name: 'Claude Code', html: '<p>Im Terminal:</p>', befehl: `claude mcp add --transport http fundus ${MCP_URL}` },
+  { id: 'cursor', name: 'Cursor', html: '<p>In <code>~/.cursor/mcp.json</code> (alle Projekte) oder <code>.cursor/mcp.json</code>:</p>', befehl: `{ "mcpServers": { "fundus": { "url": "${MCP_URL}" } } }` },
+];
+const KI_BEISPIELE = [
+  'Such mir in Fundus drei CC0-Stühle als glTF, zeig mir die Vorschauen und gib mir Lizenz und Download-Links für den schönsten.',
+  'Finde in Fundus Regengeräusche, die ich frei verwenden darf, und schreib mir die Namensnennung dazu.',
+];
+const kopierknopf = (text, label, klasse = 'knopf knopf--klein') =>
+  `<button type="button" class="${klasse}" data-kopieren="${esc(text)}" aria-label="${esc(label)}">Kopieren</button>`;
+
+function kiBlock() {
+  return `
+  <section class="ki" id="ki" aria-labelledby="ki-titel">
+    <div class="ki__haupt">
+      <h1 id="ki-titel">Freie Assets für deine KI</h1>
+      <p class="ki__satz" id="ki-satz">Trag diese Adresse in deinen KI-Assistenten ein. Dann sucht er im Katalog, sieht sich Vorschauen an und bekommt Lizenz, Namensnennung und Download-Links.</p>
+      <div class="ki__adresse">
+        <code class="ki__url">${esc(MCP_URL)}</code>
+        ${kopierknopf(MCP_URL, 'Adresse kopieren', 'knopf knopf--haupt')}
+      </div>
+      <p class="ki__prinzip">Die Dateien bleiben bei der Quelle, Fundus verweist nur darauf. Jede Karte nennt Lizenz und Namensnennung.</p>
+      <button type="button" class="ki__weiter" id="zumkatalog">Lieber selbst stöbern? Zum Katalog <span aria-hidden="true">↓</span></button>
+    </div>
+    <div class="ki__neben">
+      <div class="segmente" role="tablist" aria-label="Wo du die Adresse einträgst">
+        ${KI_WEGE.map((w, i) => `<button type="button" role="tab" id="ki-tab-${w.id}" aria-controls="ki-weg-${w.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(w.name)}</button>`).join('')}
+      </div>
+      ${KI_WEGE.map((w, i) => `<div class="ki__weg" role="tabpanel" id="ki-weg-${w.id}" aria-labelledby="ki-tab-${w.id}"${i ? ' hidden' : ''}>${w.html}${w.befehl ? `<div class="ki__befehl"><code>${esc(w.befehl)}</code>${kopierknopf(w.befehl, `Befehl für ${w.name} kopieren`)}</div>` : ''}</div>`).join('')}
+      <p class="ki__klein">Andere MCP-Clients: Transport Streamable HTTP, ohne Anmeldung.</p>
+      <h2 class="ki__zwischen">Probier zum Beispiel</h2>
+      <ul class="ki__beispiele">
+        ${KI_BEISPIELE.map((b, i) => `<li><q>${esc(b)}</q>${kopierknopf(b, `Beispiel ${i + 1} kopieren`)}</li>`).join('')}
+      </ul>
+    </div>
+    <span class="unsichtbar" aria-live="polite" id="ki-meldung"></span>
+  </section>`;
+}
+
+async function kopieren(knopf) {
+  const text = knopf.dataset.kopieren;
+  const meldung = main.querySelector('#ki-meldung');
+  let ok = false;
+  try {
+    await navigator.clipboard.writeText(text);
+    ok = true;
+  } catch {
+    // no clipboard (insecure context, denied): select the visible text so Ctrl+C works
+    const code = knopf.parentElement.querySelector('code, q');
+    if (code) getSelection().selectAllChildren(code);
+  }
+  knopf.textContent = ok ? 'Kopiert' : 'Markiert';
+  knopf.classList.add('ist-kopiert');
+  if (meldung) meldung.textContent = ok ? 'In die Zwischenablage kopiert.' : 'Text markiert, kopieren mit Strg+C.';
+  clearTimeout(knopf.zurueck);
+  knopf.zurueck = setTimeout(() => {
+    knopf.textContent = 'Kopieren';
+    knopf.classList.remove('ist-kopiert');
+  }, 1800);
+}
+
+function kiTab(tab, fokus = false) {
+  const ki = main.querySelector('#ki');
+  for (const t of ki.querySelectorAll('[role="tab"]')) {
+    const an = t === tab;
+    t.setAttribute('aria-selected', String(an));
+    t.tabIndex = an ? 0 : -1;
+    ki.querySelector(`#${t.getAttribute('aria-controls')}`).hidden = !an;
+  }
+  if (fokus) tab.focus();
+}
+
+function kiVerbinden() {
+  const ki = main.querySelector('#ki');
+  ki.addEventListener('click', (e) => {
+    const knopf = e.target.closest('[data-kopieren]');
+    if (knopf) kopieren(knopf);
+    const tab = e.target.closest('[role="tab"]');
+    if (tab) kiTab(tab);
+    if (e.target.closest('#zumkatalog')) main.querySelector('.katalog').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  });
+  ki.querySelector('[role="tablist"]').addEventListener('keydown', (e) => {
+    const tabs = [...ki.querySelectorAll('[role="tab"]')];
+    const i = tabs.indexOf(document.activeElement);
+    if (i < 0) return;
+    const ziel = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+    if (ziel === undefined) return;
+    e.preventDefault();
+    kiTab(tabs[(ziel + tabs.length) % tabs.length], true);
+  });
+}
+
+// The MCP block shows on the plain start page only; any filter or search hides it.
+function startZeigen() {
+  const ki = main.querySelector('#ki');
+  if (!ki) return;
+  const f = zustand.filter;
+  const start = !f.art && !f.unter && !f.q && (!f.lizenz || f.lizenz === 'alle') && !f.format && !f.quelle;
+  ki.hidden = !start;
+  // one h1 per view: on the start page the catalogue title steps down a level
+  const titel = main.querySelector('#ordnertitel');
+  if (start) titel.setAttribute('aria-level', '2');
+  else titel.removeAttribute('aria-level');
+  const total = zustand.katalog?.stand?.total;
+  if (start && total) main.querySelector('#ki-satz').textContent = `Trag diese Adresse in deinen KI-Assistenten ein. Dann sucht er in ${zahl(total)} freien Objekten, sieht sich Vorschauen an und bekommt Lizenz, Namensnennung und Download-Links.`;
+}
+
 function katalogBauen() {
   document.title = 'Fundus · freie Assets';
-  main.innerHTML = `
+  main.innerHTML = `${kiBlock()}
   <div class="katalog">
     <nav class="leiste" id="leiste" aria-label="Ordner"></nav>
     <section class="inhalt" aria-labelledby="ordnertitel">
@@ -173,7 +284,7 @@ function katalogBauen() {
         <h1 id="ordnertitel">Alle Objekte</h1>
         <p class="inhalt__anzahl" id="anzahl" aria-live="polite"></p>
       </header>
-      <p class="inhalt__einleitung" id="einleitung">Freie Bilder, 3D-Modelle, Materialien, Musik, Sounds, Icons, Schriften, Code und Claude-Skills aus offenen Quellen. Jedes Objekt nennt Urheber, Lizenz und Ursprung. Die Dateien lädst du direkt bei der Quelle.</p>
+      <p class="inhalt__einleitung" id="einleitung">Freie Bilder, 3D-Modelle, Materialien, Musik, Sounds, Icons, Schriften, Code und Claude-Skills aus offenen Quellen, zum Stöbern und Suchen.</p>
       <div class="filter">
         <div class="segmente" role="group" aria-label="Lizenz" id="lizenzwahl">
           ${Object.entries({ alle: 'Alle Lizenzen', frei: 'Ohne Namensnennung', nennung: 'Mit Namensnennung', gleich: 'Gleiche Bedingungen' }).map(([k, v]) => `<button type="button" data-lizenz="${k}" aria-pressed="false">${esc(v)}</button>`).join('')}
@@ -208,6 +319,7 @@ function katalogBauen() {
     }),
   );
   main.querySelector('#zufallknopf').addEventListener('click', zufall);
+  kiVerbinden();
   main.querySelector('#leiste').addEventListener('click', (e) => {
     const b = e.target.closest('[data-ordner]');
     if (!b) return;
@@ -396,6 +508,7 @@ function ladeanzeige(text) {
 function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   const ablage = main.querySelector('#ablage');
   if (!ablage) return;
+  startZeigen();
   if (!zustand.katalog && !zustand.fehler) {
     ladeanzeige('Katalog wird geladen …');
     return;
