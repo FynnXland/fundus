@@ -153,10 +153,22 @@ async function anzahl(sterne) {
   return data.total_count ?? 0;
 }
 
+const tag = (ms) => new Date(ms).toISOString().slice(0, 10);
+
+/** A single star value with more than 1,000 repositories (below about 230 stars) is split by creation date. */
+async function datumsBaender(wert, von, bis, zaehle, tiefe = 0) {
+  const q = `${wert} created:${tag(von)}..${tag(bis)}`;
+  if (tiefe >= 8 || bis - von < 864e5 * 2 || (await zaehle(q)) <= 1000) return [q];
+  const mitte = von + Math.floor((bis - von) / 2 / 864e5) * 864e5;
+  return [...(await datumsBaender(wert, von, mitte, zaehle, tiefe + 1)), ...(await datumsBaender(wert, mitte + 864e5, bis, zaehle, tiefe + 1))];
+}
+
 /** Star bands with fewer than 1,000 repositories each, from `von` stars upwards (GitHub shows 1,000 per search). */
 export async function baender(von, bis = Infinity, zaehle = anzahl) {
   const q = bis === Infinity ? `>=${von}` : von === bis ? `${von}` : `${von}..${bis}`;
-  if (von === bis || (await zaehle(q)) <= 1000) return [q];
+  const n = await zaehle(q);
+  if (n <= 1000) return [q];
+  if (von === bis) return datumsBaender(von, Date.parse('2008-01-01'), Date.now(), zaehle);
   const mitte = bis === Infinity ? von * 2 - 1 : Math.floor((von + bis) / 2);
   return [...(await baender(von, mitte, zaehle)), ...(await baender(mitte + 1, bis, zaehle))];
 }
@@ -167,6 +179,18 @@ export async function baender(von, bis = Infinity, zaehle = anzahl) {
  * whole range comes round every few nights. Entries already read stay in the catalogue file meanwhile.
  */
 async function sterneRing(cfg, log) {
+  // a fixed slice (cfg.sterneBis, e.g. a catch-up from 900 to 999 stars) is read once in full and keeps no ring state
+  if (cfg.sterneBis) {
+    const liste = await baender(cfg.sterneAb, cfg.sterneBis);
+    const out = [];
+    let i = 0;
+    for (const band of liste) {
+      const repos = await sucheAlle(`stars:${band}`, log);
+      for (const r of repos) { const it = parseRepo(r, 'projekt'); if (it) out.push(it); }
+      log(`  github: Sternbereich ${++i}/${liste.length} (${band}): ${repos.length} Repositories, ${out.length} mit offener Lizenz`);
+    }
+    return out;
+  }
   let stand = {};
   try { stand = JSON.parse(await readFile(STAND, 'utf8')); } catch {}
   const heute = new Date().toISOString().slice(0, 10);
@@ -264,6 +288,7 @@ source.crawl = async function crawl(cfg, log) {
   // The most starred open-source projects, whatever their topic. They come first, so a topic search below that
   // knows the kind better (skript, grafik …) overrides them.
   if (cfg.sterneAb) out.push(...(await sterneRing(cfg, log)));
+  if (cfg.nurSterne) return out;
   for (const query of cfg.projekte ?? []) for (const r of await search(query, per, log)) { const it = parseRepo(r, 'projekt'); if (it) out.push(it); }
   for (const query of cfg.skripte ?? []) for (const r of await search(query, per, log)) { const it = parseRepo(r, 'skript'); if (it) out.push(it); }
   // Asset repositories (sprite packs, sound packs, texture sets): the entry is the repository under the

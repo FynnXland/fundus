@@ -173,3 +173,13 @@ test('Katalogspeicher: große Quellen in Teilen, kleine als eine Datei, Rückweg
     process.chdir(alt);
   }
 });
+
+test('merge: unveränderte Einträge behalten ihre alte Zeile samt Zeitstempel', async () => {
+  const { merge } = await import('../crawler/crawl.mjs');
+  const alt = { id: 'q:1', title: 'A', fetchedAt: '2026-11-01', firstSeen: '2026-10-01' };
+  const [gleich] = merge([alt], [{ id: 'q:1', title: 'A', fetchedAt: '2026-11-27' }]);
+  assert.equal(gleich.fetchedAt, '2026-11-01');
+  const [neu] = merge([alt], [{ id: 'q:1', title: 'B', fetchedAt: '2026-11-27' }]);
+  assert.equal(neu.fetchedAt, '2026-11-27');
+  assert.equal(neu.firstSeen, '2026-10-01');
+});

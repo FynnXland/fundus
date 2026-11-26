@@ -15,10 +15,15 @@ import { SOURCES } from './sources/index.mjs';
 import { dedupe } from './lib/dedupe.mjs';
 import { ladeQuelle, schreibeQuelle, migriere } from './lib/store.mjs';
 
+// An entry whose content did not change keeps its old line byte for byte (fetchedAt included): otherwise every
+// crawl rewrites every line and each nightly commit stores the whole catalogue again.
+const ohneZeit = ({ fetchedAt, firstSeen, ...rest }) => JSON.stringify(rest);
+
 export function merge(previous, fresh) {
   const byId = new Map(previous.map((it) => [it.id, it]));
   for (const it of fresh) {
     const old = byId.get(it.id);
+    if (old && ohneZeit(old) === ohneZeit(it)) continue;
     byId.set(it.id, { ...it, firstSeen: old?.firstSeen ?? it.fetchedAt });
   }
   return dedupe([...byId.values()]);
