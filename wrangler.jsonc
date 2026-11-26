@@ -29,7 +29,9 @@
   // Per visitor on /mcp: 60 tool calls a minute. Counted per Cloudflare location and only approximately; namespace ids
   // must be unique in the account (fynn.land uses 2001 and 2002).
   "ratelimits": [
-    { "name": "RL_MCP", "namespace_id": "3001", "simple": { "limit": 60, "period": 60 } }
+    { "name": "RL_MCP", "namespace_id": "3001", "simple": { "limit": 60, "period": 60 } },
+    // Anthropic's outbound addresses (claude.ai and Desktop connectors, many people per address): worker/schutz.mjs
+    { "name": "RL_MCP_KI", "namespace_id": "3002", "simple": { "limit": 1200, "period": 60 } }
   ],
   "vars": {
     // "1" only with the Workers Paid plan: contact sheets decode pictures (CPU time beyond the free 10 ms)

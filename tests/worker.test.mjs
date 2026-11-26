@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker, { vorschau } from '../worker/index.mjs';
-import { schutzZuruecksetzen } from '../worker/schutz.mjs';
+import { schutzZuruecksetzen, ausKiNetz, begrenzt } from '../worker/schutz.mjs';
 import { plan } from '../scripts/vorschau-r2.mjs';
 
 const PFAD = 'ab/0123456789abcd.webp';
@@ -42,6 +42,25 @@ test('Worker: Not-Aus und Ratenlimit sperren nur /mcp', async () => {
   const voll = { ASSETS: assets, RL_MCP: { limit: async () => ({ success: false }) } };
   assert.equal((await worker.fetch(new Request('https://x/mcp', { method: 'POST' }), voll)).status, 429);
   schutzZuruecksetzen();
+});
+
+test('Ratenlimit: Anthropics Ausgangsadressen zählen im eigenen Topf', async () => {
+  assert.equal(ausKiNetz('160.79.104.1'), true);
+  assert.equal(ausKiNetz('160.79.111.254'), true);
+  assert.equal(ausKiNetz('153.61.223.9'), true);
+  assert.equal(ausKiNetz('160.79.112.1'), false);
+  assert.equal(ausKiNetz('8.8.8.8'), false);
+  assert.equal(ausKiNetz('2607:6bc0::1'), false);
+  const genutzt = [];
+  const env = {
+    RL_MCP: { limit: async () => (genutzt.push('normal'), { success: true }) },
+    RL_MCP_KI: { limit: async () => (genutzt.push('ki'), { success: true }) },
+  };
+  const anfrage = (ip) => new Request('https://x/mcp', { method: 'POST', headers: { 'CF-Connecting-IP': ip } });
+  await begrenzt(env, 'RL_MCP', anfrage('160.79.104.20'));
+  await begrenzt(env, 'RL_MCP', anfrage('93.184.216.34'));
+  await begrenzt({ RL_MCP: env.RL_MCP }, 'RL_MCP', anfrage('160.79.104.20'));
+  assert.deepEqual(genutzt, ['ki', 'normal', 'normal']);
 });
 
 test('R2-Abgleich: lädt Fehlendes und Geändertes hoch, löscht Verwaistes', () => {

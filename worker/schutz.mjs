@@ -14,9 +14,22 @@ async function schluessel(request) {
   return [...new Uint8Array(buf).slice(0, 8)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Connectors in claude.ai and Claude Desktop call from Anthropic's servers, so many people share a few addresses.
+// Those addresses get their own, larger allowance (binding <name>_KI). Ranges: outbound IPv4 of
+// https://platform.claude.com/docs/en/api/ip-addresses, read 26.11.2026.
+const KI_NETZE = [['160.79.104.0', 21], ['153.61.208.0', 20]];
+
+const zahl = (ip) => ip.split('.').reduce((n, t) => n * 256 + Number(t), 0);
+export function ausKiNetz(ip) {
+  if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip || '')) return false;
+  const n = zahl(ip);
+  return KI_NETZE.some(([netz, bits]) => Math.floor(n / 2 ** (32 - bits)) === Math.floor(zahl(netz) / 2 ** (32 - bits)));
+}
+
 /** True when this visitor has used up the allowance of that limiter (binding in wrangler.jsonc "ratelimits"). */
 export async function begrenzt(env, binding, request) {
-  const limiter = env?.[binding];
+  const ki = ausKiNetz(request.headers.get('CF-Connecting-IP'));
+  const limiter = env?.[ki && env?.[`${binding}_KI`] ? `${binding}_KI` : binding];
   if (!limiter || typeof limiter.limit !== 'function') return false;
   try {
     const { success } = await limiter.limit({ key: await schluessel(request) });
