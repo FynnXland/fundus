@@ -40,3 +40,15 @@ test('GitHub-Schriften: Musterdatei ist die aufrechte Regular-TTF, möglichst we
   assert.equal(musterDatei(['fonts/otf/Inter-Bold.otf', 'fonts/ttf/Inter-Regular.ttf', 'fonts/ttf/Inter-Italic.ttf', 'docs/test.ttf', 'x/y/z/Inter-Regular.ttf']), 'fonts/ttf/Inter-Regular.ttf');
   assert.equal(musterDatei(['src/glyphs.sfd', 'README.md']), undefined);
 });
+
+test('GitHub: Sternbereiche bleiben unter 1.000 Treffern, nach oben offen', async () => {
+  const { baender } = await import('../crawler/sources/github.mjs');
+  // made-up distribution: 3 repos per star value below 2,000, few above
+  const zaehle = async (q) => {
+    const [von, bis] = q.startsWith('>=') ? [Number(q.slice(2)), 1e7] : q.includes('..') ? q.split('..').map(Number) : [Number(q), Number(q)];
+    return Math.max(0, Math.min(bis, 1999) - von + 1) * 3 + (bis >= 2000 ? 500 : 0);
+  };
+  const b = await baender(1000, Infinity, zaehle);
+  assert.ok(b.at(-1).startsWith('>='));
+  for (const q of b) assert.ok((await zaehle(q)) <= 1000 || !q.includes('.'), q);
+});

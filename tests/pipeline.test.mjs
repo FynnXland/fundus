@@ -152,3 +152,24 @@ test('gedrosselteHosts: Massen-403 eines Servers wird unklar, einzelne 404 bleib
   assert.equal(alle.at(-1).ok, false);
   assert.equal(alle.at(-2).ok, false);
 });
+
+test('Katalogspeicher: große Quellen in Teilen, kleine als eine Datei, Rückweg räumt auf', async () => {
+  const { mkdtemp, readdir } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const store = await import('../crawler/lib/store.mjs');
+  const alt = process.cwd();
+  process.chdir(await mkdtemp(join(tmpdir(), 'fundus-store-')));
+  try {
+    const viele = Array.from({ length: store.TEIL + 5 }, (_, i) => ({ id: `t:${i}` }));
+    await store.schreibeQuelle('gross', viele, '2026-11-26');
+    assert.deepEqual(await readdir('data/katalog/gross'), ['teil-00.json', 'teil-01.json']);
+    assert.equal((await store.ladeQuelle('gross')).items.length, viele.length);
+    assert.deepEqual(await store.quellenAufPlatte(), ['gross']);
+    await store.schreibeQuelle('gross', viele.slice(0, 3));
+    assert.deepEqual(await readdir('data/katalog'), ['gross.json']);
+    assert.equal((await store.ladeKatalog()).items.length, 3);
+  } finally {
+    process.chdir(alt);
+  }
+});

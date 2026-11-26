@@ -2,13 +2,14 @@
 // whitelist, no NC/ND, unique ids, only http(s) links. Call numbers are display labels and may repeat.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import { validateItem } from '../crawler/lib/schema.mjs';
+import { ladeKatalog } from '../crawler/lib/store.mjs';
 
 const ordner = new URL('../data/katalog/', import.meta.url);
 
-test('Katalogdaten sind gültig', { skip: !existsSync(ordner) && 'data/katalog/ fehlt (noch nicht gecrawlt)' }, () => {
-  const items = readdirSync(ordner).filter((f) => f.endsWith('.json')).flatMap((f) => JSON.parse(readFileSync(new URL(f, ordner), 'utf8')).items);
+test('Katalogdaten sind gültig', { skip: !existsSync(ordner) && 'data/katalog/ fehlt (noch nicht gecrawlt)' }, async () => {
+  const { items } = await ladeKatalog();
   assert.ok(items.length > 0, 'Katalog ist leer');
   const fehler = [];
   const ids = new Set();

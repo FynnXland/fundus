@@ -5,7 +5,7 @@
 //
 //   node crawler/bewertungen-nachtragen.mjs --quelle internetarchive     ~15 requests per 750 entries (50 per request)
 //   node crawler/bewertungen-nachtragen.mjs --quelle fuel                 offline, from meta.abrufe
-//   --von a.json --nach b.json   read and write other files (default: data/katalog/<quelle>.json, in place)
+//   --von a.json --nach b.json   read and write other files (default: the source catalogue, in place)
 //   --probe 100                  only the first 100 entries, nothing is written
 //
 // Internet Archive: advancedsearch with 50 identifiers per request (fields avg_rating, num_reviews, downloads),
@@ -14,6 +14,7 @@ import { readFile, writeFile, rename } from 'node:fs/promises';
 import { getJson, setHostGap } from './lib/http.mjs';
 import { beliebtheit } from './lib/bewertung.mjs';
 import { bewertungVon } from './sources/internetarchive.mjs';
+import { ladeQuelle, schreibeQuelle } from './lib/store.mjs';
 
 const SEARCH = 'https://archive.org/advancedsearch.php';
 const PACK = 50;
@@ -64,10 +65,11 @@ async function main() {
   const arg = (n) => (process.argv.includes(n) ? process.argv[process.argv.indexOf(n) + 1] : null);
   const quelle = arg('--quelle');
   if (!['internetarchive', 'fuel'].includes(quelle)) throw new Error('--quelle internetarchive oder --quelle fuel');
-  const von = arg('--von') ?? `data/katalog/${quelle}.json`;
+  // without --von/--nach the source's own catalogue (one file or split into parts, lib/store.mjs)
+  const von = arg('--von');
   const nach = arg('--nach') ?? von;
   const probe = Number(arg('--probe')) || 0;
-  const bestand = JSON.parse(await readFile(von, 'utf8'));
+  const bestand = von ? JSON.parse(await readFile(von, 'utf8')) : await ladeQuelle(quelle);
   const items = probe ? bestand.items.slice(0, probe) : bestand.items;
   let r;
   if (quelle === 'fuel') r = fuelAnwenden(items);
@@ -82,6 +84,7 @@ async function main() {
   }
   console.log(`${items.length} Einträge, ${r.gefunden} Treffer, ${r.bewertet} mit Bewertung, ${r.beliebt} mit Beliebtheit`);
   if (probe) return;
+  if (!nach) return schreibeQuelle(quelle, r.items, bestand.crawledAt);
   await writeFile(`${nach}.neu`, `{"crawledAt":${JSON.stringify(bestand.crawledAt)},"items":[\n${r.items.map((it) => JSON.stringify(it)).join(',\n')}\n]}\n`);
   await rename(`${nach}.neu`, nach);
 }

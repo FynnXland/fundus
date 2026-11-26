@@ -10,6 +10,7 @@ import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem } from '../lib/item.mjs';
 import { normalizeLicense } from '../lib/licenses.mjs';
 import { createHash } from 'node:crypto';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
 // Same skill copied into several collections: identical SKILL.md text (whitespace normalised) = same skill.
 const ZEILENENDE = /\r\n/g;
@@ -145,6 +146,53 @@ async function sucheAlle(query, log, maxSeiten = 10) {
   return alle;
 }
 
+const STAND = 'data/crawlstand/github.json';
+
+async function anzahl(sterne) {
+  const data = await getJson(`${API}/search/repositories?q=${encodeURIComponent(`stars:${sterne}`)}&per_page=1`, { headers: headers() });
+  return data.total_count ?? 0;
+}
+
+/** Star bands with fewer than 1,000 repositories each, from `von` stars upwards (GitHub shows 1,000 per search). */
+export async function baender(von, bis = Infinity, zaehle = anzahl) {
+  const q = bis === Infinity ? `>=${von}` : von === bis ? `${von}` : `${von}..${bis}`;
+  if (von === bis || (await zaehle(q)) <= 1000) return [q];
+  const mitte = bis === Infinity ? von * 2 - 1 : Math.floor((von + bis) / 2);
+  return [...(await baender(von, mitte, zaehle)), ...(await baender(mitte + 1, bis, zaehle))];
+}
+
+/**
+ * Every repository with at least cfg.sterneAb stars, in bands. The bands are worked as a ring: each run reads at
+ * most cfg.sterneSeiten result pages and the next run continues there, so the nightly run stays short while the
+ * whole range comes round every few nights. Entries already read stay in the catalogue file meanwhile.
+ */
+async function sterneRing(cfg, log) {
+  let stand = {};
+  try { stand = JSON.parse(await readFile(STAND, 'utf8')); } catch {}
+  const heute = new Date().toISOString().slice(0, 10);
+  const alt = stand.berechnet && (Date.parse(heute) - Date.parse(stand.berechnet)) / 864e5 > 30;
+  if (!stand.baender?.length || stand.ab !== cfg.sterneAb || alt) {
+    stand = { ab: cfg.sterneAb, berechnet: heute, baender: await baender(cfg.sterneAb), naechstes: 0 };
+    log(`  github: ${stand.baender.length} Sternbereiche ab ${cfg.sterneAb} Sternen berechnet`);
+  }
+  const out = [];
+  let seiten = 0, fertig = 0;
+  const budget = cfg.sterneSeiten ?? 150;
+  while (seiten < budget && fertig < stand.baender.length) {
+    const band = stand.baender[stand.naechstes % stand.baender.length];
+    const repos = await sucheAlle(`stars:${band}`, log);
+    seiten += Math.max(1, Math.ceil(repos.length / 100));
+    for (const r of repos) { const it = parseRepo(r, 'projekt'); if (it) out.push(it); }
+    stand.naechstes = (stand.naechstes + 1) % stand.baender.length;
+    fertig++;
+    log(`  github: Sternbereich ${fertig}/${Math.min(stand.baender.length, budget)} (${band}): ${repos.length} Repositories, ${out.length} mit offener Lizenz`);
+  }
+  await mkdir('data/crawlstand', { recursive: true });
+  await writeFile(STAND, JSON.stringify(stand));
+  log(`  github: ${fertig} von ${stand.baender.length} Sternbereichen gelesen, ${out.length} Projekte, weiter bei Bereich ${stand.naechstes}`);
+  return out;
+}
+
 async function search(query, perPage, log) {
   try {
     const data = await getJson(`${API}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${perPage}`, { headers: headers() });
@@ -213,13 +261,9 @@ source.crawl = async function crawl(cfg, log) {
   if (!process.env.GITHUB_TOKEN) log('  github: ohne GITHUB_TOKEN, das dauert wegen der Ratenlimits ein paar Minuten');
   const out = [];
   const per = cfg.proSuche ?? 25;
-  // The most starred open-source projects, whatever their topic (cfg.sterne: star ranges below 1,000 hits each).
-  // They come first, so a topic search below that knows the kind better (skript, grafik …) overrides them.
-  let sterne = 0;
-  for (const band of cfg.sterne ?? []) {
-    for (const r of await sucheAlle(`stars:${band}`, log)) { const it = parseRepo(r, 'projekt'); if (it) { out.push(it); sterne++; } }
-  }
-  if (cfg.sterne?.length) log(`  github: ${sterne} Projekte aus den Sternbereichen`);
+  // The most starred open-source projects, whatever their topic. They come first, so a topic search below that
+  // knows the kind better (skript, grafik …) overrides them.
+  if (cfg.sterneAb) out.push(...(await sterneRing(cfg, log)));
   for (const query of cfg.projekte ?? []) for (const r of await search(query, per, log)) { const it = parseRepo(r, 'projekt'); if (it) out.push(it); }
   for (const query of cfg.skripte ?? []) for (const r of await search(query, per, log)) { const it = parseRepo(r, 'skript'); if (it) out.push(it); }
   // Asset repositories (sprite packs, sound packs, texture sets): the entry is the repository under the
