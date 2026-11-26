@@ -1,0 +1,74 @@
+{
+ "fmaPortiert": {
+  "item_size": 17475337,
+  "metadata": {
+   "identifier": "Lets_Go_Arctic-11859",
+   "creator": "Lakes",
+   "title": "Let's Go Arctic",
+   "licenseurl": "http://creativecommons.org/licenses/by-sa/3.0/au/",
+   "collection": "freemusicarchive",
+   "mediatype": "audio",
+   "addeddate": "2012-06-04 21:19:24"
+  },
+  "files": [
+   {
+    "name": "Lakes_-_01_-_Lets_Go_Arctic.mp3",
+    "format": "VBR MP3",
+    "track": "1",
+    "title": "Let's Go Arctic",
+    "length": "139.72",
+    "size": "5592404",
+    "md5": "169e5fd01de572a4e8f8b59f2f3a3f6a",
+    "sha1": "90d7873ad63864279ccbf0f1fb3e43a15301d3f7"
+   },
+   {
+    "name": "Lakes_-_02_-_Radar_for_Bats.mp3",
+    "format": "VBR MP3",
+    "track": "2",
+    "title": "Radar for Bats",
+    "length": "93.57",
+    "size": "3746069",
+    "md5": "b1a096155b9b7d2558280d008a47f5da",
+    "sha1": "58d6c3388d3d1cd577dc2a86383e64236cc1284c"
+   }
+  ]
+ },
+ "netlabelJp": {
+  "item_size": 443269735,
+  "metadata": {
+   "identifier": "NigaiHa",
+   "creator": "Yukiga Futte Uresii",
+   "title": "Nigai Ha",
+   "licenseurl": "http://creativecommons.org/licenses/by/2.1/jp/",
+   "subject": "Noise;Glitch;Minimal",
+   "collection": [
+    "oloil",
+    "netlabels"
+   ],
+   "mediatype": "audio",
+   "addeddate": "2009-10-13 12:36:21"
+  },
+  "files": [
+   {
+    "name": "01_Nigai_Ha_04.mp3",
+    "format": "VBR MP3",
+    "track": "01",
+    "title": "Nigai Ha 04",
+    "length": "05:56",
+    "size": "5563392",
+    "md5": "6c8266f40d46f6d7ab416d58374e1fb9",
+    "sha1": "c16f67e039e969132cf4f74783afe0f708556dc0"
+   },
+   {
+    "name": "01_Nigai_Ha_04_vbr.mp3",
+    "format": "VBR MP3",
+    "track": "01",
+    "title": "Nigai Ha 04",
+    "length": "05:56",
+    "size": "3891605",
+    "md5": "5eca15962d3499968a407ea75b7e602b",
+    "sha1": "b723ae59831d7f9d716d44632e556343b4911db1"
+   }
+  ]
+ }
+}

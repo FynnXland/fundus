@@ -357,7 +357,7 @@ test('Internet Archive: Suchanfrage nach addeddate, alte Aufrufform und Lizenzli
   const staged = decodeURIComponent(ia.searchUrl('radio-aporee-maps', 100, 3, { sort: 'addeddate asc' }));
   assert.equal(new URL(ia.searchUrl('radio-aporee-maps', 100, 3, { sort: 'addeddate asc' })).searchParams.get('sort[]'), 'addeddate asc');
   assert.match(staged, /page=3/);
-  assert.equal((staged.match(/licenseurl:/g) ?? []).length, 12);
+  assert.equal((staged.match(/licenseurl:/g) ?? []).length, 4, 'vier Platzhalter-Klauseln seit 26.11.2026');
   assert.equal(ia.LICENSE_URLS.length, 12);
 });
 

@@ -47,6 +47,11 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
   „meant for research purposes“) ist ein Stand von 2017 aus der abgeschalteten API und änderte nichts an lit. d.
   FMA-Titel kommen erlaubt über Wikimedia Commons (`Category:Free Music Archive`) und die Internet-Archive-Sammlung
   `freemusicarchive`. Details: `docs/stand/fundus-fma.md`.
+- Internet Archive nimmt seit 26.11.2026 alle Fassungen von CC BY und BY-SA an (1.0 bis 4.0, auch Länderfassungen
+  wie `by/3.0/us`, `by/2.1/jp`). Die portierten Lizenzen gewähren dieselben Rechte (vervielfältigen, bearbeiten,
+  kommerziell, Namensnennung, bei SA gleiche Bedingungen), nur nach nationalem Recht formuliert. Fundus zeigt deshalb
+  die echte Länderfassung („CC BY 3.0 US“ mit Link auf deren Lizenzseite), nicht die allgemeine. Weiter draußen: NC,
+  ND, Sampling+, `licenses/publicdomain/` und `choose/publicdomain-2` (alte, mehrdeutige Angaben), „FMA_License“.
 - Smithsonian-Nutzungsbedingungen (si.edu/termsofuse) ließen sich automatisiert nicht abrufen (Cloudflare); CC0 ist über
   die API-Doku und den AWS-Registry-Eintrag belegt. Vor dem Einschalten mit Schlüssel einmal im Browser lesen.
 - OGA-BY 3.0 und 4.0 (OpenGameArt) sind seit 23.11.2026 zugelassen. Gelesen: die Lizenztexte

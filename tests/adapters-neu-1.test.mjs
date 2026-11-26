@@ -74,11 +74,13 @@ test('Internet Archive: Netlabel-Album mit erster MP3, MD5 und ZIP unter 300 MB'
   assert.equal(it.meta.sammlung, 'oloil');
 });
 
-test('Internet Archive: Lizenz nur exakt aus der Whitelist, großes Item ohne ZIP', () => {
+test('Internet Archive: Lizenz nur CC BY/BY-SA/CC0/PDM, großes Item ohne ZIP', () => {
   const { metadata } = fx('internetarchive');
   const withLicense = (u) => parseItem({ ...metadata, metadata: { ...metadata.metadata, licenseurl: u } });
   assert.equal(withLicense('http://creativecommons.org/licenses/by-nc-sa/3.0/'), null);
-  assert.equal(withLicense('http://creativecommons.org/licenses/by/3.0/us/'), null);
+  // Ported variants are accepted since 26.11.2026 (tests/adapters-fma.test.mjs), other paths are not.
+  assert.equal(withLicense('http://creativecommons.org/licenses/by/3.0/us/').license.id, 'CC-BY-3.0-US');
+  assert.equal(withLicense('http://creativecommons.org/licenses/by/3.0/deed.en'), null);
   assert.equal(withLicense(undefined), null);
   assert.equal(withLicense('https://creativecommons.org/publicdomain/mark/1.0/').license.id, 'PDM-1.0');
   assert.equal(parseItem({}), null);

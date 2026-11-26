@@ -1,11 +1,12 @@
 // Internet Archive, music and field recordings. Licences on archive.org are set by the uploader, so the crawler
-// stays in curated collections and accepts only licence URLs from an exact whitelist; ported variants
-// (/3.0/us/, /de/ …) and NC/ND are out.
+// stays in curated collections and accepts only CC BY, CC BY-SA (every version from 1.0 to 4.0, also the ported
+// variants such as /3.0/us/ or /2.1/jp/, which grant the same rights under a national legal text), CC0 and the
+// Public Domain Mark. NC, ND, Sampling+ and the "FMA_License" are out. A ported licence keeps its own deed URL.
 //
-// Collections (checked live 23.11.2026, hits with a whitelisted licence):
-//   netlabels           ~5 900   musik   releases uploaded by the labels themselves (the former default)
-//   radio-aporee-maps   ~58 700  sound   field recordings, one curating uploader (radio aporee), see below
-//   freemusicarchive    ~290     musik   Free Music Archive mirror from 2011, uploaded by one archive.org account
+// Collections (checked live 26.11.2026, hits with an accepted licence; 23.11. without ported/older versions):
+//   netlabels           ~7 270   musik   releases uploaded by the labels themselves (the former default; 23.11.: 5 900)
+//   radio-aporee-maps   ~58 750  sound   field recordings, one curating uploader (radio aporee), see below
+//   freemusicarchive    ~380     musik   Free Music Archive mirror from 2011, uploaded by one archive.org account (23.11.: 286)
 //   computoser          ~4 500   musik   computer-composed pieces (CC BY-SA 4.0, one uploader); optional
 // Deliberately not used: "audio_music" (commercial releases tagged CC0 or PDM by uploaders), "hifidelity" (game and
 // TV music as CC0), "folksoundomy_music", "78rpm" (legal dispute), "jamendo-albums" (Jamendo excluded itself),
@@ -43,9 +44,43 @@ const source = {
   terms: 'https://archive.org/about/terms',
 };
 
-// Exact licence URLs as they occur in the licenseurl field (both schemes are common).
+// The unported licence URLs of the first version (both schemes are common); kept for callers and tests.
 const LICENSE_PATHS = ['publicdomain/zero/1.0/', 'licenses/by/3.0/', 'licenses/by/4.0/', 'licenses/by-sa/3.0/', 'licenses/by-sa/4.0/', 'publicdomain/mark/1.0/'];
 export const LICENSE_URLS = LICENSE_PATHS.flatMap((p) => [`http://creativecommons.org/${p}`, `https://creativecommons.org/${p}`]);
+
+// What the licenseurl field may hold: CC BY or BY-SA with version and optional port (jurisdiction), CC0, PDM.
+// Ports are two-letter codes plus "scotland" and "igo". Deed and legalcode pages or other paths are not accepted.
+const CC_URL = /^https?:\/\/(?:www\.)?creativecommons\.org\/(?:licenses\/(by|by-sa)\/(1\.0|2\.0|2\.1|2\.5|3\.0|4\.0)(?:\/([a-z]{2}|scotland|igo))?|publicdomain\/(zero|mark)\/1\.0)\/?$/;
+// The search: four wildcard clauses instead of hundreds of exact ports; parseItem() then checks with CC_URL.
+// Slashes must be escaped for the search backend (unescaped it answers BACKEND_ERROR, checked 26.11.2026).
+const LICENSE_QUERY = ['licenses/by/', 'licenses/by-sa/', 'publicdomain/zero/', 'publicdomain/mark/']
+  .map((p) => `licenseurl:*creativecommons.org/${p}*`.replaceAll('/', '\\/'))
+  .join(' OR ');
+// Bumped when the accepted licences change: collections read with an older list start again at offset 0,
+// because the new hits are spread over the whole sort order and an old offset would skip some of them.
+export const LIZENZSTAND = 2;
+
+/** Licence record for a licenseurl value, or null. Ported variants keep their national deed and show the port. */
+export function licenseFromUrl(raw) {
+  const m = String(raw ?? '').trim().toLowerCase().match(CC_URL);
+  if (!m) return null;
+  const [, code, v, port, pd] = m;
+  if (pd === 'zero') return { id: 'CC0-1.0', name: 'CC0 1.0', url: 'https://creativecommons.org/publicdomain/zero/1.0/deed.de', attribution: false, shareAlike: false, family: 'gemeinfrei' };
+  if (pd === 'mark') return { id: 'PDM-1.0', name: 'Public Domain Mark 1.0', url: 'https://creativecommons.org/publicdomain/mark/1.0/deed.de', attribution: false, shareAlike: false, family: 'gemeinfrei' };
+  // 4.0 has no ports, 2.1 exists only as ports.
+  if ((v === '4.0' && port) || (v === '2.1' && !port)) return null;
+  const sa = code === 'by-sa';
+  const kurz = sa ? 'BY-SA' : 'BY';
+  const land = port ? port.toUpperCase() : '';
+  return {
+    id: `CC-${kurz}-${v}${port ? `-${land}` : ''}`,
+    name: `CC ${kurz} ${v}${port ? ` ${land}` : ''}`,
+    url: `https://creativecommons.org/licenses/${code}/${v}/${port ? `${port}/` : ''}deed.de`,
+    attribution: true,
+    shareAlike: sa,
+    family: 'cc',
+  };
+}
 
 const MP3_FORMATS = ['VBR MP3', '128Kbps MP3'];
 
@@ -92,8 +127,8 @@ export function pickMp3(files = []) {
 export function parseItem(data, { kind = 'musik', stats } = {}) {
   const m = data?.metadata;
   if (!m?.identifier || !/^[A-Za-z0-9._-]+$/.test(m.identifier)) return null;
-  const license = first(m.licenseurl);
-  if (!LICENSE_URLS.includes(license)) return null;
+  const license = licenseFromUrl(first(m.licenseurl));
+  if (!license) return null;
   const mp3 = pickMp3(data.files);
   if (!mp3) return null;
   const id = m.identifier;
@@ -146,8 +181,7 @@ export function bewertungVon(id, stats) {
 
 /** @param {{ sort?: string }} [opts]  default sort stays "downloads desc" for the old three-argument call */
 export function searchUrl(collection, rows, page, { sort = 'downloads desc' } = {}) {
-  const licenses = LICENSE_URLS.map((u) => `licenseurl:"${u}"`).join(' OR ');
-  const p = new URLSearchParams({ q: `mediatype:audio AND collection:"${collection}" AND (${licenses})` });
+  const p = new URLSearchParams({ q: `mediatype:audio AND collection:"${collection}" AND (${LICENSE_QUERY})` });
   for (const f of ['identifier', 'addeddate', 'avg_rating', 'num_reviews', 'downloads']) p.append('fl[]', f);
   p.append('sort[]', sort);
   p.set('rows', String(rows));
@@ -183,7 +217,7 @@ export function budgetFromConfig(cfg = {}) {
 // state = {
 //   version: 1,
 //   sammlungen: {
-//     "netlabels": { art, richtung: "asc" | "desc", offset: 1200, treffer?: 5887, fertig: false, fertigAm?: "2026-11-23", runde: 1, zuletzt?: ISO, fehler?: text }
+//     "netlabels": { art, richtung: "asc" | "desc", offset: 1200, treffer?: 5887, fertig: false, fertigAm?: "2026-11-23", runde: 1, lizenzen: 2, zuletzt?: ISO, fehler?: text }
 //   }
 // }
 // `offset` counts the items already handled in the sort order of `richtung`; the next item is at that position.
@@ -192,7 +226,7 @@ export function emptyState() {
   return { version: 1, sammlungen: {} };
 }
 
-const fresh = (c, runde = 1) => ({ art: c.art, richtung: 'asc', offset: 0, fertig: false, runde });
+const fresh = (c, runde = 1) => ({ art: c.art, richtung: 'asc', offset: 0, fertig: false, runde, lizenzen: LIZENZSTAND });
 const daysBetween = (a, b) => Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86400000);
 
 /**
@@ -207,7 +241,8 @@ export function prepareState(state, collections, { heute, wiederholenNachTagen =
     const e = st.sammlungen[c.id];
     if (!e) {
       st.sammlungen[c.id] = fresh(c);
-    } else if (e.art !== c.art) {
+    } else if (e.art !== c.art || e.lizenzen !== LIZENZSTAND) {
+      // Changed kind or licence list: read the collection again from the start (same round).
       st.sammlungen[c.id] = fresh(c, e.runde);
     } else if (e.fertig && e.fertigAm && daysBetween(e.fertigAm, heute) >= wait) {
       const capped = (e.treffer ?? 0) > WINDOW;
