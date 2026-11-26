@@ -39,6 +39,14 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
 - Openverse-Nutzungsbedingungen verbieten Scraping; der Adapter bleibt im erlaubten Seitenfenster der API (240 Treffer
   je Suchbegriff). Für deutlich mehr: erweiterten Zugang bei Openverse anfragen.
 - Freesound direkt bleibt aus (API-Bedingungen § 1 und § 4 f: keine ähnlichen Datenbanken).
+- Free Music Archive direkt bleibt aus (geprüft 26.11.2026, freemusicarchive.org/Terms_of_Use, „Restrictions on Use“):
+  lit. d verbietet direkte Links auf einzelne Audiodateien („deep links … such as mp3 files“), also Hörproben und
+  Downloads über `/track/…/stream/` und `/download/`; lit. e verbietet automatisierte Anfragen und Data Mining. Eine API
+  gibt es nicht mehr (`/api` 404). robots.txt sperrt nur KI-Crawler und nennt eine Sitemap, die liefert aber nur
+  Adressen, die Metadaten stünden erst auf jeder Titelseite. Der Forschungsdatensatz mdeff/fma (Metadaten CC BY 4.0,
+  „meant for research purposes“) ist ein Stand von 2017 aus der abgeschalteten API und änderte nichts an lit. d.
+  FMA-Titel kommen erlaubt über Wikimedia Commons (`Category:Free Music Archive`) und die Internet-Archive-Sammlung
+  `freemusicarchive`. Details: `docs/stand/fundus-fma.md`.
 - Smithsonian-Nutzungsbedingungen (si.edu/termsofuse) ließen sich automatisiert nicht abrufen (Cloudflare); CC0 ist über
   die API-Doku und den AWS-Registry-Eintrag belegt. Vor dem Einschalten mit Schlüssel einmal im Browser lesen.
 - OGA-BY 3.0 und 4.0 (OpenGameArt) sind seit 23.11.2026 zugelassen. Gelesen: die Lizenztexte
