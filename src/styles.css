@@ -272,7 +272,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 .ki__weg p code { background: var(--flaeche); padding: 1px 5px; border-radius: 5px; }
 /* concentric: 16px outside = 10px small button + 6px padding */
 .ki__befehl { display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 16px; background: var(--flaeche); }
-.ki__befehl code { flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.45; overflow-wrap: anywhere; }
+.ki__befehl code { flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.45; overflow-wrap: anywhere; white-space: pre-wrap; }
 .ki__befehl .knopf, .ki__beispiele .knopf { background: var(--karte); }
 .ki__klein { margin: 10px 0 0; font-size: 13.5px; color: var(--bleistift); }
 .ki__zwischen { margin: 26px 0 10px; font: 600 14px/1.3 var(--sans); color: var(--bleistift); }

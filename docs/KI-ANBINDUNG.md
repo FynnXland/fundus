@@ -33,6 +33,21 @@ claude mcp add --transport http fundus https://fundus.fynn.land/mcp
 { "mcpServers": { "fundus": { "url": "https://fundus.fynn.land/mcp" } } }
 ```
 
+**Codex (App, CLI, IDE-Erweiterung):** in der App oder Erweiterung unter Einstellungen, MCP servers, „Add server“,
+Streamable HTTP, URL eintragen. Oder in `~/.codex/config.toml` (alle drei teilen sich die Einstellung):
+
+```toml
+[mcp_servers.fundus]
+url = "https://fundus.fynn.land/mcp"
+```
+
+**VS Code (GitHub Copilot):** Befehlspalette „Chat: Open Customizations“, MCP Servers, „Add Server“, HTTP, URL
+eintragen, ID `fundus`. Oder in `~/.copilot/mcp-config.json`:
+
+```json
+{ "mcpServers": { "fundus": { "type": "http", "url": "https://fundus.fynn.land/mcp", "tools": ["*"] } } }
+```
+
 **Andere MCP-Clients:** Transport „Streamable HTTP“, URL wie oben. Eine Anmeldung gibt es nicht.
 
 ## Lokal: mit Speichern in einen Ordner

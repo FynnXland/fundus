@@ -169,7 +169,9 @@ const MCP_URL = 'https://fundus.fynn.land/mcp';
 const KI_WEGE = [
   { id: 'app', name: 'Claude-App', html: '<p>In claude.ai oder Claude Desktop: Einstellungen, Connectors, „Add custom connector“. Name <strong>Fundus</strong>, dann die Adresse einfügen.</p>' },
   { id: 'code', name: 'Claude Code', html: '<p>Im Terminal:</p>', befehl: `claude mcp add --transport http fundus ${MCP_URL}` },
+  { id: 'codex', name: 'Codex', html: '<p>In der Codex-App oder der IDE-Erweiterung: Einstellungen, MCP servers, „Add server“, Streamable HTTP, Adresse einfügen. Oder in <code>~/.codex/config.toml</code> (gilt auch für die CLI):</p>', befehl: `[mcp_servers.fundus]\nurl = "${MCP_URL}"` },
   { id: 'cursor', name: 'Cursor', html: '<p>In <code>~/.cursor/mcp.json</code> (alle Projekte) oder <code>.cursor/mcp.json</code>:</p>', befehl: `{ "mcpServers": { "fundus": { "url": "${MCP_URL}" } } }` },
+  { id: 'vscode', name: 'VS Code', html: '<p>Mit GitHub Copilot: Befehlspalette „Chat: Open Customizations“, MCP Servers, „Add Server“, HTTP, Adresse einfügen, als ID <strong>fundus</strong>. Oder in <code>~/.copilot/mcp-config.json</code>:</p>', befehl: `{ "mcpServers": { "fundus": { "type": "http", "url": "${MCP_URL}", "tools": ["*"] } } }` },
 ];
 const KI_BEISPIELE = [
   'Such mir in Fundus drei CC0-Stühle als glTF, zeig mir die Vorschauen und gib mir Lizenz und Download-Links für den schönsten.',
