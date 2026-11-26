@@ -442,10 +442,11 @@ export function filtern(k, { q, art, unter, lizenz, format, quelle, sort, serie 
 /**
  * The cards of a folder: the members of a group become one card where its first member stands. Returns a list of
  * { o } (single entry) and { gruppe, n, o } (folder card: the group, its size here, its first member here).
- * Size here: with a licence, format or source filter the members in the list (it is complete then), in a
- * subfolder the members in that subfolder, else the whole group. A group with one member here is a single card.
+ * Size here: with a licence, format or source filter the members in the list (it is complete then, and the opened
+ * group applies the same filters), else the whole group, also in a subfolder, because opening it shows every
+ * member. A group with one member here is a single card.
  */
-export function zusammenfassen(k, liste, { unter, lizenz, format, quelle } = {}) {
+export function zusammenfassen(k, liste, { lizenz, format, quelle } = {}) {
   const zeilenfilter = (lizenz && lizenz !== 'alle') || format || quelle;
   const karten = [];
   const offen = new Map(); // group id -> card
@@ -460,7 +461,7 @@ export function zusammenfassen(k, liste, { unter, lizenz, format, quelle } = {})
   }
   return karten.map((c) => {
     if (!c.gruppe) return c;
-    const n = zeilenfilter ? c.hier : unter ? c.gruppe.unter?.[unter] ?? c.hier : c.gruppe.anzahl;
+    const n = zeilenfilter ? c.hier : c.gruppe.anzahl;
     return n > 1 ? { gruppe: c.gruppe, n, o: c.o } : { o: c.o };
   });
 }

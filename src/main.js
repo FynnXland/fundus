@@ -302,13 +302,15 @@ function katalogBauen() {
         <label class="wahl"><span class="unsichtbar">Format</span><select id="formatwahl"><option value="">Alle Formate</option></select></label>
         <label class="wahl"><span class="unsichtbar">Quelle</span><select id="quellwahl"><option value="">Alle Quellen</option></select></label>
         <label class="wahl"><span class="unsichtbar">Sortierung</span><select id="sortwahl">${Object.keys(SORTIERUNGEN).map((k) => `<option value="${k}">${esc(SORT_TEXT[k])}</option>`).join('')}</select></label>
-        <div class="segmente filter__rechts" role="group" aria-label="Zusammengehörige Objekte" id="gruppenwahl">
-          <button type="button" data-gruppen="an" aria-pressed="true">Gruppiert</button>
-          <button type="button" data-gruppen="aus" aria-pressed="false">Einzeln</button>
-        </div>
-        <div class="segmente" role="group" aria-label="Ansicht">
-          <button type="button" data-ansicht="raster" aria-pressed="true">Raster</button>
-          <button type="button" data-ansicht="liste" aria-pressed="false">Liste</button>
+        <div class="filter__rechts">
+          <div class="segmente" role="group" aria-label="Zusammengehörige Objekte" id="gruppenwahl">
+            <button type="button" data-gruppen="an" aria-pressed="true">Gruppiert</button>
+            <button type="button" data-gruppen="aus" aria-pressed="false">Einzeln</button>
+          </div>
+          <div class="segmente" role="group" aria-label="Ansicht">
+            <button type="button" data-ansicht="raster" aria-pressed="true">Raster</button>
+            <button type="button" data-ansicht="liste" aria-pressed="false">Liste</button>
+          </div>
         </div>
         <button type="button" class="knopf" id="zufallknopf">Zufälliges Objekt</button>
       </div>

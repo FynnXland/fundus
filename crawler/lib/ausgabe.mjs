@@ -2,8 +2,8 @@
 //
 //   index/<art>/kopf.json    the KOPF best rows of the kind (order "empfohlen": rang, then mixed): the folder shows
 //                            them first, so a folder shows its best entries before the rest has loaded
-//   index/<art>/<nn>.json    all rows of the kind in parts of at most TEIL rows, ordered by subfolder, tags,
-//                            mix. Neighbouring rows are alike, so a search or a subfolder needs few parts.
+//   index/<art>/<nn>.json    all rows of the kind in parts of at most TEIL rows, ordered by subfolder, group,
+//                            tags, mix. Neighbouring rows are alike, so a search, a subfolder or a group needs few parts.
 //   suche/k_<key>.json       search tiles (suchindex.mjs), refs point to rows in the parts
 //   index/<art>/gruppen.json the groups of the kind (crawler/lib/gruppen.mjs): name, size, members per subfolder,
 //                            the parts that hold the members and up to four pictures for the folder card
@@ -12,6 +12,7 @@
 //   stand.json  .index       which parts and tiles exist, fields of the rows, licence groups, groups per kind
 // Why parts of 500 sorted by subfolder and not by hash: measured on the real catalogue scaled to 107,000 rows,
 // a typical search needs 12 % of all rows (median) this way and 25 % with hashed parts; larger parts need more.
+// (Measured before the group came into the order; not measured again since.)
 
 import { baueKacheln, kachelDatei } from './suchindex.mjs';
 

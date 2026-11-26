@@ -14,18 +14,31 @@ import { suchzeilen } from '../mcp/src/werkzeuge.mjs';
 /* ---------------- Keys ---------------- */
 
 test('Stamm: Zähler am Ende fallen weg, Jahre, Modellnummern und Dateiendungen nicht', () => {
-  assert.deepEqual(stamm('Brass Vase 01'), { s: 'brass vase', zaehler: true });
-  assert.deepEqual(stamm('Barrel_01'), { s: 'barrel', zaehler: true });
-  assert.deepEqual(stamm('Circus, No. 3'), { s: 'circus, no', zaehler: true });
-  assert.deepEqual(stamm('Cup from Oliver Wolcott, Jr. Tea Service (2 of 6)'), { s: 'cup from oliver wolcott, jr. tea service', zaehler: true });
-  assert.deepEqual(stamm('Hours of Queen Isabella: Fol. 12r'), { s: 'hours of queen isabella: fol', zaehler: true });
-  assert.deepEqual(stamm('Asio otus - Long-eared Owl XC513606'), { s: 'asio otus - long-eared owl', zaehler: true });
-  assert.deepEqual(stamm('Ocean waves 2.aiff'), { s: 'ocean waves', zaehler: true });
+  const st = (t) => { const r = stamm(t); return r && [r.s, r.zaehler, r.ausdruecklich]; };
+  assert.deepEqual(st('Brass Vase 01'), ['brass vase', true, false]);
+  assert.deepEqual(st('Barrel_01'), ['barrel', true, false]);
+  assert.deepEqual(st('Circus, No. 3'), ['circus, no', true, true]);
+  assert.deepEqual(st('Cup from Oliver Wolcott, Jr. Tea Service (2 of 6)'), ['cup from oliver wolcott, jr. tea service', true, true]);
+  assert.deepEqual(st('Hours of Queen Isabella: Fol. 12r'), ['hours of queen isabella: fol', true, true]);
+  assert.deepEqual(st('Chinese woodcut: Brocade of the Dragon, 3'), ['chinese woodcut: brocade of the dragon', true, true]);
+  assert.deepEqual(st('Asio otus - Long-eared Owl XC513606'), ['asio otus - long-eared owl', true, false]);
+  assert.deepEqual(st('Ocean waves 2.aiff'), ['ocean waves', true, false]);
   assert.equal(stamm('Paris 1889').zaehler, false, 'ein Jahr ist kein Zähler');
   assert.equal(stamm('Paris (1889)').zaehler, false);
   assert.equal(stamm('Citroën C1').zaehler, false, 'eine Modellbezeichnung ist kein Zähler');
   assert.equal(stamm('Hydracarina2').zaehler, false, 'ohne Trenner kein Zähler');
   assert.equal(stamm('01'), null, 'ohne Buchstaben bleibt nichts');
+});
+
+test('Wellcome: nur ausdrückliche Zähler, eine nackte Nummer ist dort eine Signatur', () => {
+  const w = (title) => schluessel(e(title, title, { source: 'wellcome', creator: 'Wellcome Collection' }));
+  assert.equal(w('Hindi Manuscript 884'), null);
+  assert.equal(w('WMS Turkish 19'), null);
+  assert.equal(w('Chinese manuscript, number 10i'), null);
+  assert.equal(w('Hindi Manuscript 241, folio 2b'), 'reihe|wellcome|bild|Wellcome Collection|hindi manuscript 241, folio');
+  assert.equal(w('Daoyin exercises: Intercourse of Dragon and Tiger, Pose 12'), 'reihe|wellcome|bild|Wellcome Collection|daoyin exercises: intercourse of dragon and tiger, pose');
+  assert.ok(w('Chinese woodcut: Daoist internal alchemy (12)'));
+  assert.ok(schluessel(e('x', 'Hindi Manuscript 884', { source: 'wikimedia' })), 'anderswo zählt die nackte Nummer');
 });
 
 test('Name: gemeinsamer Anfang bis zum Wortende, ohne Zählerwort', () => {
@@ -171,9 +184,9 @@ test('Seite: Ordner gruppiert lädt die Gruppen mit, eine Karte je Gruppe, Grö�
   assert.equal(v.n, 9);
   assert.equal(v.gruppe.name, 'Brass Vase');
   assert.equal(karten.indexOf(v), karten.findIndex((c) => c.o.serie === vase.id), 'die Karte steht beim ersten Mitglied');
-  // subfolder: the members there; Küche holds only two vases, a group of two is still a card
+  // subfolder: Küche holds two of the vases; the card names the whole group, because opening it shows all nine
   const kueche = zusammenfassen(k, filtern(k, { art: '3d', unter: 'Küche' }).liste, { unter: 'Küche' });
-  assert.equal(kueche.find((c) => c.gruppe?.id === vase.id).n, 2);
+  assert.equal(kueche.find((c) => c.gruppe?.id === vase.id).n, 9);
   // a licence filter counts what is left; one member left is a single card
   const frei = zusammenfassen(k, filtern(k, { art: '3d', lizenz: 'nennung' }).liste, { lizenz: 'nennung' });
   assert.deepEqual(frei.map((c) => [c.o.id, Boolean(c.gruppe)]), [['ph:vase_9', false]]);

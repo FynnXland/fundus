@@ -5,7 +5,8 @@
 //             game-icons.net split by designer
 //   reihe     the title without its counter ("Brass Vase 01", "Book of Hours: fol. 12r", "(3 of 6)") within source,
 //             kind and creator. Poly Haven and ambientCG number their own series across authors, so there the
-//             creator is left out. Without a known creator only real counters group.
+//             creator is left out. Without a known creator only real counters group; at Wellcome only explicit
+//             ones (a bare number there is mostly a shelf mark).
 //
 // Not used, because the sample was not clean: identical titles without a counter, Commons categories, the creator
 // alone, Internet Archive collections. A group needs MINDEST members; smaller ones stay single entries.
@@ -22,27 +23,36 @@ const istZaehler = (t) => ZAEHLER.test(t) && !/^(1[5-9]|20)\d\d$/.test(t);
 // file counters of cameras and recorders: DSC 0987 is two tokens (DSC, 0987), DSCF2224, IMG3548, XC250491 one
 const DATEIZAEHLER = /^[a-z]{2,4}\d{3,}$/i;
 
+// words that announce a counter: "folio 2b", "Plate 12", "No. 3", "Pose 11"
+const ZAEHLWORT = /(?:^|[\s,(:;])(?:folio|fol|leaf|plate|page|pose|no|nr|part|teil|vol|volume|tafel|blatt|band|episode|movement)\.?$/i;
+// At these sources a bare number after a word is mostly a shelf mark ("Hindi Manuscript 884", "WMS Turkish 19"):
+// only an explicit counter groups there (measured on the live crawl, docs/stand/fundus-gruppen.md).
+const NUR_AUSDRUECKLICH = new Set(['wellcome']);
+
 /**
  * The title without a trailing counter. Returns { s: key (lower case, single spaces), zaehler: true when a counter
- * was removed } or null when nothing usable is left.
+ * was removed, ausdruecklich: true when it was one beyond doubt (in brackets, after a comma, # or a counter word) }
+ * or null when nothing usable is left.
  */
 export function stamm(titel) {
   let s = String(titel ?? '').normalize('NFC').toLowerCase().replace(/_/g, ' ').replace(/\.(wav|aiff?|mp3|ogg|flac|png|jpe?g|svg|glb|blend)$/, '').replace(/\s+/g, ' ').trim();
   let zaehler = false;
+  let ausdruecklich = false;
   const klammer = s.match(/^(.*?)[\s,.\-]*\(\s*(\d{1,4}[a-z]?|\d{1,3} of \d{1,3})\s*\)$/);
   if (klammer && !/^(1[5-9]|20)\d\d$/.test(klammer[2])) {
     s = klammer[1];
-    zaehler = true;
+    zaehler = ausdruecklich = true;
   } else {
     // "no. 2", "nr 2", "#2", "part 2", "vol. 2", "fol. 12r" keep their word ("Circus, No."), the name is cut later
-    const m = s.match(/^(.*?)[\s,#:\-]*([^\s#]+)$/);
-    if (m && m[1] && (istZaehler(m[2]) || DATEIZAEHLER.test(m[2]))) {
+    const m = s.match(/^(.*?)([\s,#:\-]*)([^\s#]+)$/);
+    if (m && m[1] && (istZaehler(m[3]) || DATEIZAEHLER.test(m[3]))) {
       s = m[1];
       zaehler = true;
+      ausdruecklich = istZaehler(m[3]) && (/[,#]/.test(m[2]) || ZAEHLWORT.test(m[1]));
     }
   }
   s = s.replace(/[\s,.:;\-–]+$/, '');
-  return s.length >= 3 && /\p{L}/u.test(s) ? { s, zaehler } : null;
+  return s.length >= 3 && /\p{L}/u.test(s) ? { s, zaehler, ausdruecklich } : null;
 }
 
 /** The group key of an entry, or null. */
@@ -50,6 +60,7 @@ export function schluessel(it) {
   if (it.collection?.id) return `sammlung|${it.source.id}|${it.kind}|${it.collection.id}|${it.creator?.name ?? ''}`;
   const st = stamm(it.title);
   if (!st?.zaehler) return null;
+  if (NUR_AUSDRUECKLICH.has(it.source.id) && !st.ausdruecklich) return null;
   const wer = QUELLREIHE.has(it.source.id) ? '' : kennt(it.creator?.name) ? it.creator.name : '';
   return `reihe|${it.source.id}|${it.kind}|${wer}|${st.s}`;
 }

@@ -329,7 +329,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 .inhalt__einleitung { margin: 10px 0 0; max-width: 68ch; color: var(--bleistift); font-size: 16px; }
 
 .filter { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 20px 0 22px; }
-.filter__rechts { margin-left: auto; }
+.filter__rechts { margin-left: auto; display: flex; flex-wrap: wrap; gap: 10px; }
 .segmente { display: inline-flex; padding: 3px; border-radius: var(--r-knopf); background: var(--flaeche); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
 .segmente button {
   min-height: 34px;
@@ -597,7 +597,9 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
   .wahl select { width: 100%; max-width: none; min-height: 44px; }
   .knopf { min-height: 44px; }
   /* two rows instead of four so the objects start higher: format | source, then sorting | view */
-  .filter__rechts { width: auto; flex: 1 1 calc(50% - 4px); }
+  /* the two switches become items of the filter row: sorting | groups, then view (groups hidden: sorting | view) */
+  .filter__rechts { display: contents; }
+  .filter__rechts > .segmente { width: auto; flex: 1 1 calc(50% - 4px); }
   #zufallknopf { display: none; }
   .raster { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 2px; }
   .liste th:nth-child(2), .liste td:nth-child(2), .liste th:nth-child(5), .liste td:nth-child(5) { display: none; }

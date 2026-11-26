@@ -16,15 +16,16 @@ Quelle und Art aus. Gemessen auf zwei Ständen:
 
 - **eingecheckter Stand** (Commit `ade935e`, Daten vom 26.11.2026 21:37 UTC): 59.972 veröffentlichte Einträge.
   Reproduzierbar, alle Zahlen unten beziehen sich darauf, wenn nicht anders angegeben.
-- **laufender Aufhol-Crawl** (Hauptordner, nur gelesen, Daten vom 26.11.2026 22:28 UTC): 169.677 Einträge,
-  979 Gruppen mit 24.143 Mitgliedern. Nach dem Crawl einfach das Skript noch einmal laufen lassen.
+- **laufender Aufhol-Crawl** (Hauptordner, nur gelesen, Daten vom 26.11.2026 22:28 UTC): 169.677 Einträge, mit den
+  endgültigen Regeln 956 Gruppen mit 23.844 Mitgliedern (92 Sammlungen mit 16.741, 864 Reihen mit 7.103), 146.789
+  Karten statt 169.677. Nach dem Crawl einfach das Skript noch einmal laufen lassen.
 
 Gruppe heißt hier: mindestens 3 Mitglieder (`MINDEST` in `crawler/lib/gruppen.mjs`).
 
 | Schlüssel | Gruppen | Mitglieder | Urteil |
 |---|---|---|---|
 | `collection` + Urheber | 79 | 15.997 | **genommen.** Emoji-Sets, 21 Streamline-Serien, 30 Skill-Repositories, game-icons.net je Gestalter (24 Gestalter mit mindestens 3 Icons, die übrigen Icons bleiben einzeln) |
-| Titelstamm mit Zähler (Quelle, Art, Urheber) | 483 | 3.971 | **genommen.** Nummerierte Reihen, Folios eines Buchs, Sätze eines Musikstücks, Aufnahmen einer Art bei xeno-canto |
+| Titelstamm mit Zähler (Quelle, Art, Urheber) | 482 | 3.967 | **genommen.** Nummerierte Reihen, Folios eines Buchs, Sätze eines Musikstücks, Aufnahmen einer Art bei xeno-canto |
 | gleicher Titel ohne Zähler (ab 3 Wörtern) | 66 | 374 | verworfen: oft verschiedene Fotos mit gleicher Bildunterschrift (John Thomson, Wellcome) oder Sammelbegriffe |
 | Commons-Kategorie (spezifischste geteilte je Urheber) | 1.925 | 11.601 | verworfen: in 6 von 20 Stichprobengruppen eine Sammelkategorie ohne Thema (Auflösung, Prüfvermerk, „videos from youtube“, Interpretin statt Werk) |
 | Urheber allein (Bildquellen) | 823 | 14.700 | verworfen: keine Serie, größte „Wellcome Collection“ mit 1.661 Einträgen |
@@ -40,15 +41,30 @@ Regeln für den Titelstamm (`stamm()` in `crawler/lib/gruppen.mjs`):
   „Barrel 03“ von Serhii Khromov). Dort zählt der Urheber nicht, abweichend vom Wortlaut des Auftrags. Mit Urheber
   wären es im Rohbestand 78 statt 113 Poly-Haven-Gruppen gewesen, und Fynns Beispiel wäre zerfallen.
 - Ohne bekannten Urheber gruppiert nur ein echter Zähler (Cleveland „Button (1 of 7)“).
+- Wellcome nur mit ausdrücklichem Zähler: in Klammern, nach Komma oder # oder nach einem Zählerwort (folio, leaf, plate,
+  page, pose, no., part, vol. …). Eine nackte Nummer ist dort meist eine Signatur („Hindi Manuscript 884“).
 - Der Name ist der gemeinsame Anfang der Titel bis zum Wortende, ohne Zählerwort („Circus, No. 1“ wird „Circus“).
 
-**Falsche Zusammenlegungen**, Stichprobe der gewählten Regeln mit bis zu 8 Gruppen je Quelle und Art (seed 1):
-146 Gruppen geprüft, **2 falsch**: „Messerschmitt Me 262 / 163 / 410“ (Modellnummern, Commons-Grafik) und
-„Panjabi Manuscript 255 / 256“ (Signaturen verschiedener Handschriften, Wellcome). Eine zweite Stichprobe (seed 7, bis 6
-je Quelle und Art) fand dieselben zwei und keine weiteren. Musik extra geprüft (Verdacht „Symphony No. 5 / 6 / 7“):
-alle 19 Commons-Musikgruppen sind Sätze oder Variationen eines Werks („Haydn 35“ mit drei Sätzen, „Chopin op25“).
+**Falsche Zusammenlegungen**, von Hand geprüft:
 
-Wirkung im eingecheckten Stand (562 Gruppen, 19.968 Mitglieder, 33,3 % des Katalogs):
+- Eingecheckter Stand, bis zu 8 Gruppen je Quelle und Art (seed 1): 146 Gruppen, 2 falsch: „Messerschmitt Me 262 / 163
+  / 410“ (Modellnummern, Commons-Grafik) und „Panjabi Manuscript 255 / 256“ (Signaturen, Wellcome). Eine zweite
+  Stichprobe (seed 7, bis 6 je Quelle und Art) fand dieselben zwei.
+- Dort gibt es kaum Museumsgruppen, deshalb auf dem Live-Stand je Quelle bis zu 30 Gruppen (seed 3):
+
+| Quelle/Art (Live) | Gruppen | geprüft | falsch |
+|---|---|---|---|
+| Cleveland, Bilder | 35 | 30 | 0 |
+| Wellcome, Bilder, erste Regel | 52 | 30 | 5, alle Signaturen („Hindi Manuscript 884 / 273“, „WMS Turkish 19 / 25“, „Wellcome Chinese Collection 197 / 23C“) |
+| Wellcome, Bilder, mit ausdrücklichem Zähler | 29 | 29 | 1 Grenzfall („Crellin no. 28 / 32“: Katalognummern zweier gleichartiger Objekte) |
+| Commons, Bilder | 305 | 30 | 1 („Oldenburg, Bahnhofstraße 5 / 12 / 17“: Hausnummern) |
+| Commons, Grafik | 23 | 23 | 1 (Messerschmitt) |
+| Commons, 3D | 28 | 28 | 0 |
+
+- Musik extra geprüft (Verdacht „Symphony No. 5 / 6 / 7“): alle 19 Commons-Musikgruppen sind Sätze oder Variationen
+  eines Werks („Haydn 35“ mit drei Sätzen, „Chopin op25“).
+
+Wirkung im eingecheckten Stand (561 Gruppen, 19.964 Mitglieder, 33,3 % des Katalogs):
 
 | Ordner | Einträge | Karten gruppiert |
 |---|---|---|
@@ -59,7 +75,7 @@ Wirkung im eingecheckten Stand (562 Gruppen, 19.968 Mitglieder, 33,3 % des Katal
 | Sounds | 3.687 | 3.205 |
 | 3D-Modelle | 4.563 | 4.344 |
 | Videos | 4.381 | 4.126 |
-| Bilder | 17.612 | 17.204 |
+| Bilder | 17.612 | 17.207 |
 
 ## Umsetzung
 
@@ -83,8 +99,8 @@ Wirkung im eingecheckten Stand (562 Gruppen, 19.968 Mitglieder, 33,3 % des Katal
   zweites Blatt schaut oben heraus, die Anzahl steht auf einer kleinen Pille. Darunter Name und „Gruppe · Quelle“.
 - Klick öffnet `#/?art=…&serie=…`: alle Mitglieder in natürlicher Reihenfolge („Vase 2“ vor „Vase 10“), Zurück-Knopf
   zum Ordner, Anzahl mit Urheber. Filter des Ordners bleiben, die Seite springt zum Titel.
-- Größe auf der Karte: im Ordner die ganze Gruppe, im Unterordner die Mitglieder dort, mit Lizenz-, Format- oder
-  Quellfilter die übrig gebliebenen. Bleibt nur eines, ist es eine normale Karte.
+- Größe auf der Karte: die ganze Gruppe, auch im Unterordner (öffnen zeigt alle Mitglieder); mit Lizenz-, Format- oder
+  Quellfilter die übrig gebliebenen, und die geöffnete Gruppe filtert genauso. Bleibt nur eines, ist es eine normale Karte.
 - Umschalter „Gruppiert / Einzeln“ neben „Raster / Liste“, gemerkt in `localStorage` (`fundus.gruppen`). Er ist versteckt,
   wo er nichts ändert: in der Suche, in einer Gruppe und in der gemischten Startstichprobe.
 - Die Suche findet weiter einzelne Einträge. Die Startstichprobe bleibt bewusst einzeln: sie mischt alle Arten und
@@ -114,12 +130,13 @@ Wirkung im eingecheckten Stand (562 Gruppen, 19.968 Mitglieder, 33,3 % des Katal
 
 ## Tests und Prüfung
 
-- `npm test`: 283 von 283 grün. Neu `tests/gruppen.test.mjs` (Stamm, Namen, Schlüssel, Gruppendateien, Läufe, Seite mit
+- `npm test`: 284 von 284 grün. Neu `tests/gruppen.test.mjs` (Stamm, Namen, Schlüssel, Gruppendateien, Läufe, Seite mit
   Fetch-Stub, MCP-Faltung und Mitgliederliste). Angepasst: `tests/bewertung.test.mjs` (FELDER endet jetzt auf `serie`).
 - Browser: `npm run build:web` in der Arbeitskopie, dann
   - Vite (Port 4575) mit den Mini-Vorschauen aus dem Hauptordner (Verknüpfung `public/vorschau`): 3D, Icons, Materialien,
     Umgebungen, Gruppe öffnen (Poly Haven, game-icons Delapouite mit 2.022), Zurück, Umschalter, Liste, Suche „paving“
     (einzeln), Link im Detailblatt, hell und dunkel. Keine Konsolenfehler.
+  - Handybreite (375 px): Sortierung und „Gruppiert / Einzeln“ in einer Zeile, darunter „Raster / Liste“.
   - `wrangler dev` (Port 4576): Seite lädt Gruppendateien, `/mcp` mit `fundus_search` (gefaltet, `group`) und
     `fundus_details`. Vorschaubilder fehlen dort, weil R2 lokal leer ist.
 
@@ -131,6 +148,8 @@ Wirkung im eingecheckten Stand (562 Gruppen, 19.968 Mitglieder, 33,3 % des Katal
   dieses Dokument.
 - Seite und Worker zusammen deployen. Alter Code mit neuen Daten läuft (Feld wird ignoriert), neuer Code mit alten Daten
   zeigt keine Gruppen.
-- Bekannte Fehlerart: Modell- oder Signaturnummern sehen aus wie Zähler (2 von 146). Wenn das stört: Mindestabstand der
-  Zähler prüfen oder Gruppen mit nicht fortlaufenden dreistelligen Nummern auslassen.
+- Bekannte Fehlerart: Modell-, Haus- oder Katalognummern sehen aus wie Zähler (Commons einzeln, Wellcome jetzt nur mit
+  ausdrücklichem Zähler). Wenn mehr Quellen so aussehen: in `NUR_AUSDRUECKLICH` (`crawler/lib/gruppen.mjs`) eintragen.
+- Die 12-%-Messung zur Suche in `ausgabe.mjs` stammt von vor der neuen Ordnung (Unterordner, Gruppe, Tags); nicht neu
+  gemessen. `docs/KI-ANBINDUNG.md` erwähnt den Parameter `group` noch nicht.
 - Mögliche Erweiterung, nicht gebaut: Emoji-Sets zusätzlich nach Unicode-Gruppe teilen (OpenMoji hat 2.466 Mitglieder).
