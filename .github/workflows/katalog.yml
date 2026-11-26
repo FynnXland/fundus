@@ -37,6 +37,10 @@ jobs:
           R2_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      # music titles that are well-known protected songs (MusicBrainz, 1 request/s); new titles only, capped
+      - run: node crawler/rechtecheck.mjs --max-minuten 10
+        env:
+          FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
       # capped, so links, tests and deploy still fit in the job; a large backlog is worked off over several nights
       - run: npm run vorschau -- --max-minuten 35
       # rotating: the entries checked longest ago; the whole catalogue comes round every few nights

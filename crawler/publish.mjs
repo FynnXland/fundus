@@ -20,17 +20,21 @@ import { SOURCES } from './sources/index.mjs';
 import { baueAusgabe } from './lib/ausgabe.mjs';
 import { rangwerte, sterne5 } from './lib/bewertung.mjs';
 import { beschreibungsWoerter } from './lib/suchindex.mjs';
+import { titelNormal, urteil } from './lib/rechte.mjs';
 
 export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, 2);
 export const STARTGROESSE = 240;
 // output folder; --ziel <ordner> writes elsewhere (measurements, tests)
 const ZIEL = process.argv.includes('--ziel') ? process.argv[process.argv.indexOf('--ziel') + 1] : 'public/data';
 
-export function publishable(katalog, status, gesperrt = {}) {
+// rechte: { titel: { <normalised title>: { fakten } } } from crawler/rechtecheck.mjs; freigegeben: ids Fynn cleared
+export function publishable(katalog, status, gesperrt = {}, rechte = { titel: {} }, freigegeben = []) {
   const out = [];
-  const skipped = { ungueltig: 0, kaputt: 0, gesperrt: 0 };
+  const skipped = { ungueltig: 0, kaputt: 0, gesperrt: 0, rechte: 0 };
+  const frei = new Set(freigegeben);
   for (const item of katalog.items) {
     if (gesperrt[item.id]) { skipped.gesperrt++; continue; }
+    if (item.kind === 'musik' && !frei.has(item.id) && urteil(item, rechte.titel?.[titelNormal(item.title)]?.fakten).stufe === 'fremd') { skipped.rechte++; continue; }
     if (validateItem(item).length) { skipped.ungueltig++; continue; }
     if (status[item.id]?.broken) { skipped.kaputt++; continue; }
     const { fetchedAt, ...rest } = item;
@@ -156,8 +160,12 @@ async function main() {
   // Reported entries: { "<id>": "Grund, Datum" }. They stay out until the entry is removed from this file.
   try { gesperrt = JSON.parse(await readFile('data/gesperrt.json', 'utf8')); } catch {}
   try { vorschau = JSON.parse(await readFile('data/vorschauen.json', 'utf8')); } catch {}
+  // music whose title is a well-known protected song by someone else (crawler/rechtecheck.mjs, reports/rechtecheck.md)
+  let rechte = { titel: {} };
+  try { rechte = JSON.parse(await readFile('data/rechtecheck.json', 'utf8')); } catch {}
+  const freigegeben = JSON.parse(await readFile('crawler/config.json', 'utf8')).rechte?.freigegeben ?? [];
 
-  const { items: gueltig, skipped } = publishable(katalog, status, gesperrt);
+  const { items: gueltig, skipped } = publishable(katalog, status, gesperrt, rechte, freigegeben);
   // same address at two sources (Commons directly and through Openverse), then same content
   const ohneAdressDoppel = dedupe(gueltig);
   const { items, zusammengefuehrt: inhaltlich } = inhaltsDubletten(ohneAdressDoppel, vorschau);
@@ -208,7 +216,7 @@ async function main() {
     JSON.stringify({ crawledAt: katalog.crawledAt ?? null, total: items.length, zusammengefuehrt, perKind, mitBewertung, mitBeliebtheit, perUnter, perFormat, sources, index }, null, 1),
   );
   const mitBild = items.filter((it) => it.vorschau).length;
-  console.log(`Veröffentlicht: ${items.length} Einträge, ${mitBild} mit Vorschaubild, ${zusammengefuehrt} Doppelte zusammengeführt (ausgelassen: ${skipped.ungueltig} ungültig, ${skipped.kaputt} mit toten Links, ${skipped.gesperrt} gesperrt).`);
+  console.log(`Veröffentlicht: ${items.length} Einträge, ${mitBild} mit Vorschaubild, ${zusammengefuehrt} Doppelte zusammengeführt (ausgelassen: ${skipped.ungueltig} ungültig, ${skipped.kaputt} mit toten Links, ${skipped.gesperrt} gesperrt, ${skipped.rechte} fremde Lieder).`);
 }
 
 if (process.argv[1]?.endsWith('publish.mjs')) {

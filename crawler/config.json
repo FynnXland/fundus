@@ -350,6 +350,9 @@
   "fontsource": {
     "limit": 3000
   },
+  "rechte": {
+    "freigegeben": []
+  },
   "githubschriften": {
     "repos": [
       { "repo": "IdreesInc/Monocraft", "urheber": "Idrees Hassan", "vorschau": "dist/Monocraft-otf/Monocraft.otf", "kategorie": "Monospace",

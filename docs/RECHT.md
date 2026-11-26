@@ -16,7 +16,7 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
 | Punkt | Grundlage | Bewertung | Ampel | Umsetzung in Fundus |
 |---|---|---|---|---|
 | Link und Einbettung | §§ 15, 19a UrhG; EuGH Svensson C-466/12, BestWater C-348/13, VG Bild-Kunst C-392/19; BGH Die Realität I/II, Deutsche Digitale Bibliothek II | Frei zugängliches Werk, kein neues Publikum, keine öffentliche Wiedergabe. Grenze: Umgehung technischer Schutzmaßnahmen. Die offene Lizenz sichert zusätzlich ab. | grün | Hotlink-Sperren werden respektiert: ccMixter ausgeschlossen (403), Art Institute of Chicago abgeschaltet (Cloudflare-Abfrage seit 23.11.2026). Referer wird nicht gefälscht, nur weggelassen (`no-referrer`). |
-| Falsch angegebene Lizenz | EuGH GS Media C-160/15; BGH Vorschaubilder III; § 97 UrhG | Haftung nur bei Kenntnis oder Kennenmüssen; bei Gewinnerzielungsabsicht wird Kenntnis vermutet. Nach einem Hinweis besteht Kenntnis. | gelb (mit Werbung höher) | Nur kuratierte Quellen, Lizenz und Abrufdatum je Eintrag, „Eintrag melden“ auf jeder Karte, Sperrliste `data/gesperrt.json`, Linkprüfung blendet Gelöschtes aus. |
+| Falsch angegebene Lizenz | EuGH GS Media C-160/15; BGH Vorschaubilder III; § 97 UrhG | Haftung nur bei Kenntnis oder Kennenmüssen; bei Gewinnerzielungsabsicht wird Kenntnis vermutet. Nach einem Hinweis besteht Kenntnis. | gelb (mit Werbung höher) | Nur kuratierte Quellen, Lizenz und Abrufdatum je Eintrag, „Eintrag melden“ auf jeder Karte, Sperrliste `data/gesperrt.json`, Linkprüfung blendet Gelöschtes aus, Rechteprüfung für Musik (siehe unten). |
 | Lizenzbedingungen | CC BY-SA 4.0 Ziff. 3(a), 3(b); GPL-3.0 Ziff. 0, 4 | Namensnennung „in any reasonable manner“ reicht, ShareAlike greift erst bei Bearbeitung, GPL-„convey“ liegt bei der Quelle. | grün | TASL-Text auf jeder Karte, Vorschauen unverändert, Beschreibungstexte von Commons (CC BY-SA) werden nicht übernommen. |
 | Proxy („Tunnel“) | §§ 16, 19a, 44a UrhG; EuGH Renckhoff C-161/17, ITV C-607/11; DSA Art. 4, 5 | Eigene Übertragung = eigene Wiedergabe, kein Kenntnisfilter, kein DSA-Privileg (Inhalte sind ausgewählt, nicht vom Nutzer). | rot bis gelb | Kein Proxy. Pakete (Modell + Texturen, Skill-Ordner) baut der Browser des Besuchers aus Einzeldateien der Quelle. |
 | Eigene Mini-Vorschaubilder (seit 23.11.2026, Wunsch des Betreibers) | §§ 16, 19a UrhG; CC BY/BY-SA 4.0 Ziff. 2(a), 3(a); Memo-Punkt 3 | Kleine Vorschaubilder (320 px, WebP) liegen auf unserem Server. Das ist eine eigene Vervielfältigung und Zugänglichmachung, die offene Lizenzen erlauben (Formatwechsel und Verkleinerung sind keine Bearbeitung im Sinne von CC 4.0). Risiko nur bei falsch angegebener Lizenz der Quelle: dann gibt es keinen Kenntnisfilter wie bei Links. | gelb | Urheber und Lizenz an jedem Objekt, Meldeweg, Sperrliste entfernt auch das Vorschaubild beim nächsten Lauf, nur Quellen mit gepflegten Lizenzangaben. Die eigentlichen Dateien bleiben bei der Quelle. |
@@ -72,6 +72,16 @@ Fremdserver erfahren die IP-Adresse der Besucher, also laden Vorschauen erst nac
 - Bewertungen: Fundus zeigt nur Bewertungen der Quellseiten (Internet Archive aus der Such-API, Blender Extensions aus den
   öffentlichen Listenseiten `/add-ons/?page=N`, robots.txt erlaubt `/`, Content-Signal `search=yes, ai-train=no, use=reference`;
   Fundus trainiert nichts und verlinkt die Quelle). Abschaltbar mit `"blender": { "bewertungen": false }`.
+- Rechteprüfung Musik (seit 26.11.2026, `crawler/rechtecheck.mjs`, Regel in `crawler/lib/rechte.mjs`): Eine CC-Lizenz
+  bei Jamendo, im Internet Archive oder auf Commons ist eine Angabe des Hochladers, maschinell nachprüfen lässt sie sich
+  nicht. Anlass war „Jingle Bell Rock“ (Beal/Boothe 1957) als CC BY 3.0 bei Jamendo: Selbst wenn die Aufnahme dem
+  Hochlader gehört, deckt seine Lizenz die Komposition nicht. Die Prüfung schlägt jeden Musiktitel bei MusicBrainz nach
+  (Werk, Urheber mit Lebensdaten, Zahl der Aufnahmen). Ausgeblendet wird, wenn der Titel eindeutig ein bekanntes,
+  noch geschütztes Lied bezeichnet (Urheber leben oder starben vor weniger als 70 Jahren) und der Hochlader nicht zu
+  den Urhebern gehört. Allgemeine Titel („Meditation“, „Lullaby“) werden nicht beurteilt. Gemeinfreie Lieder
+  („Jingle Bells“, „Stille Nacht“) bleiben. Was die Prüfung nicht findet: umbenannte Uploads, Lieder mit
+  allgemeinem Titel, Samples. Noch nicht geprüfte Titel bleiben im Katalog. Liste der Treffer und Verdachtsfälle in
+  `reports/rechtecheck.md`, Freigaben in `crawler/config.json` unter `rechte.freigegeben`.
 - Mini-Vorschaubilder: eigene Kopie auf dem Server, siehe Matrix. Bei Meldungen das Vorschaubild mit entfernen
   (passiert automatisch beim nächsten `npm run vorschau`, sobald der Eintrag gesperrt ist; danach löscht
   `npm run vorschau:r2` es aus dem R2-Bucket, im Cloudflare-Cache lebt es höchstens noch einen Tag).

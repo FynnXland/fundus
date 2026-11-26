@@ -110,7 +110,7 @@ test('publishable: kaputte, gesperrte und ungültige Einträge bleiben draußen'
   const ungueltig = { ...item({ sourceId: 'kaputt2' }), title: '' };
   const { items, skipped } = publishable({ items: [gut, kaputt, gesperrt, ungueltig] }, { 'test:kaputt': { broken: true } }, { 'test:gesperrt': 'Meldung' });
   assert.deepEqual(items.map((i) => i.id), ['test:gut']);
-  assert.deepEqual(skipped, { ungueltig: 1, kaputt: 1, gesperrt: 1 });
+  assert.deepEqual(skipped, { ungueltig: 1, kaputt: 1, gesperrt: 1, rechte: 0 });
 });
 
 test('inhaltsDubletten: gleiche Prüfsumme führt zusammen, ähnliche Vorschau-Kugeln nicht', async () => {
