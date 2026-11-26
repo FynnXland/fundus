@@ -17,6 +17,7 @@ const P = {
   skill: '<path d="M7 3.5h7l4 4v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2z"/><path d="M14 3.5v4h4M8.5 12h7M8.5 15.5h5"/>',
   video: '<rect x="3.5" y="5.5" width="17" height="13" rx="3"/><path d="M10.3 9.3v5.4l4.6-2.7z"/>',
   shader: '<circle cx="12" cy="12" r="8"/><path d="M8.4 9.4a4 4 0 0 1 3-3M4.8 15.2c4.4 1.9 10 1.9 14.4 0"/>',
+  gruppe: '<path d="M3.5 8a2 2 0 0 1 2-2h3.8l2 2h7.2a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M3.5 11h17"/>',
   alle: '<rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/>',
 };
 

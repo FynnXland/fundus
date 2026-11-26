@@ -5,7 +5,7 @@
 import { ARTEN, ladeKarte, ladeArt, aehnliche, mehrAusSammlung } from './katalog.js';
 import { vorschau, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { symbol } from './symbole.js';
-import { esc, safeUrl, bytes, host, datum, sterneHtml, beliebtheitHtml, bewertungAusEintrag } from './util.js';
+import { esc, safeUrl, bytes, host, datum, zahl, sterneHtml, beliebtheitHtml, bewertungAusEintrag } from './util.js';
 
 const SCHRIFTPROBE = 'Fundus 1984: Quax jagt Wölfe über den Deich.';
 let ausloeser = null;
@@ -173,6 +173,7 @@ function infoHtml(it, katalog, mitVorschau) {
     <div class="info__haupt">
       <h2 class="info__titel" id="if-titel">${esc(it.title)}</h2>
       ${bewertungsZeile(it)}
+      ${it.serie ? `<p class="info__gruppe">Gehört zur Gruppe <a href="#/?art=${encodeURIComponent(it.kind)}&amp;serie=${encodeURIComponent(it.serie.id)}">${esc(it.serie.name)}</a> mit ${zahl(it.serie.anzahl)} Objekten</p>` : ''}
       ${it.description ? `<p class="info__beschreibung">${esc(it.description)}</p>` : ''}
       <div class="knopfreihe">${downloadsHtml(it)}</div>
       <p class="info__klein" id="paketstatus" aria-live="polite">Download direkt von ${esc([...new Set(it.downloads.map((d) => host(d.paket ? d.paket.files[0].url : d.url)))].join(', '))}.</p>

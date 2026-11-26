@@ -386,6 +386,39 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 .karte__titel { margin: 9px 4px 0; font-weight: 600; font-size: 14.5px; line-height: 1.3; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .karte__meta { margin: 2px 4px 0; font-size: 12.5px; color: var(--bleistift); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .karte__hoeren { margin: 0 0 4px 10px; }
+/* A group: one folder card. Up to four member pictures as a mosaic, a second sheet peeks out behind it, the size
+   sits on a small pill. Same size and motion as a single card, so the grid stays calm. */
+.karte__stapel { position: relative; display: block; }
+.karte--gruppe .karte__bild { box-shadow: 0 -4px 0 -2px var(--flaeche-2), 0 -8px 0 -4px var(--haar); }
+.karte__mosaik { display: grid; gap: 2px; background: var(--seite); place-items: stretch; }
+.karte__mosaik > span { min-width: 0; min-height: 0; overflow: hidden; display: grid; place-items: center; background: var(--flaeche); }
+.karte__mosaik img { width: 100%; height: 100%; object-fit: contain; padding: 8%; }
+.karte__mosaik--1 img { padding: 0; }
+.karte__mosaik.karte__bild--foto img { object-fit: cover; padding: 0; }
+.karte__mosaik--2 { grid-template-columns: 1fr 1fr; }
+.karte__mosaik--3, .karte__mosaik--4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.karte__mosaik--3 > span:first-child { grid-row: span 2; }
+.karte__zahl {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: 999px;
+  background: var(--karte);
+  color: var(--tinte);
+  font-size: 12.5px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 2px rgb(31 30 29 / 0.14);
+}
+.karte__zahl .symbol { color: var(--akzent); }
+.inhalt__zurueck { margin: 0 0 10px; }
+.inhalt__zurueck[hidden], .segmente[hidden] { display: none; }
+.liste__gruppe .liste__name .symbol { color: var(--akzent); }
+.info__gruppe { margin: 0; font-size: 14.5px; color: var(--bleistift); }
 .mehr { display: flex; justify-content: center; padding: 28px 0 0; }
 .stand { margin: 28px 0 0; font-size: 13px; color: var(--bleistift); }
 
