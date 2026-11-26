@@ -108,6 +108,8 @@ async function main() {
   for (const host of ['thumb.wikimedia.org', 'upload.wikimedia.org']) setHostGap(host, 700);
   for (const host of ['cdn.polyhaven.org', 'acg-media.struffelproductions.com', 'api.openverse.org', 'api.iconify.design', 'archive.org', 'ids.si.edu']) setHostGap(host, 250);
   setHostGap('cdn.jsdelivr.net', 120);
+  // museum image servers behind a CDN (Wellcome about 55,000, Cleveland several thousand pictures)
+  for (const host of ['iiif.wellcomecollection.org', 'openaccess-cdn.clevelandart.org']) setHostGap(host, 250);
   // opengameart.org/robots.txt asks for Crawl-delay: 10
   setHostGap('opengameart.org', 10000);
   // icons (about 14,600 files) and the Khronos/Godot pictures: GitHub names no limit for raw, politeFetch backs off on 429
