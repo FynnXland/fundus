@@ -172,6 +172,7 @@
     "limit": 10000
   },
   "github": {
+    "sterne": ["10000..10999", "11000..11999", "12000..13499", "13500..14999", "15000..17499", "17500..19999", "20000..24999", "25000..29999", "30000..49999", ">=50000"],
     "projekte": [
       "topic:game stars:>300",
       "topic:boilerplate stars:>800",
@@ -256,6 +257,11 @@
     "skillsProRepo": 200,
     "skillReposMax": 15,
     "weitere": [
+      { "q": "topic:3d-models stars:>5", "art": "3d" },
+      { "q": "topic:3d-assets stars:>5", "art": "3d" },
+      { "q": "topic:gltf-models stars:>3", "art": "3d" },
+      { "q": "topic:pbr-textures stars:>5", "art": "textur" },
+      { "q": "topic:sound-effects stars:>10", "art": "sound" },
       {
         "q": "topic:game-assets stars:>20",
         "art": "grafik"
@@ -354,6 +360,14 @@
     "freigegeben": []
   },
   "githubschriften": {
+    "maxNeu": 300,
+    "suchen": [
+      "license:ofl-1.1 stars:>50",
+      "topic:font license:ofl-1.1 stars:>10",
+      "topic:fonts license:ofl-1.1 stars:>10",
+      "topic:typeface license:ofl-1.1 stars:>10",
+      "topic:font license:apache-2.0 stars:>100"
+    ],
     "repos": [
       { "repo": "IdreesInc/Monocraft", "urheber": "Idrees Hassan", "vorschau": "dist/Monocraft-otf/Monocraft.otf", "kategorie": "Monospace",
         "beschreibung": "Monospace-Schrift zum Programmieren im Stil der Minecraft-Schrift, mit Ligaturen.",

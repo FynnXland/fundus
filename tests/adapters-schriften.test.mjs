@@ -34,3 +34,9 @@ test('GitHub-Schriften: andere Lizenz oder keine Schriftdatei fällt raus', () =
   assert.equal(parseSchrift(repo({ license: { spdx_id: 'MIT' } }), release, { vorschau: 'a.otf' }), null);
   assert.equal(parseSchrift(repo(), { assets: [asset('Monocraft-ttf.zip', 1)] }), null);
 });
+
+test('GitHub-Schriften: Musterdatei ist die aufrechte Regular-TTF, möglichst weit oben', async () => {
+  const { musterDatei } = await import('../crawler/sources/githubschriften.mjs');
+  assert.equal(musterDatei(['fonts/otf/Inter-Bold.otf', 'fonts/ttf/Inter-Regular.ttf', 'fonts/ttf/Inter-Italic.ttf', 'docs/test.ttf', 'x/y/z/Inter-Regular.ttf']), 'fonts/ttf/Inter-Regular.ttf');
+  assert.equal(musterDatei(['src/glyphs.sfd', 'README.md']), undefined);
+});

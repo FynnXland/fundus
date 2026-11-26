@@ -1,4 +1,7 @@
-// Fonts that are only published on GitHub (not on Fontsource), from a short hand-picked list in config.json.
+// Fonts that are only published on GitHub (not on Fontsource): a short hand-picked list in config.json (repos) and
+// the repository search for open font licences (suchen, e.g. "topic:font license:ofl-1.1 stars:>10"). Families that
+// Fontsource already has are left out. Found repositories are looked at once and then kept (the catalogue file
+// holds them); at most cfg.maxNeu new ones per run, so a nightly run stays inside the API limit.
 // Each entry is one repository: the licence comes from the repository (only OFL and Apache), the downloads are
 // the files of the latest release, linked at GitHub. A font needs a file the previews can render (TTF or OTF),
 // either as a release file or at a path in the repository.
@@ -8,6 +11,11 @@
 import { getJson, setHostGap } from '../lib/http.mjs';
 import { beliebtheit } from '../lib/bewertung.mjs';
 import { makeItem } from '../lib/item.mjs';
+import { ladeQuelle } from '../lib/store.mjs';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+
+// repositories looked at without a usable font file (font tools, sources only): not asked again
+const STAND = 'data/crawlstand/githubschriften.json';
 
 const API = 'https://api.github.com';
 
@@ -60,9 +68,67 @@ export function parseSchrift(repo, release, extra = {}) {
   });
 }
 
+/** The font file a sample can be rendered from: a regular upright TTF (or OTF), as shallow as possible. */
+export function musterDatei(pfade) {
+  const schrift = pfade.filter((p) => /\.(ttf|otf)$/i.test(p) && !/nerd|test|sample|demo|unhinted\/.*variable/i.test(p));
+  const punkte = (p) => (/regular/i.test(p) ? 0 : 10) + (/italic|oblique/i.test(p) ? 20 : 0) + (/\.ttf$/i.test(p) ? 0 : 1) + p.split('/').length;
+  return schrift.sort((a, b) => punkte(a) - punkte(b) || a.length - b.length)[0];
+}
+
+const familie = (n = '') => n.toLowerCase().replace(/[-_ ]?(fonts?|typeface)$/i, '').replace(/[^a-z0-9]/g, '');
+
+async function gefunden(cfg, log) {
+  const repos = new Map();
+  for (const q of cfg.suchen ?? []) {
+    for (let seite = 1; seite <= 10; seite++) {
+      try {
+        const data = await getJson(`${API}/search/repositories?q=${encodeURIComponent(q)}&sort=stars&order=desc&per_page=100&page=${seite}`, { headers: headers() });
+        for (const r of data.items ?? []) if (!r.fork && !r.archived) repos.set(r.full_name.toLowerCase(), r);
+        if ((data.items ?? []).length < 100) break;
+      } catch (err) {
+        log(`  githubschriften Suche "${q}": ${err.message}`);
+        break;
+      }
+    }
+  }
+  return [...repos.values()].sort((a, b) => b.stargazers_count - a.stargazers_count);
+}
+
 source.crawl = async function crawl(cfg, log) {
   setHostGap('api.github.com', 1000);
   const out = [];
+  // repositories found by search: new ones only, the known ones stay in the catalogue file
+  const bekannt = new Set((await ladeQuelle(source.id)).items.map((it) => it.id));
+  const fontsource = new Set((await ladeQuelle('fontsource')).items.map((it) => familie(it.title)));
+  const genannt = new Set((cfg.repos ?? []).map((e) => e.repo.toLowerCase()));
+  let stand = { ausgelassen: [] };
+  try { stand = JSON.parse(await readFile(STAND, 'utf8')); } catch {}
+  const ausgelassen = new Set(stand.ausgelassen);
+  let neu = 0, doppelt = 0, ohneDatei = 0;
+  for (const repo of await gefunden(cfg, log)) {
+    if (neu >= (cfg.maxNeu ?? 300)) break;
+    const id = `${source.id}:${repo.full_name.toLowerCase()}`;
+    if (genannt.has(repo.full_name.toLowerCase()) || bekannt.has(id) || ausgelassen.has(id)) continue;
+    if (fontsource.has(familie(repo.name))) { doppelt++; continue; }
+    neu++;
+    try {
+      const release = await getJson(`${API}/repos/${repo.full_name}/releases/latest`, { headers: headers() }).catch(() => null);
+      let vorschau;
+      if (!release?.assets?.some((a) => /\.(ttf|otf)$/i.test(a.name) && !/nerd/i.test(a.name))) {
+        const baum = await getJson(`${API}/repos/${repo.full_name}/git/trees/${repo.default_branch}?recursive=1`, { headers: headers() });
+        vorschau = musterDatei((baum.tree ?? []).map((t) => t.path));
+        if (!vorschau) { ohneDatei++; ausgelassen.add(id); continue; }
+      }
+      const it = parseSchrift(repo, release, { vorschau, tags: (repo.topics ?? []).filter((t) => !/^(font|fonts|typeface|typography|ofl)$/.test(t)).slice(0, 6) });
+      if (it) out.push(it);
+      else ausgelassen.add(id);
+    } catch (err) {
+      log(`  githubschriften ${repo.full_name}: ${err.message}`);
+    }
+  }
+  await mkdir('data/crawlstand', { recursive: true });
+  await writeFile(STAND, JSON.stringify({ ausgelassen: [...ausgelassen].sort() }));
+  log(`  githubschriften: ${neu} neue Repositories angesehen, ${out.length} Schriften, ${doppelt} schon bei Fontsource, ${ohneDatei} ohne Schriftdatei`);
   for (const eintrag of cfg.repos ?? []) {
     try {
       const repo = await getJson(`${API}/repos/${eintrag.repo}`, { headers: headers() });
@@ -74,7 +140,6 @@ source.crawl = async function crawl(cfg, log) {
       log(`  githubschriften ${eintrag.repo}: ${err.message}`);
     }
   }
-  log(`  githubschriften: ${out.length} Schriften`);
   return out;
 };
 

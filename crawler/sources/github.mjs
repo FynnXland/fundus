@@ -129,6 +129,22 @@ export function skillItem({ repo, dir, front, license, files, md }) {
   });
 }
 
+/** All results of a search, page by page (GitHub stops at 1,000 per query, so callers split by star range). */
+async function sucheAlle(query, log, maxSeiten = 10) {
+  const alle = [];
+  for (let seite = 1; seite <= maxSeiten; seite++) {
+    try {
+      const data = await getJson(`${API}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=100&page=${seite}`, { headers: headers() });
+      alle.push(...(data.items ?? []));
+      if ((data.items ?? []).length < 100) break;
+    } catch (err) {
+      log(`  github Suche "${query}" Seite ${seite}: ${err.message}`);
+      break;
+    }
+  }
+  return alle;
+}
+
 async function search(query, perPage, log) {
   try {
     const data = await getJson(`${API}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${perPage}`, { headers: headers() });
@@ -197,6 +213,13 @@ source.crawl = async function crawl(cfg, log) {
   if (!process.env.GITHUB_TOKEN) log('  github: ohne GITHUB_TOKEN, das dauert wegen der Ratenlimits ein paar Minuten');
   const out = [];
   const per = cfg.proSuche ?? 25;
+  // The most starred open-source projects, whatever their topic (cfg.sterne: star ranges below 1,000 hits each).
+  // They come first, so a topic search below that knows the kind better (skript, grafik …) overrides them.
+  let sterne = 0;
+  for (const band of cfg.sterne ?? []) {
+    for (const r of await sucheAlle(`stars:${band}`, log)) { const it = parseRepo(r, 'projekt'); if (it) { out.push(it); sterne++; } }
+  }
+  if (cfg.sterne?.length) log(`  github: ${sterne} Projekte aus den Sternbereichen`);
   for (const query of cfg.projekte ?? []) for (const r of await search(query, per, log)) { const it = parseRepo(r, 'projekt'); if (it) out.push(it); }
   for (const query of cfg.skripte ?? []) for (const r of await search(query, per, log)) { const it = parseRepo(r, 'skript'); if (it) out.push(it); }
   // Asset repositories (sprite packs, sound packs, texture sets): the entry is the repository under the
