@@ -69,6 +69,7 @@ export function detailtext(it, { mitUrls = true } = {}) {
   ];
   if (it.description) zeilen.push(`Description: ${zeichen(it.description, 300)}`);
   if (it.collection?.name) zeilen.push(`Collection: ${it.collection.name}`);
+  if (['projekt', 'skript', 'skill'].includes(it.kind)) zeilen.push('Note: third-party code. Fundus does not check security, privacy compliance or whether the license claim is right; review it before use.');
   zeilen.push(`Preview: ${it.vorschau ? 'own thumbnail (fundus_preview)' : it.preview?.thumb ? `only at the source: ${ohneTracking(it.preview.thumb)}` : 'none'}${it.preview?.type === 'audio' && it.preview.url ? ` · audio sample: ${ohneTracking(it.preview.url)}` : ''}`);
   zeilen.push('Downloads (number = download option):');
   it.downloads.forEach((d, i) => {

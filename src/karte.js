@@ -67,6 +67,9 @@ function brauchtQuelle(it) {
   return it.preview.type !== 'text' && Boolean(it.preview.url || it.preview.thumb);
 }
 
+// kinds that are code someone else wrote; the card says that nobody checked it
+const SOFTWARE = new Set(['projekt', 'skript', 'skill']);
+
 function vorschauFlaeche(it, mitVorschau) {
   const lokal = it.vorschau ? `<img class="info__mini" src="/vorschau/${esc(it.vorschau.pfad)}" alt="Vorschau: ${esc(it.title)}" width="${it.vorschau.b}" height="${it.vorschau.h}" />` : `<span class="info__symbol">${symbol(it.kind, 64)}</span>`;
   if (!brauchtQuelle(it)) return textVorschau(it);
@@ -175,6 +178,7 @@ function infoHtml(it, katalog, mitVorschau) {
       ${bewertungsZeile(it)}
       ${it.description ? `<p class="info__beschreibung">${esc(it.description)}</p>` : ''}
       <div class="knopfreihe">${downloadsHtml(it)}</div>
+      ${SOFTWARE.has(it.kind) ? '<p class="info__klein">Software von Dritten: Fundus prüft weder Sicherheit noch Datenschutz noch, ob die Lizenzangabe stimmt. Schau dir den Code an, bevor du ihn einsetzt.</p>' : ''}
       <p class="info__klein" id="paketstatus" aria-live="polite">Download direkt von ${esc([...new Set(it.downloads.map((d) => host(d.paket ? d.paket.files[0].url : d.url)))].join(', '))}.</p>
       <div class="reiter segmente" role="tablist" aria-label="Angaben">
         <button type="button" role="tab" id="tab-uebersicht" aria-controls="tp-uebersicht" aria-selected="true">Übersicht</button>
