@@ -4,7 +4,7 @@ import { test, before, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { baueAusgabe, KOPF, TEIL } from '../crawler/lib/ausgabe.mjs';
-import { kodiere, dekodiere, normalisiere, woerter, baueKacheln, suche, kachelDatei, rangfolge } from '../crawler/lib/suchindex.mjs';
+import { kodiere, dekodiere, normalisiere, woerter, baueKacheln, suche, kachelDatei, rangfolge, beschreibungsWoerter, einzahl, kartenFuer, undVerknuepft, teilTreffer, kachelnFuerAnfrage } from '../crawler/lib/suchindex.mjs';
 import { FELDER, zeile, suchfelder, startauswahl } from '../crawler/publish.mjs';
 import { ladeKatalog, beimNachladen, bedarf, hat, hole, filtern, ladeKarte, ladeArt, ladeAlle, aehnliche } from '../src/katalog.js';
 
@@ -102,6 +102,53 @@ test('Kacheln: bleiben unter dem Budget, Suche findet genau, als Anfang und mit 
   const tippfehler = treffer('sonnenuntergamg');
   assert.ok(trefferVon('sonnenuntergang').every((id) => tippfehler.includes(id)), 'ein Tippfehler auf 15 Buchstaben stört nicht');
   assert.deepEqual(treffer('zzzzzz'), []);
+});
+
+test('Beschreibung: nur lateinische Wörter von 2 bis 24 Zeichen, ohne Füllwörter und Zahlen, jedes einmal', () => {
+  assert.equal(beschreibungsWoerter('Use this skill when the user wants to write a Git commit, 2 commits für die Änderung'), 'skill user wants write git commit commits anderung');
+  assert.equal(beschreibungsWoerter('律师助理与法律助手 contract review'), 'contract review');
+  assert.equal(beschreibungsWoerter(undefined), '');
+  assert.ok(beschreibungsWoerter(Array.from({ length: 100 }, (_, i) => `wort${String.fromCharCode(97 + (i % 26))}${i}`).join(' ')).split(' ').length <= 60);
+});
+
+test('Einzahl: englische Plurale, kurze und doppelte s bleiben', () => {
+  for (const [w, e] of [['chairs', 'chair'], ['cats', 'cat'], ['berries', 'berry'], ['boxes', 'box'], ['glasses', 'glass'], ['icons', 'icon'], ['glass', 'glass'], ['bus', 'bus'], ['gas', 'gas'], ['chair', 'chair']]) assert.equal(einzahl(w), e, w);
+});
+
+test('Kacheln: das Budget gilt in Bytes, auch für Wörter mit Umlauten oder anderen Schriften', () => {
+  const titel = Array.from({ length: 400 }, (_, i) => `${'律师助理与法律'.slice(i % 5)}${String.fromCharCode(0x4e00 + i)} ${String.fromCharCode(0x4e00 + i)}x`);
+  const kacheln = baueKacheln(titel.map((t, ref) => [ref, [[t, 0]]]), 2000);
+  for (const [s, k] of kacheln) if (s.length < 8) assert.ok(Buffer.byteLength(JSON.stringify(k)) <= 2000, `${s}: ${Buffer.byteLength(JSON.stringify(k))}`);
+});
+
+test('Suche: Plural trifft Einzahl und umgekehrt, Beschreibung zählt am wenigsten', () => {
+  const it = (id, title, description) => ({ id, title, description, kind: 'bild', tags: [], creator: { name: 'x' }, source: { name: 'y' }, unter: 'u', downloads: [] });
+  const liste = [it('a', 'cat'), it('b', 'two cats'), it('c', 'catalog'), it('d', 'dog', 'a cat on a sofa')];
+  const kacheln = baueKacheln(liste.map((x, ref) => [ref, suchfelder(x)]));
+  const s = [...kacheln.keys()];
+  assert.deepEqual(rangfolge(suche('cats', kacheln, s)).map((r) => liste[r].id), ['b', 'a', 'd']);
+  assert.deepEqual(rangfolge(suche('cat', kacheln, s)).map((r) => liste[r].id), ['a', 'b', 'c', 'd']);
+  assert.deepEqual(kachelnFuerAnfrage('cats', s).sort(), s.filter((k) => 'cats'.startsWith(k) || k.startsWith('cats')).sort());
+});
+
+test('Teiltreffer: mehr passende Wörter zuerst, dann das seltenere Wort, ganze Treffer fehlen', () => {
+  const it = (id, title) => ({ id, title, kind: 'icon', tags: [], creator: { name: 'x' }, source: { name: 'y' }, unter: 'u', downloads: [] });
+  const liste = [it('alle', 'pixel heart red'), it('zwei', 'pixel heart'), it('herz', 'heart'), ...Array.from({ length: 20 }, (_, i) => it(`p${i}`, 'pixel'))];
+  const kacheln = baueKacheln(liste.map((x, ref) => [ref, suchfelder(x)]));
+  const { ws, karten } = kartenFuer('pixel heart red', kacheln, [...kacheln.keys()]);
+  assert.deepEqual([...undVerknuepft(karten).keys()].map((r) => liste[r].id), ['alle']);
+  // two of three words first, the full hit is left out
+  assert.deepEqual(teilTreffer(ws, karten, { mindestens: 2 }).map(([r]) => liste[r].id), ['zwei']);
+  // fewer than 10 with half of the words: one word is enough, still ranked by the number of words
+  const mitEinem = teilTreffer(ws, karten).map(([r]) => liste[r].id);
+  assert.deepEqual(mitEinem.slice(0, 2), ['zwei', 'herz']);
+  assert.equal(mitEinem.length, 22);
+  const zwei = kartenFuer('pixel heart', kacheln, [...kacheln.keys()]);
+  const teil = teilTreffer(zwei.ws, zwei.karten).map(([r]) => liste[r].id);
+  assert.equal(teil[0], 'herz', 'the rare word (heart, 3 entries) before the common one (pixel, 22)');
+  assert.equal(teil.length, 21);
+  assert.deepEqual(teilTreffer(zwei.ws, zwei.karten, { max: 5 }).length, 5);
+  assert.deepEqual(teilTreffer(zwei.ws, zwei.karten, { filter: (r) => liste[r].id === 'herz' }).map(([r, m]) => [liste[r].id, m]), [['herz', 0b10]]);
 });
 
 test('Rangfolge: Treffer im Titel stehen vor Treffern in den Tags', () => {

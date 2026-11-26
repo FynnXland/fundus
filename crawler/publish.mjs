@@ -19,6 +19,7 @@ import { ladeKatalog } from './lib/store.mjs';
 import { SOURCES } from './sources/index.mjs';
 import { baueAusgabe } from './lib/ausgabe.mjs';
 import { rangwerte, sterne5 } from './lib/bewertung.mjs';
+import { beschreibungsWoerter } from './lib/suchindex.mjs';
 
 export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, 2);
 export const STARTGROESSE = 240;
@@ -93,7 +94,26 @@ export function zeile(it, v = it.vorschau) {
   ];
 }
 
-/** What the search index knows of an entry: the fields the old in-browser index searched, by weight class. */
+// Names of the kinds in German and English, so "pixel heart icon" or "sunset hdri" find entries whose title does
+// not say "icon" or "hdri". Rows of a kind sit next to each other, so each name costs a few bytes in the index.
+// Singular only: the search matches plurals itself.
+export const ARTNAMEN = {
+  bild: 'bild foto photo image picture',
+  grafik: 'grafik graphic 2d',
+  '3d': '3d model modell',
+  textur: 'textur texture material',
+  hdri: 'hdri environment umgebung',
+  icon: 'icon',
+  musik: 'musik music',
+  sound: 'sound sfx gerausch',
+  schrift: 'schrift font typeface',
+  skript: 'skript script code',
+  projekt: 'projekt project',
+  skill: 'skill',
+  video: 'video',
+};
+
+/** What the search index knows of an entry, by weight class (crawler/lib/suchindex.mjs). */
 export const suchfelder = (it) => [
   [it.title, 0],
   [it.tags.slice(0, 8).join(' '), 1],
@@ -101,6 +121,8 @@ export const suchfelder = (it) => [
   [it.creator.name, 2],
   [it.source.name, 2],
   [formate(it).join(' '), 2],
+  [ARTNAMEN[it.kind] ?? it.kind, 2],
+  [beschreibungsWoerter(it.description), 3],
 ];
 
 /** Mixed sample for the first screen: round-robin over the kinds, entries with a picture or text first, the best of those first. */

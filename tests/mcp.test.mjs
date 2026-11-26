@@ -109,7 +109,10 @@ describe('Kern', () => {
     assert.equal(e.gesamt, 4);
     assert.equal(e.weiter, null);
     assert.equal((await kern.suchen({ q: 'chair', art: 'bild' })).treffer.length, 0);
-    assert.deepEqual(ids(await kern.suchen({ q: 'painted chair' })), ['polyhaven:painted_wooden_chair_01']);
+    const bemalt = await kern.suchen({ q: 'painted chair' });
+    assert.equal(bemalt.voll, 1);
+    assert.equal(bemalt.treffer[0].id, 'polyhaven:painted_wooden_chair_01');
+    assert.equal(bemalt.treffer[0].fehlt, undefined);
     // a row carries what the answer needs
     const r = e.treffer.find((x) => x.id === 'polyhaven:gallinera_chair');
     assert.equal(r.quellname, 'Poly Haven');
@@ -117,8 +120,56 @@ describe('Kern', () => {
     assert.equal(r.art, '3d');
   });
 
+  test('Rückfall: unter drei Treffern für alle Wörter folgen Einträge mit den meisten Wörtern, gekennzeichnet', async () => {
+    const { kern } = neuerKern();
+    // one exact hit, then the other chairs, which lack "painted"
+    const e = await kern.suchen({ q: 'painted chair' });
+    assert.equal(e.rueckfall, true);
+    assert.deepEqual(e.treffer.slice(1).map((r) => r.fehlt), ['painted', 'painted', 'painted']);
+    assert.deepEqual(ids(e), erwartet((it) => /chair/i.test(it.title)));
+    assert.equal(e.gesamt, 4);
+    // nothing matches all words: only partial rows, the missing word named
+    const keins = await kern.suchen({ q: 'chair xyzzy' });
+    assert.equal(keins.voll, 0);
+    assert.deepEqual(ids(keins), erwartet((it) => /chair/i.test(it.title)));
+    assert.ok(keins.treffer.every((r) => r.fehlt === 'xyzzy'));
+    // kind and subfolder limit the fallback too
+    assert.deepEqual(ids(await kern.suchen({ q: 'chair xyzzy', art: 'bild' })), []);
+    // three or more full hits: no fallback; one word: no fallback
+    const voll = await kern.suchen({ q: 'chair' });
+    assert.equal(voll.rueckfall, false);
+    assert.equal((await kern.suchen({ q: 'xyzzy' })).rueckfall, false);
+    // at least half of the words should match; when no entry reaches that, one word is enough (a list of names)
+    assert.deepEqual(ids(await kern.suchen({ q: 'gallinera sheen pretville xyzzy qwertz' })), ['khronos:SheenChair', 'polyhaven:gallinera_chair', 'polyhaven:pretville_street']);
+    // a row filter can drop every full hit (four CC0 chairs, none share-alike): the partial hits follow
+    const gefiltert = await kern.suchen({ q: 'chair 3d', lizenzgruppe: 'gleich' });
+    assert.equal(gefiltert.voll, 4);
+    assert.equal(gefiltert.rueckfall, true);
+    assert.deepEqual(gefiltert.treffer.map((r) => [r.id, r.fehlt]), [['wikimedia:88992301', 'chair']]);
+    // ... and stay behind the full hits that pass the filter
+    const frei = await kern.suchen({ q: 'chair 3d', lizenzgruppe: 'frei' });
+    assert.deepEqual(frei.treffer.slice(0, 4).map((r) => r.fehlt), [undefined, undefined, undefined, undefined]);
+    assert.equal(frei.rueckfall, false, 'no partial hit passes the filter');
+  });
+
+  test('Suche findet Beschreibung, Artnamen und Plural', async () => {
+    const { kern } = neuerKern();
+    // "leads" stands only in the description of the skill
+    assert.deepEqual(ids(await kern.suchen({ q: 'leads', art: 'skill' })), ['github:gosom/google-maps-scraper/skills/google-maps-scraper']);
+    // the kind name in both languages
+    assert.deepEqual(ids(await kern.suchen({ q: 'font' })), erwartet((it) => it.kind === 'schrift'));
+    assert.deepEqual(ids(await kern.suchen({ q: 'street hdri' })), ['polyhaven:pretville_street']);
+    assert.deepEqual(ids(await kern.suchen({ q: 'musik' })), erwartet((it) => it.kind === 'musik'));
+    // plural and singular
+    assert.deepEqual(ids(await kern.suchen({ q: 'chairs' })), erwartet((it) => /chair/i.test(it.title)));
+    assert.deepEqual(ids(await kern.suchen({ q: 'floors', art: 'textur' })), ['ambientcg:WoodFloor060']);
+    // a title hit ranks before a description hit
+    const r = await kern.suchen({ q: 'chair' });
+    assert.ok(r.treffer.every((x) => /chair/i.test(x.titel)));
+  });
+
   test('Seitenweise mit Cursor: dieselben Treffer, keine doppelt', async () => {
-    for (const anfrage of [{ q: 'chair' }, { art: '3d' }, { art: '3d', mitVorschau: true }, {}]) {
+    for (const anfrage of [{ q: 'chair' }, { q: 'painted chair' }, { q: 'chair xyzzy' }, { art: '3d' }, { art: '3d', mitVorschau: true }, {}]) {
       const { kern } = neuerKern();
       const alle = ids(await kern.suchen({ ...anfrage, limit: 50 }));
       const gesammelt = [];
@@ -240,6 +291,14 @@ describe('MCP-Werkzeuge', () => {
     assert.match(weiter, /showing 3-4\./);
     // a subfolder: the count is known, the position is not the match number (rows of other subfolders skipped)
     assert.match(textVon(await ruf('fundus_search', { kind: '3d', subfolder: 'Möbel', limit: 2 })), /^4 matches in 3d, 2 on this page\. More: cursor/);
+    // fallback: the header says so, the last column names the missing words
+    const teil = textVon(await ruf('fundus_search', { query: 'painted chair', limit: 3 })).split('\n');
+    assert.match(teil[0], /^1 match for all words of "painted chair", then 3 matching only some words \(column "missing"\), showing 1-3\. More: cursor "3"\.$/);
+    assert.ok(teil[1].endsWith('\tpreview\tmissing'));
+    assert.ok(teil[2].endsWith('\t-'));
+    assert.ok(teil[3].endsWith('\tpainted'));
+    assert.match(textVon(await ruf('fundus_search', { query: 'chair xyzzy', limit: 2 })), /^No entry matches all words of "chair xyzzy"\. Showing 4 entries matching some words/);
+    assert.match(textVon(await ruf('fundus_search', { query: 'chair 3d', license_group: 'gleich' })), /^No entry on this page matches all words of "chair 3d" with these filters; showing entries matching only some words \(column "missing"\)\.\n/);
     const fehler = await ruf('fundus_search', { kind: 'moebel' });
     assert.equal(fehler.isError, true);
     assert.match(textVon(fehler), /Kinds:/);

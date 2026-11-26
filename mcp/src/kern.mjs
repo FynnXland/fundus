@@ -9,7 +9,10 @@
 //
 // Nothing loads a whole kind: a search walks its ranked hits, a listing walks the parts in order, and both stop
 // when the page is full or after maxAbrufe files. The cursor is the position to continue from.
-import { woerter, kachelnFuer, kachelDatei, suche, rangfolge, normalisiere } from './suchindex.mjs';
+import { woerter, kachelnFuerAnfrage, kachelDatei, kartenFuer, undVerknuepft, teilTreffer, rangfolge, normalisiere } from './suchindex.mjs';
+
+/** Below this many entries matching all words (after kind and subfolder), entries matching most words follow. */
+export const RUECKFALL_UNTER = 3;
 
 export const VERSION = '0.1.0'; // keep equal to mcp/package.json
 
@@ -186,7 +189,9 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
 
   /**
    * One page of entries. Without q the rows come in index order (by subfolder and tags), with q by relevance.
-   * Returns { treffer, weiter (cursor or null), gesamt (exact count or null), teilweise (stopped at the fetch cap) }.
+   * Returns { treffer, weiter (cursor or null), gesamt (exact count or null), teilweise (stopped at the fetch cap),
+   * voll (entries matching all words, before row filters), rueckfall (true when entries matching only some words
+   * follow them; such rows carry fehlt = the missing words) }.
    */
   async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, limit = 10, cursor } = {}) {
     await stand();
@@ -219,15 +224,23 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     let refs = null; // ranked hits (search) or null (listing over blocks)
     let bloecke = null;
     let gesamt = null;
+    let voll = null;
+    let fehlt = null; // ref -> missing words, for the fallback rows
     const deckt = (t) => ui < 0 || (t.von <= ui && ui <= t.bis);
     if (q && woerter(q).length) {
-      const ws = [...new Set(woerter(q))];
-      const noetig = new Set(ws.flatMap((w) => (w.length > 1 ? kachelnFuer(w, k.schluessel) : kachelnFuer(w, k.schluessel).filter((s) => w.startsWith(s)))));
       const geladen = new Map();
-      await Promise.all([...noetig].map(async (s) => geladen.set(s, await ladeKachel(s))));
-      refs = rangfolge(suche(q, geladen, k.schluessel));
-      if (a) refs = refs.filter((r) => r >= a.start && r < a.ende);
-      if (ui >= 0) refs = refs.filter((r) => deckt(blockVon(r)));
+      await Promise.all(kachelnFuerAnfrage(q, k.schluessel).map(async (s) => geladen.set(s, await ladeKachel(s))));
+      const { ws, karten } = kartenFuer(q, geladen, k.schluessel);
+      const imBereich = (r) => (!a || (r >= a.start && r < a.ende)) && (ui < 0 || deckt(blockVon(r)));
+      refs = rangfolge(undVerknuepft(karten)).filter(imBereich);
+      voll = refs.length;
+      // Row filters (licence, format, …) can drop every full hit, which only the walk below sees: with them the
+      // partial hits always follow the full ones and show up only once those are used up.
+      if (ws.length > 1 && (voll < RUECKFALL_UNTER || zeilenfilter)) {
+        const teil = teilTreffer(ws, karten, { filter: imBereich });
+        fehlt = new Map(teil.map(([r, maske]) => [r, ws.filter((_, i) => !(maske & (1 << i))).join(' ')]));
+        refs = refs.concat(teil.map(([r]) => r));
+      }
       if (!zeilenfilter && ui < 0) gesamt = refs.length;
     } else {
       bloecke = (a ? a.teile : k.bloecke).filter(deckt);
@@ -267,10 +280,12 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
         await Promise.all(vorne.map((u) => ladeTeil(u, zaehler)));
       }
       const r = teile.get(t.datei)[i];
+      const fehlend = fehlt?.get(refs[pos]);
       pos++;
-      if (r && passt(r)) treffer.push(r);
+      if (r && passt(r)) treffer.push(fehlend ? { ...r, fehlt: fehlend } : r);
     }
-    return { treffer, weiter: pos < laenge ? pos.toString(36) : null, gesamt, ab, teilweise, abrufe: zaehler.n };
+    const rueckfall = zeilenfilter ? treffer.some((r) => r.fehlt) : Boolean(fehlt?.size);
+    return { treffer, weiter: pos < laenge ? pos.toString(36) : null, gesamt, ab, teilweise, abrufe: zaehler.n, voll, rueckfall };
   }
 
   /* ---------------- Entries ---------------- */

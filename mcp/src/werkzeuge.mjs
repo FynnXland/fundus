@@ -24,23 +24,35 @@ function vorschauSpalte(r) {
   return '-';
 }
 
-export function suchzeilen(treffer) {
-  const kopf = 'id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview';
+/** Rows as a tab table; with a fallback a last column "missing" names the query words a row lacks. */
+export function suchzeilen(treffer, { rueckfall = false } = {}) {
+  const kopf = `id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview${rueckfall ? '\tmissing' : ''}`;
   const zeilen = treffer.map((r) =>
-    [r.id, zeichen(r.titel, 70), `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r)].join('\t'),
+    [r.id, zeichen(r.titel, 70), `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
   );
   return [kopf, ...zeilen].join('\n');
 }
 
 function suchkopf(e, { q, art, limit }) {
   const was = `${q ? ` for "${q}"` : ''}${art ? ` in ${art}` : ''}`;
+  const zeige = e.ab ? `showing ${e.ab}-${e.ab + e.treffer.length - 1}` : `${e.treffer.length} on this page`;
   const teile = [];
-  if (!e.treffer.length) teile.push(`No matches${was}${e.weiter ? ' in the part searched so far' : ''}.`);
-  else if (e.gesamt != null) teile.push(`${e.gesamt} matches${was}, ${e.ab ? `showing ${e.ab}-${e.ab + e.treffer.length - 1}` : `${e.treffer.length} on this page`}.`);
+  if (e.rueckfall && e.gesamt == null) {
+    // row filters: counts before them say nothing about this page
+    const voll = e.treffer.filter((r) => !r.fehlt).length;
+    teile.push(`${voll ? `${voll} on this page match all words of "${q}", then` : `No entry on this page matches all words of "${q}" with these filters; showing`} entries matching only some words (column "missing").`);
+  } else if (e.rueckfall) {
+    const teil = `${e.gesamt - e.voll} `;
+    const von = `of "${q}"${art ? ` in ${art}` : ''}`;
+    teile.push(e.voll
+      ? `${e.voll} ${e.voll === 1 ? 'match' : 'matches'} for all words ${von}, then ${teil}matching only some words (column "missing"), ${zeige}.`
+      : `No entry matches all words ${von}. Showing ${teil}entries matching some words, most words first (column "missing" = words the entry lacks), ${zeige}.`);
+  } else if (!e.treffer.length) teile.push(`No matches${was}${e.weiter ? ' in the part searched so far' : ''}.`);
+  else if (e.gesamt != null) teile.push(`${e.gesamt} matches${was}, ${zeige}.`);
   else teile.push(`${e.treffer.length} matches${was} on this page (total not counted with these filters).`);
   if (e.teilweise) teile.push(`Stopped after ${e.abrufe} index files to stay cheap; continue with cursor "${e.weiter}" or narrow the search (kind, query).`);
   else if (e.weiter) teile.push(`More: cursor "${e.weiter}".`);
-  if (!e.treffer.length && !e.weiter && limit) teile.push('Try fewer words, another kind or fundus_catalog for valid filter values.');
+  if (!e.treffer.length && !e.weiter && limit) teile.push('Try another word (synonym, English or German), fewer filters or fundus_catalog for valid filter values.');
   return teile.join(' ');
 }
 
@@ -118,7 +130,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     'fundus_search',
     {
       title: 'Fundus: search assets',
-      description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words must all match (title, tags, creator, formats). All filters are optional and combine; without query it lists a kind or subfolder. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
+      description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
       inputSchema: z.object({
         query: z.string().optional().describe('search words, e.g. "wooden chair"; English and German titles exist'),
         kind: z.string().optional().describe('bild, grafik, 3d, textur, hdri, icon, musik, sound, schrift, skript, projekt, skill, video'),
@@ -138,7 +150,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
       try {
         const e = await kern.suchen({ q: a.query, art: a.kind, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, limit: a.limit ?? 10, cursor: a.cursor });
         const kopf = suchkopf(e, { q: a.query, art: a.kind, limit: a.limit ?? 10 });
-        return text(e.treffer.length ? `${kopf}\n${suchzeilen(e.treffer)}` : kopf);
+        return text(e.treffer.length ? `${kopf}\n${suchzeilen(e.treffer, { rueckfall: e.rueckfall })}` : kopf);
       } catch (err) { return fehler(err); }
     },
   );
