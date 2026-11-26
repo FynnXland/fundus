@@ -16,6 +16,7 @@ import godot from './godot.mjs';
 import opengameart from './opengameart.mjs';
 import openclipart from './openclipart.mjs';
 import fontsource from './fontsource.mjs';
+import githubschriften from './githubschriften.mjs';
 import iconify from './iconify.mjs';
 import openmoji from './openmoji.mjs';
 import twemoji from './twemoji.mjs';
@@ -42,6 +43,6 @@ import smithsonian from './smithsonian.mjs';
 // Order matters for dedupe: direct sources first, aggregators (Openverse) last.
 export const SOURCES = [
   wikimedia, commonsaudio, wikimediavideo, polyhaven, ambientcg, khronos, fuel, cleveland, wellcome, smithsonian,
-  github, blender, godot, opengameart, openclipart, fontsource, iconify,
+  github, blender, godot, opengameart, openclipart, fontsource, githubschriften, iconify,
   openmoji, twemoji, notoemoji, fluentemoji, gameicons, streamline, internetarchive, openverse,
 ].map(({ crawl, ...meta }) => ({ ...meta, crawl }));

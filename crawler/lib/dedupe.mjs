@@ -69,7 +69,7 @@ const BILDARTEN = new Set(['bild']);
 // before copies (Openclipart before the Commons clipart categories, museums before Commons uploads of their works).
 const QUELLRANG = [
   'polyhaven', 'ambientcg', 'khronos', 'fuel', 'openclipart', 'opengameart', 'cleveland', 'wellcome', 'nga', 'smk', 'rijksmuseum',
-  'met', 'smithsonian', 'wikimedia', 'commonsaudio', 'wikimediavideo', 'europeana', 'fontsource', 'iconify', 'openmoji', 'twemoji', 'notoemoji', 'fluentemoji', 'gameicons', 'streamline', 'github',
+  'met', 'smithsonian', 'wikimedia', 'commonsaudio', 'wikimediavideo', 'europeana', 'fontsource', 'githubschriften', 'iconify', 'openmoji', 'twemoji', 'notoemoji', 'fluentemoji', 'gameicons', 'streamline', 'github',
   'blender', 'godot', 'godotshaders', 'internetarchive', 'freesound', 'openverse',
 ];
 

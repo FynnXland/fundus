@@ -264,7 +264,9 @@ async function grossLaden(fenster, it, { grossesModell = false } = {}) {
       document.fonts.add(face);
       ziel.innerHTML = `<div class="schriftmuster" style="font-family:'${name}'"><p class="schriftmuster__gross">${esc(it.title)}</p><p class="schriftmuster__mittel">${esc(SCHRIFTPROBE)}</p><p>ABCDEFGHIJKLMNOPQRSTUVWXYZ<br />abcdefghijklmnopqrstuvwxyz äöüß 0123456789</p></div>`;
     } catch {
-      fehler('Die Schrift ließ sich nicht laden.');
+      // some origins send no CORS header (GitHub release files); then the rendered sample picture stays
+      if (it.vorschau) ziel.querySelector('.info__hinweis')?.remove();
+      else fehler('Die Schrift ließ sich nicht laden.');
     }
     return;
   }

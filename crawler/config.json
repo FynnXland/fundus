@@ -350,6 +350,16 @@
   "fontsource": {
     "limit": 3000
   },
+  "githubschriften": {
+    "repos": [
+      { "repo": "IdreesInc/Monocraft", "urheber": "Idrees Hassan", "vorschau": "dist/Monocraft-otf/Monocraft.otf", "kategorie": "Monospace",
+        "beschreibung": "Monospace-Schrift zum Programmieren im Stil der Minecraft-Schrift, mit Ligaturen.",
+        "tags": ["Monospace", "Pixel", "Minecraft-Stil", "Programmieren", "Retro"] },
+      { "repo": "IdreesInc/Miracode", "urheber": "Idrees Hassan", "kategorie": "Monospace",
+        "beschreibung": "Glatte Vektor-Variante von Monocraft: Minecraft-Anmutung, aber scharf und gut lesbar.",
+        "tags": ["Monospace", "Minecraft-Stil", "Programmieren", "Retro"] }
+    ]
+  },
   "iconify": {
     "limit": 300,
     "mehrBeispiele": false,

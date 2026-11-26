@@ -54,6 +54,7 @@ export async function vorschauBauen(buffer) {
 export function bildquelle(it) {
   if (it.preview?.thumb) return it.preview.thumb;
   if (it.preview?.type === 'font' && /\.woff2$/.test(it.preview.url ?? '')) return it.preview.url.replace(/\.woff2$/, '.ttf');
+  if (it.preview?.type === 'font' && /\.(ttf|otf)$/i.test(it.preview.url ?? '')) return it.preview.url;
   return null;
 }
 
