@@ -185,3 +185,34 @@ Ursprüngliche Fragen an den Hauptchat:
 3. Fundus: Prüfung im Worker, Antworttext, Seite `#/zugang`, Grenze für Vorschaubilder.
 4. Erst wenn die neuen Rechtstexte live sind: einschalten.
 5. Danach: Schlüssel am Konto, dann der Verlauf.
+
+## Stand des Baus (27.11.2026 nachmittags)
+
+Fynn hat die Empfehlungen bestätigt. Stufe 1 ist auf der Fundus-Seite gebaut und veröffentlicht, aber **ausgeschaltet**
+(`ZUGANG: "0"` in `wrangler.jsonc`). Solange zählt und speichert der Worker nichts, `/api/zugang/*` antwortet außer
+`info` mit 404, und die Seite `#/zugang` sagt, dass eigene Zugänge noch nicht eingeschaltet sind.
+
+| Teil | Wo |
+|---|---|
+| Zähler, Schlüssel, Limit-Antwort, API der Seite, Aufräumen | `worker/zugang.mjs`, eingebunden in `worker/index.mjs` |
+| Zugang fürs Dashboard (`counts`, `list`, `grant`, `reset`, `block`, `unblock`) | `worker/admin.mjs`, Entrypoint `Admin`; `wrangler.jsonc` startet jetzt `worker/eingang.mjs` |
+| Datenbank | D1 `fundus`, Jurisdiction `eu`, Tabellen aus `worker/zugang.sql` |
+| Geheimnis für die IP-Kennung | Secret `ZAEHLER_GEHEIM` am Worker; lokal `.dev.vars` (nicht im Repository) |
+| Seite und Kurzfassung Datenschutz | `src/zugang.js`, `#/zugang`, Absatz auf `#/datenschutz` nur bei eingeschaltetem Schalter |
+| Grenze für Vorschaubilder | `RL_VORSCHAU`, 900 je Minute und Adresse (der Entwurf des Hauptchats nennt 600: Zahl im Text anpassen) |
+| Aufräumen | Cron `23 2 * * *` |
+| Tests | `tests/zugang.test.mjs`, mit echtem SQLite hinter den D1-Aufrufen |
+
+Lokal mit eingeschaltetem Schalter geprüft: Zugang erzeugen, Aufruf mit und ohne Schlüssel wird gezählt, unbekannter
+Schlüssel und fremde Herkunft werden abgewiesen, die Seite zeigt Adresse und Verbrauch.
+
+Einschalten, in dieser Reihenfolge:
+
+1. Die neuen Datenschutztexte sind auf fynn.land live (Hauptchat, nach Fynns Ja).
+2. Im Admin-Dashboard gibt es den Abschnitt „Fundus-Zugänge“ (Bindung `{ binding: "FUNDUS", service: "fundus",
+   entrypoint: "Admin" }`); bis dahin geht die Freigabe von Hand nur über `wrangler d1 execute`.
+3. `ZUGANG` auf `"1"`, einen Link zu `#/zugang` in den KI-Bereich der Startseite, veröffentlichen, pushen.
+4. Am ersten Tag `counts()` und die Rechenzeit im Cloudflare-Dashboard ansehen und die Zahlen in `GRENZEN` nachziehen.
+
+Nicht gebaut: Schlüssel am Konto (Stufe 2, braucht den Eintrag `fundus` in `ACCOUNT_GAMES` des Kontoservers) und der
+Verlauf. Zu prüfen: ob der API-Token des nächtlichen GitHub-Laufs einen Worker mit D1-Bindung veröffentlichen darf.

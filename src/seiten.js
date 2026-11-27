@@ -2,6 +2,7 @@ import { BETREIBER } from './betreiber.js';
 import { ARTEN } from './katalog.js';
 import { vorschau, DRITTLAND_TEXT } from './vorschau.js';
 import { esc, safeUrl, zahl, datum, store } from './util.js';
+import { zugangSeite, zugangBereit, datenschutzBereit } from './zugang.js';
 
 const luecke = (was) => `<span class="platzhalterdaten">[${esc(was)} fehlt noch]</span>`;
 
@@ -88,6 +89,8 @@ function datenschutz() {
   <h2>Downloads und Links</h2>
   <p>Ein Klick auf einen Download lädt die Datei direkt vom Server der Quelle, ein Klick auf „Ursprungsseite“ öffnet deren Website. Pakete (etwa ein 3D-Modell mit Texturen) holt dein Browser Datei für Datei von der Quelle und packt sie auf deinem Gerät zu einer ZIP-Datei.</p>
 
+  <div id="ds-zugang"></div>
+
   <h2>Gespeicherte Einstellungen</h2>
   <p>Drei Einstellungen merkt sich die Seite im lokalen Speicher deines Browsers: ob Vorschauen von den Quellen laden sollen (<code>fundus.vorschau</code>), ob du das helle oder dunkle Farbschema gewählt hast (<code>fundus.thema</code>) und ob du Symbole oder eine Liste sehen willst (<code>fundus.ansicht</code>). Alles bleibt auf deinem Gerät, wird nie übertragen und entsteht nur, wenn du die jeweilige Einstellung änderst.</p>
   <p><button type="button" class="knopf" id="einstellungenweg">Vorschauen ausschalten und Einstellungen löschen</button> <span id="einstellungenstatus" aria-live="polite">${an ? 'Vorschauen sind gerade eingeschaltet.' : 'Vorschauen sind gerade ausgeschaltet.'}</span></p>`;
@@ -115,7 +118,8 @@ function melden({ katalog, params }) {
 export const SEITEN = {
   quellen: { titel: 'Quellen & Lizenzen', braucht: 'stand', html: quellen },
   impressum: { titel: 'Impressum', html: impressum },
-  datenschutz: { titel: 'Datenschutz', html: datenschutz },
+  datenschutz: { titel: 'Datenschutz', html: datenschutz, bereit: datenschutzBereit },
+  zugang: { titel: 'Dein Zugang', html: zugangSeite, bereit: zugangBereit },
   melden: { titel: 'Eintrag melden', braucht: 'stand', html: melden },
 };
 

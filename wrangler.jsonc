@@ -7,7 +7,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "fundus",
-  "main": "worker/index.mjs",
+  "main": "worker/eingang.mjs",
   "compatibility_date": "2026-11-01",
   // the MCP server uses node:buffer through the official SDK
   "compatibility_flags": ["nodejs_compat"],
@@ -17,7 +17,7 @@
     "html_handling": "auto-trailing-slash",
     // the site routes with #/…, so an unknown path is a real 404 (a missing index file must not come back as HTML)
     "not_found_handling": "none",
-    "run_worker_first": ["/mcp", "/vorschau/*"]
+    "run_worker_first": ["/mcp", "/vorschau/*", "/api/zugang/*"]
   },
   "r2_buckets": [
     { "binding": "VORSCHAU", "bucket_name": "fundus-vorschau" }
@@ -31,9 +31,20 @@
   "ratelimits": [
     { "name": "RL_MCP", "namespace_id": "3001", "simple": { "limit": 60, "period": 60 } },
     // Anthropic's outbound addresses (claude.ai and Desktop connectors, many people per address): worker/schutz.mjs
-    { "name": "RL_MCP_KI", "namespace_id": "3002", "simple": { "limit": 1200, "period": 60 } }
+    { "name": "RL_MCP_KI", "namespace_id": "3002", "simple": { "limit": 1200, "period": 60 } },
+    // previews: 120 on one page of the grid, so a person scrolling fast stays far below this
+    { "name": "RL_VORSCHAU", "namespace_id": "3003", "simple": { "limit": 900, "period": 60 } }
   ],
+  // Daily counters, access keys and grants for /mcp (worker/zugang.mjs). Created with --jurisdiction eu.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "fundus", "database_id": "b4c53f74-bc6a-4714-b499-12b64a0528c2" }
+  ],
+  // aufraeumen() in worker/zugang.mjs, once a night
+  "triggers": { "crons": ["23 2 * * *"] },
   "vars": {
+    // "1" switches the daily allowances and the page #/zugang on. Only after the new privacy texts are live on
+    // fynn.land (docs/MCP-ZUGANG-ENTWURF.md). Needs the secret ZAEHLER_GEHEIM (wrangler secret put).
+    "ZUGANG": "0",
     // "1" only with the Workers Paid plan: contact sheets decode pictures (CPU time beyond the free 10 ms)
     "KONTAKTBOGEN": "0"
   },

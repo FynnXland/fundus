@@ -150,6 +150,8 @@ async function route() {
     : `<h1>Diese Seite gibt es nicht</h1><p>Unter <code>${esc(location.hash)}</code> liegt nichts.</p>`;
   main.innerHTML = `<article class="dokument"><a class="zurueck" href="${esc(zustand.katalogHash)}"><span aria-hidden="true">‹</span> Zum Katalog</a>${inhalt}</article>`;
   document.title = `${titel} · Fundus`;
+  // pages that do something after they are in the document (the access page loads its numbers)
+  seite?.bereit?.(main);
   main.focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }

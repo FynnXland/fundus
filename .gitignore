@@ -7,3 +7,4 @@ public/vorschau/
 data/katalog.alt.json
 data/katalog/*.neu
 .wrangler/
+.dev.vars
