@@ -278,8 +278,8 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - Ergebnis: 35 Einträge „fremd“ (vorher 23), 459 „zum Ansehen“. 13 kamen neu dazu, einer ist wieder sichtbar
   („For you“ von Czxttkl, ein chinesisches Lied; die gebündelte Suche zählt 36 gleichnamige Werke statt weniger).
 - Die 13 neuen an der Quelle angesehen (Commons-Beschreibung, Titelliste im Internet Archive). Neun stehen jetzt in
-  `crawler/config.json` unter `rechte.freigegeben`. Das hat der Chat eingetragen, nicht Fynn; seine Bestätigung
-  steht aus. Alle neun waren vorher ungeprüft und damit schon sichtbar.
+  `crawler/config.json` unter `rechte.freigegeben`. Der Chat hat sie eingetragen, Fynn hat am 27.11.2026
+  abends bestätigt, dass alle neun sichtbar bleiben. Alle neun waren vorher ungeprüft und damit schon sichtbar.
   - Von der Quelle selbst belegt (2): `internetarchive:AIOT_YesAnd` (Album, laut Beschreibung live improvisierte
     Stücke, neun eigene Titel) und `internetarchive:out-of-my-dreams` (laut Beschreibung eine Komposition von
     George L Smyth nach einem Haiku von Ryōkan).
