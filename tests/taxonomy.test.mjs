@@ -101,3 +101,25 @@ test('Projekte: bei gleich vielen Themen je Ordner entscheidet die Beschreibung'
   // scrcpy: android (Mobile), ffmpeg (Audio, Video), sdl2 (Spiele)
   assert.equal(p('scrcpy', 'Display and control your Android device', ['android', 'c', 'ffmpeg', 'mirroring', 'sdl2']), 'Mobile Apps');
 });
+
+const b = (title, tags = [], source = 'wellcome', meta = {}) => unterkategorie({ kind: 'bild', title, tags, meta, source: { id: source } });
+
+test('Bilder: Museumsbestände haben eigene Ordner', () => {
+  assert.equal(b('A physician examining a patient. Engraving.'), 'Medizin & Anatomie');
+  assert.equal(b('John Hunter. Line engraving by W. Sharp', ['portrait prints']), 'Porträts & Menschen');
+  assert.equal(b('Book of Hours: fol. 12r'), 'Handschriften & Buchseiten');
+  assert.equal(b('A horse and a dog. Etching'), 'Tiere', 'das Motiv geht vor der Technik');
+  assert.equal(b('Something without a subject. Etching'), 'Kunst & Grafik');
+});
+
+test('Bilder aus Cleveland: der Objekttyp entscheidet vor dem Titel, bei Bildern erst danach', () => {
+  assert.equal(b('Dish', ['Ceramic', 'Chinese Art'], 'cleveland'), 'Keramik & Glas');
+  assert.equal(b('Leaf from a Bible', ['Manuscript', 'Medieval Art'], 'cleveland'), 'Handschriften & Buchseiten');
+  assert.equal(b('Coin with an Owl', ['Coins', 'Greek and Roman Art'], 'cleveland'), 'Schmuck & Münzen');
+  assert.equal(b('Horse in a Meadow', ['Painting', 'European Painting and Sculpture'], 'cleveland'), 'Tiere');
+  assert.equal(b('Untitled', ['Print', 'Prints'], 'cleveland'), 'Kunst & Grafik');
+});
+
+test('Bilder: Wellcomes Regal "Archives and manuscripts" macht kein Bild zur Handschrift', () => {
+  assert.notEqual(b('Rain charm from the Torres Straits', [], 'wellcome', { art: 'Archives and manuscripts' }), 'Handschriften & Buchseiten');
+});

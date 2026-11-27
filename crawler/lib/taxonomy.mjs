@@ -22,14 +22,25 @@ const W = (label, ...words) => {
 
 export const UNTER = {
   bild: [
+    W('Karten', 'map', 'landkarte', 'stadtplan', 'plan of the city'),
+    W('Handschriften & Buchseiten', 'manuscript', 'folio', 'title page', 'title-page', 'titlepage', 'frontispiece', 'page from', 'page of', 'book of hours', 'missal', 'psalter', 'gospel book', 'codex', 'papyrus', 'recipe collection', 'recipe book', "qur'an", 'koran', 'liber de', 'libri', 'incunabul*', 'handschrift', /^(?:a )?letter (?:from|to)\b/, /\bherbal(?! remed)/, /(?<!inv\.\s?)\bMS\.? ?(?:[a-z]+ ){0,2}\d/, /\bfol\.\s?\d/, /^vol\. ?[ivx\d]+/, /(?:^| · )(?:books?|title pages|epb[^·]*)(?= · |$)/),
     W('Weltraum', 'space', 'galaxy', 'galaxies', 'nebula', 'planet', 'moon', 'mond', 'astronom*', 'nasa', 'star cluster', 'weltraum'),
-    W('Tiere', 'animal', 'bird', 'insect', 'butterfly', 'butterflies', 'moth', 'cat', 'dog', 'horse', 'fish', 'mammal', 'reptile', 'spider', 'beetle', 'tier', 'tiere', 'vogel', 'fauna', 'lepidoptera', 'aves', 'mouse', 'mice', 'rat', 'squirrel', 'rabbit', 'hare', 'fox', 'wolf', 'wolves', 'bear', 'deer', 'elk', 'moose', 'boar', 'lion', 'tiger', 'leopard', 'cheetah', 'elephant', 'giraffe', 'zebra', 'monkey', 'ape', 'gorilla', 'lemur', 'bat', 'whale', 'dolphin', 'seal', 'otter', 'cattle', 'cow', 'sheep', 'goat', 'pig', 'donkey', 'camel', 'lizard', 'snake', 'turtle', 'tortoise', 'frog', 'toad', 'salamander', 'crocodile', 'bee', 'wasp', 'ant', 'dragonfly', 'dragonflies', 'damselfly', 'grasshopper', 'snail', 'crab', 'jellyfish', 'owl', 'eagle', 'hawk', 'falcon', 'kite', 'vulture', 'heron', 'egret', 'stork', 'crane', 'swan', 'duck', 'goose', 'geese', 'gull', 'tern', 'pelican', 'parrot', 'macaw', 'swallow', 'swift', 'sparrow', 'finch', 'warbler', 'flycatcher', 'kingfisher', 'woodpecker', 'hummingbird', 'robin', 'thrush', 'tit', 'crow', 'raven', 'magpie', 'pigeon', 'dove', 'penguin', 'flamingo', 'peacock', 'moustique'),
-    W('Pflanzen', 'plant', 'flower', 'tree', 'leaf', 'leaves', 'botanical', 'blossom', 'fungi', 'mushroom', 'flora', 'pflanze', 'pflanzen', 'blume', 'blumen', 'baum'),
+    W('Tiere', 'animal', 'bird', 'insect', 'butterfly', 'butterflies', 'moth', 'cat', 'dog', 'horse', 'fish', 'mammal', 'reptile', 'spider', 'beetle', 'tier', 'tiere', 'vogel', 'fauna', 'lepidoptera', 'aves', 'mouse', 'mice', 'rat', 'squirrel', 'rabbit', 'hare', 'fox', 'wolf', 'wolves', 'bear', 'deer', 'elk', 'moose', 'boar', 'lion', 'tiger', 'leopard', 'cheetah', 'elephant', 'giraffe', 'zebra', 'monkey', 'ape', 'gorilla', 'lemur', 'bat', 'whale', 'dolphin', 'seal', 'otter', 'cattle', 'cow', 'sheep', 'goat', 'pig', 'donkey', 'camel', 'lizard', 'snake', 'turtle', 'tortoise', 'frog', 'toad', 'salamander', 'crocodile', 'bee', 'wasp', 'ant', 'dragonfly', 'dragonflies', 'damselfly', 'grasshopper', 'snail', 'crab', 'jellyfish', 'owl', 'eagle', 'hawk', 'falcon', 'kite', 'vulture', 'heron', 'egret', 'stork', 'crane', 'swan', 'duck', 'goose', 'geese', 'gull', 'tern', 'pelican', 'parrot', 'macaw', 'swallow', 'swift', 'sparrow', 'finch', 'warbler', 'flycatcher', 'kingfisher', 'woodpecker', 'hummingbird', 'robin', 'thrush', 'tit', 'crow', 'raven', 'magpie', 'pigeon', 'dove', 'penguin', 'flamingo', 'peacock', 'moustique',
+      'pez', 'underwater photograph', /[a-z]{3,}(?:idae|iformes|optera|oidea)\b/),
+    W('Pflanzen', 'plant', 'flower', 'tree', 'leaf', 'leaves', 'botanical', 'blossom', 'fungi', 'mushroom', 'flora', 'pflanze', 'pflanzen', 'blume', 'blumen', 'baum', /[a-z]{3,}aceae\b/),
     W('Architektur', 'architecture', 'building', 'church', 'cathedral', 'castle', 'palace', 'tower', 'bridge', 'house', 'interior', 'monastery', 'monasteries', 'temple', 'mosque', 'kirche', 'schloss', 'gebäude', 'palacio', 'catedral', 'cattedrale', 'cathédrale', 'kathedrale', 'dom', 'basilica', 'basilique', 'chapel', 'chapelle', 'kapelle', 'iglesia', 'église', 'chiesa', 'abbey', 'abbaye', 'kloster', 'burg', 'fortress', 'fort', 'citadel', 'château', 'castello', 'castillo', 'synagogue', 'pagoda', 'shrine', 'lighthouse', 'windmill', 'mill', 'facade', 'fassade'),
     W('Stadt', 'city', 'cities', 'street', 'urban', 'skyline', 'night', 'stadt', 'straße'),
     W('Landschaft', 'landscape', 'mountain', 'lake', 'river', 'sea', 'beach', 'coast', 'forest', 'valley', 'valleys', 'glacier', 'sunset', 'sunrise', 'waterfall', 'landschaft', 'berg', 'see', 'wald'),
+    W('Porträts & Menschen', 'portrait', 'self-portrait', 'porträt', 'bildnis', 'retrato', 'personality rights warning', 'indigenous peoples', /(?:^| · )people(?= |$)/),
+    W('Wissenschaft & Mikroskopie', 'sem', 'tem', 'micrograph', 'microscop*', 'confocal', 'cell', 'neuron', 'neurone', 'bacteria', 'bacterium', 'virus', 'protein', 'molecular', 'molecule', 'chromosome', 'dna', 'embryo', 'crystal', 'mandelbrot', 'fractal', 'photomicrograph', 'chemistry', 'chemical', 'laboratory', 'laboratories', 'experiment', 'paleontolog*', 'fossil', 'diatom'),
+    W('Medizin & Anatomie', 'anatomy', 'anatomical', 'medical', 'medicine', 'surgery', 'surgical', 'surgeon', 'physician', 'hospital', 'pharmacy', 'apothecary', 'disease', 'leprosy', 'skeleton', 'skull', 'dissection', 'obstetric*', 'midwife', 'patient', 'dental', 'dentist', 'forceps', 'amputation', 'vaccination', 'smallpox', 'plague', 'cholera', 'tuberculosis', 'cancer', 'tumour', 'tumor', 'x-ray', 'stethoscope', 'syringe', 'brain', 'trephin*', 'physiognomy', 'phrenolog*', 'wound', 'childbirth', 'midwifery', 'malaria', 'syphilis', 'gout', 'foetus', 'fetus', 'lung', 'liver', 'kidney', 'pregnan*', 'pneumonia', 'patholog*', 'parasite', 'therap*', 'prosthes*', 'bandage', 'splint', 'apparatus', 'necrosis', 'fibrosis', 'cirrhosis', 'sclerosis', 'thrombosis', 'meningitis', 'arthritis', 'dermatitis', 'hepatitis', 'bronchitis', 'encephalitis', 'pharyngitis', 'laryngitis', 'tonsillitis', 'osteomyelitis', 'lithotomy', 'tracheotomy', 'craniotomy', /[a-z]{4,}(?:iasis|ectomy)\b/),
+    W('Historische Fotografie', 'photographic print', 'gelatin silver print', 'albumen print', 'daguerreotype', 'carte de visite', 'photographic postcard', /(?:^| · )photographs?(?= · |$)/),
     W('Kunst & Grafik', 'painting', 'drawing', 'print', 'poster', 'illustration', 'engraving', 'artwork', 'woodcut', 'lithograph', 'gemälde', 'zeichnung'),
-    W('Technik', 'machine', 'engine', 'locomotive', 'train', 'car', 'aircraft', 'airplane', 'ship', 'vehicle', 'technology', 'technologies', 'maschine', 'automobile', 'sports car', 'porsche', 'ferrari', 'lamborghini', 'volkswagen', 'mercedes-benz', 'bmw', 'audi', 'opel', 'fiat', 'citroën', 'renault', 'peugeot', 'tram', 'tramway', 'bus', 'tractor', 'helicopter', 'motorcycle'),
+    W('Skulptur & Objekte', 'sculpture', 'statue', 'statuette', 'figurine', 'bust of', 'buste', 'bas-relief', 'museum object', 'amulet', 'votive'),
+    // second rules for two existing folders: weaker signs that must not outrank the rules above
+    W('Architektur', 'town hall', 'rathaus', 'ratusz', 'hôtel de ville', 'monument', 'war memorial', 'monuments and memorials', 'base mérimée', 'monuments historiques', 'rijksmonument*', 'schools in', /[a-zäöü]kirche\b/, /[a-z]kerk\b/),
+    W('Stadt', 'market square', 'plaza', 'piazza', 'rynek'),
+    W('Technik', 'machine', 'engine', 'locomotive', 'train', 'car', 'aircraft', 'airplane', 'ship', 'vehicle', 'technology', 'technologies', 'maschine', 'automobile', 'sports car', 'porsche', 'ferrari', 'lamborghini', 'volkswagen', 'mercedes-benz', 'bmw', 'audi', 'opel', 'fiat', 'citroën', 'renault', 'peugeot', 'tram', 'tramway', 'bus', 'tractor', 'helicopter', 'motorcycle', 'toyota', 'kia', 'suzuki', 'nissan', 'mazda', 'volvo', 'hyundai', 'suv', /\bIMO \d{7}\b/, /\brailways?(?! station)\b/),
     W('Essen', 'food', 'fruit', 'vegetable', 'dish', 'bread', 'essen'),
     W('Texturen & Muster', 'texture', 'pattern', 'background', 'surface', 'muster'),
   ],
@@ -167,6 +178,53 @@ export const UNTER = {
 
 export const SONSTIGES = 'Sonstiges';
 
+// Kinds of work that only count when neither title nor tags name a subject ("A Hereford ox. Etching" stays an animal).
+const BILD_ZULETZT = [
+  W('Kunst & Grafik', 'etching', 'aquatint', 'mezzotint', 'chromolithograph', 'watercolour', 'watercolor', 'gouache', 'caricature', 'sketch', 'drypoint', 'photogravure', 'photoengraving', 'cartoon', 'advertisement', 'postcard', 'ephemera'),
+  W('Historische Fotografie', /\bphotograph(?: by\b|,|\.|$)/),
+];
+
+// Cleveland Museum of Art: tags[0] is the API field "type", tags[1] the department (crawler/sources/cleveland.mjs).
+const BUCH = 'Handschriften & Buchseiten', KG = 'Kunst & Grafik', FOTO = 'Historische Fotografie', OBJ = 'Skulptur & Objekte';
+const TEX = 'Textilien', KER = 'Keramik & Glas', SCHMUCK = 'Schmuck & Münzen', MET = 'Metallarbeiten', WAFFEN = 'Waffen & Rüstungen';
+// object types: the type decides before the title ("Dish" is a ceramic, not food; "Leaf from a Bible" is no plant)
+const CLEVELAND_VOR = {
+  manuscript: BUCH, calligraphy: BUCH, 'book binding': BUCH,
+  textile: TEX, lace: TEX, embroidery: TEX, velvet: TEX, garment: TEX, sampler: TEX, tapestry: TEX, carpet: TEX, knitting: TEX,
+  ceramic: KER, glass: KER,
+  jewelry: SCHMUCK, coins: SCHMUCK, amulets: SCHMUCK, scarabs: SCHMUCK, glyptic: SCHMUCK, seals: SCHMUCK,
+  metalwork: MET, silver: MET, enamel: MET,
+  'arms and armor': WAFFEN,
+  'furniture and woodwork': OBJ, miscellaneous: OBJ, 'funerary equipment': OBJ, jade: OBJ, 'tools and equipment': OBJ, lacquer: OBJ, ivory: OBJ, 'spindle whorl': OBJ, basketry: OBJ, vessels: OBJ, wood: OBJ, 'musical instrument': OBJ, stone: OBJ, mask: OBJ, 'cosmetic objects': OBJ, lamp: OBJ, netsuke: OBJ, leather: OBJ, mosaic: OBJ, plaque: OBJ, timepiece: OBJ, container: OBJ, 'mixed media': OBJ, forgery: OBJ,
+  'portrait miniature': 'Porträts & Menschen',
+};
+// pictures: what the title shows comes first, the type is the fallback
+const CLEVELAND_NACH = { print: KG, painting: KG, drawing: KG, woodblock: KG, monotype: KG, plate: KG, 'lithographic stone': KG, photograph: FOTO, sculpture: OBJ };
+// bound volumes and portfolios are print albums, sketchbooks or photo books in these departments, books elsewhere
+const CLEVELAND_BAND = { prints: KG, drawings: KG, photography: FOTO };
+function cleveland(item) {
+  const [typ, abteilung] = (item.tags ?? []).map((t) => t.toLowerCase());
+  if (typ === 'bound volume' || typ === 'portfolio') return CLEVELAND_BAND[abteilung] ? { nach: CLEVELAND_BAND[abteilung] } : { vor: BUCH };
+  return { vor: CLEVELAND_VOR[typ], nach: CLEVELAND_NACH[typ] };
+}
+// genre tags of Wellcome that name a portrait whatever the title says ("John Hunter. Line engraving by …")
+const PORTRAET_TAGS = new Set(['portrait prints', 'portrait photographs', 'portrait paintings', 'portrait drawings', 'group portraits']);
+
+function unterBild(item) {
+  const museum = item.source?.id === 'cleveland' ? cleveland(item) : {};
+  if (museum.vor) return museum.vor;
+  if ((item.tags ?? []).some((t) => PORTRAET_TAGS.has(t))) return 'Porträts & Menschen';
+  const regeln = UNTER.bild;
+  for (const r of regeln) if (r.re.test(item.title ?? '')) return r.label;
+  if (museum.nach) return museum.nach;
+  // meta.art is left out for pictures: Wellcome's "Archives and manuscripts" is a shelf, not a kind of work
+  const rest = [...(item.tags ?? []), item.meta?.kategorie, item.description?.slice(0, 160)].filter(Boolean).join(' · ');
+  for (const r of regeln) if (r.re.test(rest)) return r.label;
+  const alles = `${item.title ?? ''} · ${rest}`;
+  for (const r of BILD_ZULETZT) if (r.re.test(alles)) return r.label;
+  return SONSTIGES;
+}
+
 // Icon styles that the icon adapters set in meta.stil; they decide before any word rule.
 const ICON_STILE = new Set(['Emoji', '3D', 'Farbig', 'Illustrationen', 'Pixel', 'Spiele']);
 
@@ -179,6 +237,7 @@ export function unterkategorie(item) {
     // Iconify sets: the set's category ("UI Multicolor", "Emoji", "Flags") says more than its name
     for (const r of regeln) if (item.meta?.kategorie && r.re.test(item.meta.kategorie)) return r.label;
   }
+  if (item.kind === 'bild') return unterBild(item);
   const rest = [...(item.tags ?? []), item.meta?.kategorie, item.meta?.art, item.description?.slice(0, 160)].filter(Boolean).join(' · ');
   for (const text of [item.title ?? '', rest]) {
     for (const r of regeln) if (r.re.test(text)) return r.label;
