@@ -249,7 +249,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
   box-shadow: 0 1px 2px rgb(31 30 29 / 0.05);
 }
 .ki__url { flex: 1; min-width: 0; font: 500 clamp(15px, 0.75rem + 0.55vw, 19px) var(--mono); overflow-wrap: anywhere; user-select: all; }
-.ki__adresse .knopf { min-height: 44px; padding: 0 20px; }
+.ki__adresse .knopf { min-height: 44px; min-width: 108px; padding: 0 20px; }
 .ki__prinzip { margin: 14px 0 0; max-width: 56ch; font-size: 14.5px; color: var(--bleistift); }
 .ki__weiter {
   margin: 18px 0 0 -10px;
@@ -266,7 +266,17 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 }
 .ki__weiter:active { transform: scale(0.97); }
 .ki__neben { min-width: 0; padding-top: 6px; }
-.ki__weg { margin-top: 12px; }
+/* concentric: 22px outside = 16px command row + 6px padding */
+.ki__karte { padding: 6px; border-radius: 22px; background: var(--karte); border: 1px solid var(--haar); box-shadow: 0 1px 2px rgb(31 30 29 / 0.05); }
+.ki__karte .segmente { display: flex; overflow-x: auto; scrollbar-width: none; }
+.ki__karte .segmente button { flex: 1 0 auto; }
+/* every way to connect lies in the same cell, so the card is as tall as the longest one and switching moves nothing below */
+.ki__wege { display: grid; padding: 4px 10px 0; }
+.ki__weg { grid-area: 1 / 1; min-width: 0; margin-top: 12px; }
+.ki__weg[hidden] { display: block; visibility: hidden; }
+.ki__karte .ki__klein { margin: 12px 10px 10px; }
+/* "Kopieren", "Kopiert" and "Markiert" take the same room */
+[data-kopieren] { min-width: 96px; justify-content: center; text-align: center; }
 .ki__weg p { margin: 0 0 10px; max-width: 56ch; }
 .ki__weg code { font: 0.88em var(--mono); }
 .ki__weg p code { background: var(--flaeche); padding: 1px 5px; border-radius: 5px; }
@@ -581,6 +591,8 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
   .ki__befehl, .ki__beispiele li { flex-wrap: wrap; padding: 10px 6px 6px 14px; }
   .ki__befehl code, .ki__beispiele q { flex-basis: 100%; padding-right: 8px; }
   .ki__befehl .knopf, .ki__beispiele .knopf { margin-left: auto; }
+  /* a command stays on its line and scrolls sideways: wrapped JSON made one way to connect twice as tall as the others */
+  .ki__befehl code { white-space: pre; overflow-x: auto; scrollbar-width: none; }
 
   .katalog { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 12px 16px 40px; }
   .leiste { position: static; max-height: none; overflow: visible; margin: 0 -16px; padding: 0; }

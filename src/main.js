@@ -201,11 +201,15 @@ function kiBlock() {
       <button type="button" class="ki__weiter" id="zumkatalog">Lieber selbst stöbern? Zum Katalog <span aria-hidden="true">↓</span></button>
     </div>
     <div class="ki__neben">
+      <div class="ki__karte">
       <div class="segmente" role="tablist" aria-label="Wo du die Adresse einträgst">
         ${KI_WEGE.map((w, i) => `<button type="button" role="tab" id="ki-tab-${w.id}" aria-controls="ki-weg-${w.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(w.name)}</button>`).join('')}
       </div>
+      <div class="ki__wege">
       ${KI_WEGE.map((w, i) => `<div class="ki__weg" role="tabpanel" id="ki-weg-${w.id}" aria-labelledby="ki-tab-${w.id}"${i ? ' hidden' : ''}>${w.html}${w.befehl ? `<div class="ki__befehl"><code>${esc(w.befehl)}</code>${kopierknopf(w.befehl, `Befehl für ${w.name} kopieren`)}</div>` : ''}</div>`).join('')}
+      </div>
       <p class="ki__klein">Andere MCP-Clients: Transport Streamable HTTP, ohne Anmeldung.</p>
+      </div>
       <h2 class="ki__zwischen">Probier zum Beispiel</h2>
       <ul class="ki__beispiele">
         ${KI_BEISPIELE.map((b, i) => `<li><q>${esc(b)}</q>${kopierknopf(b, `Beispiel ${i + 1} kopieren`)}</li>`).join('')}
