@@ -1,6 +1,8 @@
 # Entwurf: Limits, persönlicher Zugang und Freigabe für den Fundus-MCP
 
-Stand 27.11.2026. Noch nichts davon ist gebaut. Zahlen mit „Vorschlag“ sind Fynns Entscheidung.
+Stand 27.11.2026, nach der Abstimmung mit dem fynn.land-Hauptchat (dessen Antwort mit Textentwürfen für die
+Datenschutzerklärung: `fynnland/docs/entwuerfe/fundus-mcp-zugang-datenschutz.md`). Noch nichts davon ist gebaut.
+Zahlen mit „Vorschlag“ sind Fynns Entscheidung.
 
 ## Ziel
 
@@ -61,7 +63,10 @@ Der Schlüssel ist eine zufällige Zeichenkette. Gespeichert wird nur sein Hash.
 | mit Schlüssel aus dem Browser | 60 | 300 |
 | mit Schlüssel am Konto | 60 | 500 |
 | von Fynn freigeschaltet | 120 | frei wählbar, etwa 5.000 |
-| alle zusammen | | 10.000 |
+| alle ohne Schlüssel zusammen | | 10.000 |
+
+Der Gesamtdeckel gilt nur für Aufrufe ohne Schlüssel (Vorschlag des Hauptchats): Sonst könnte jemand, der Adressen
+wechselt, ihn für alle mit Schlüssel verbrauchen. Ob er auch Schlüssel und Freigaben treffen soll, entscheidet Fynn.
 
 Eine übliche KI-Sitzung braucht 5 bis 30 Aufrufe. Neue Schlüssel aus dem Browser: höchstens 3 je IP-Adresse und Tag,
 sonst wäre die Grenze mit einem Klick umgangen.
@@ -70,6 +75,9 @@ Vorschaubilder (`/vorschau/*`) bekommen eine eigene Grenze je Minute und Adresse
 das Worker-Skript laufen und ein Abgreifen aller 180.000 Bilder sonst ungebremst wäre.
 
 ### 3. Wenn die Grenze erreicht ist
+
+Die Domain der Kontaktadresse (fynnland.xyz) läuft am 02.03.2027 aus. Vorschlag des Hauptchats: Die Antwort nennt
+Discord und `https://fynn.land/impressum.html` statt einer E-Mail-Adresse.
 
 Die Antwort kommt als normales Werkzeug-Ergebnis mit Fehlerkennzeichen, nicht als HTTP 429, damit die KI sie dem
 Menschen weitergibt:
@@ -101,15 +109,27 @@ Schlüssels (die Seite zeigt die ersten acht Zeichen als Kennung).
 
 ### 6. Technik
 
-- **Speicher:** D1, die Datenbank des Admin-Workers. Je Aufruf ein `INSERT … ON CONFLICT DO UPDATE … RETURNING`
-  auf eine Zeile (Tag, Schlüssel-Hash). Im Tarif sind 50 Millionen geschriebene Zeilen im Monat enthalten.
-  KV wäre mit einem Schreibvorgang je Aufruf teurer (1 Million enthalten), Durable Objects brauchen eigene Abrechnung.
-- **Weg:** Der Fundus-Worker hat schon die Service-Bindung `GUARD` zum Admin-Worker. Dort eine neue Methode, etwa
-  `Guard.fundusZugriff({ schluessel, ipHash, kiNetz })`, die zählt und `{ erlaubt, verbraucht, grenze, bis }` liefert.
-  Kein Weg über das öffentliche Internet, keine zusätzliche berechnete Anfrage.
-- **Fällt der Admin-Worker aus:** offen bleiben wie heute (die Minutengrenze greift weiter), nicht den Katalog sperren.
-- **Zuständigkeit:** Fundus-Worker und die Seite `#/zugang` in diesem Projekt. Zähler, Freigaben und Dashboard in
-  `fynnland-admin`, Schlüssel am Konto in `fynnland-konto`, Rechtstexte in `fynnland`: Hauptchat von fynn.land.
+- **Speicher:** eine eigene D1 für Fundus, angelegt mit `npx wrangler d1 create fundus --jurisdiction eu` (sonst
+  stimmt „Speicherort in der EU“ nicht). Nicht die Datenbank des Admin-Workers: Der ist der empfindlichste Worker und
+  speichert nach seiner eigenen Regel keine IP-Daten; außerdem zählt Fundus so unabhängig von ihm.
+  Je Aufruf ein `INSERT … ON CONFLICT DO UPDATE … RETURNING` auf eine Zeile (Tag, Kennung). Im Tarif sind 50 Millionen
+  geschriebene Zeilen im Monat enthalten, danach 1 US-Dollar je Million (Preisseite von D1, gelesen 27.11.2026);
+  jeder Index auf der Tabelle zählt als weitere geschriebene Zeile, also ohne Zusatzindex bauen.
+- **Dashboard:** Der Admin-Worker bindet `{ binding: "FUNDUS", service: "fundus", entrypoint: "Admin" }` nach dem
+  Vertrag aus `fynnland-admin/docs/PROGRAMM-ANBINDEN.md`: Fundus hält die Daten, das Dashboard ruft Methoden auf, die
+  reines JSON liefern und nie werfen, ohne IP-Daten und ohne Konto-Kennungen. Methoden: `counts()`, `list()`,
+  `grant(kennung, grenze, notiz)`, `reset`, `block`, `unblock`. Aufrufe über eine Service-Bindung kosten keine
+  zusätzliche Anfrage, nur die Rechenzeit beider Worker (Preisseite von Workers, gelesen 27.11.2026).
+- **Kennung eines Schlüssels:** die ersten 8 Hex-Zeichen von SHA-256(Schlüssel), nicht der Anfang des Schlüssels.
+  Der Schlüssel kommt als `?key=` oder als `Authorization: Bearer`; die Adresse wird nie protokolliert und nie in
+  einer Fehlermeldung zurückgegeben.
+- **IP-Kennung:** HMAC-SHA-256 mit einem Worker-Secret und dem Datum (ein einfacher SHA-256 ließe sich über alle
+  IPv4-Adressen zurückrechnen). Bei IPv6 nur das /64-Netz, sonst holt sich ein Anschluss mit wechselnden Adressen
+  beliebig viele Tageskontingente.
+- **Ist die D1 nicht erreichbar:** Der Zugang bleibt offen (die Minutengrenze greift weiter). Die einzige harte
+  Kostenbremse ist dann der Not-Aus des Admin-Workers; `Guard.state()` bleibt, wie er ist.
+- **Zuständigkeit:** Fundus-Worker, D1, Entrypoint `Admin` und die Seite `#/zugang` in diesem Projekt. Dashboard-
+  Abschnitt in `fynnland-admin`, Konto-Anbindung in `fynnland-konto`, Rechtstexte in `fynnland`: Hauptchat fynn.land.
 
 ## Datenschutz: was sich ändert
 
@@ -120,13 +140,24 @@ Rechts-Skill; hier nur die Tatsachen.
 |---|---|---|---|
 | Tageszähler ohne Schlüssel | Hash aus IP-Adresse und Datum, Anzahl der Aufrufe | Missbrauch und Kosten begrenzen | bis zum Ende des Folgetags |
 | Tageszähler mit Schlüssel | Hash des Schlüssels, Anzahl je Tag | wie oben, dazu Anzeige des Verbrauchs | 7 Tage (für die Übersicht) |
-| Schlüssel aus dem Browser | Hash des Schlüssels, Erzeugungstag, Hash der IP-Adresse beim Erzeugen | Zuordnung des Kontingents, Schutz vor Massen-Erzeugung | bis zur Sperrung, sonst 90 Tage nach dem letzten Aufruf |
-| Schlüssel am Konto | wie oben, dazu die Kontokennung | Verwaltung im Konto | bis zur Löschung des Schlüssels oder Kontos |
-| Freigabe von Hand | Tageslimit, Notiz von Fynn | Zuteilung | bis zur Rücknahme |
+| Schlüssel aus dem Browser | Hash des Schlüssels, Erzeugungstag; keine IP-Kennung beim Schlüssel (die Grenze „3 neue je Tag“ läuft über den Tageszähler) | Zuordnung des Kontingents | bis zur Sperrung, sonst 90 Tage nach dem letzten Aufruf |
+| Schlüssel am Konto | Der Schlüssel liegt als Datenstand von `fundus` im Konto; Fundus merkt sich nur die Stufe „Konto“ mit Ablauf nach 90 Tagen, keine Kontokennung | Verwaltung im Konto | bis zur Löschung des Schlüssels oder Kontos |
+| Freigabe von Hand | Tageslimit, Notiz von Fynn ohne Namen | Zuteilung | bis zur Rücknahme |
 | Verlauf (nur mit Konto und Einwilligung) | Zeit, Werkzeug, Suchwörter und Filter, keine Antworten | Kontrolle durch die Person selbst | Vorschlag 30 Tage, jederzeit löschbar |
 | `localStorage` im Browser | der eigene Schlüssel | Anzeige auf `#/zugang` | bis die Person ihn löscht |
 
-Offene Rechtsfragen für den Hauptchat:
+Einschätzung des Hauptchats (KI-Selbstprüfung mit dem Rechts-Skill, keine Rechtsberatung):
+
+- Tageszähler ohne Schlüssel: tragfähig mit HMAC, Art. 6 Abs. 1 Buchst. f DSGVO. Die Daten sind pseudonym, also
+  weiter personenbezogen; der Text darf nicht mehr „speichert nichts“ sagen.
+- Persönlicher Schlüssel: tragfähig, Art. 6 Abs. 1 Buchst. b, weil die Person das Kontingent selbst wählt.
+- `localStorage` (`fundus.zugang`): zulässig nach § 25 Abs. 2 Nr. 2 TDDDG, aber nur, wenn der Schlüssel erst beim
+  Klick auf „Zugang erzeugen“ entsteht, nie beim Laden der Seite.
+- Verlauf: später, aus beim Start, löschbar, mit eigenem Text.
+- Außer `datenschutz.html` auf fynn.land brauchen auch die Datenschutzseite von Fundus (`src/seiten.js`) und
+  `#/zugang` eine Kurzfassung.
+
+Ursprüngliche Fragen an den Hauptchat:
 
 - Rechtsgrundlage für Zähler und Schlüssel ohne Konto (berechtigtes Interesse an Schutz vor Missbrauch und Kosten?).
 - `localStorage` für den eigenen Schlüssel: Speichern auf dem Gerät nach § 25 TDDDG, vermutlich „unbedingt erforderlich“
@@ -135,6 +166,17 @@ Offene Rechtsfragen für den Hauptchat:
 - Die Sätze „speichert nichts“, „kein Konto und keine Sitzung“ und „Zähler gilt nur für diese Minute“ stimmen dann
   nicht mehr und müssen vor dem Einschalten geändert sein.
 - Auftragsverarbeitung bleibt Cloudflare (D1 statt nur Worker); Speicherort der Datenbank prüfen.
+
+## Was Fynn entscheiden muss
+
+1. die Zahlen der Tabelle „Grenzen“
+2. Schlüssel ohne Konto: ja oder nein
+3. eigene D1 für Fundus (Empfehlung) oder die Datenbank des Admin-Workers
+4. ob der Gesamtdeckel auch für Schlüssel und Freigaben gilt
+5. Notiz bei Freigaben als Freitext oder feste Liste
+6. die Kontaktadresse ab März 2027
+7. Verlauf: ja oder nein
+8. das „Ja, live stellen“ für die neuen Datenschutztexte
 
 ## Reihenfolge
 
