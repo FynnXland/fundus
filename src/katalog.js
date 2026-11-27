@@ -73,7 +73,9 @@ async function pool(aufgaben, parallel) {
 }
 
 const mix = (a, b) => (a.m < b.m ? -1 : a.m > b.m ? 1 : a.id < b.id ? -1 : 1);
-const empfohlen = (a, b) => b.rang - a.rang || mix(a, b);
+// rang caps popularity at the 99th percentile and rounds it, so the count itself (stars, downloads) breaks ties:
+// the most starred projects come in the exact order of their stars
+const empfohlen = (a, b) => b.rang - a.rang || (b.beliebtheit?.wert ?? 0) - (a.beliebtheit?.wert ?? 0) || mix(a, b);
 
 /** One row as an object. art, quellname and gruppe are not in the files (smaller rows), they are added here. */
 function zeileBauen(k, felder, z, art) {
@@ -144,7 +146,8 @@ export async function ladeKatalog() {
   };
   let ref = 0;
   for (const e of ix.arten) {
-    const a = { art: e.art, anzahl: e.anzahl, kopfAnzahl: e.kopf, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [], kopf: false, kopfLauf: null, fertig: false };
+    // kopf2Anzahl > 0 marks a big kind (crawler/lib/ausgabe.mjs GROSS): it has a second head and never loads in full by itself
+    const a = { art: e.art, anzahl: e.anzahl, kopfAnzahl: e.kopf, kopf2Anzahl: e.kopf2 ?? 0, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [], kopf: false, kopfLauf: null, kopf2: false, kopf2Lauf: null, fertig: false };
     let von = ref;
     e.teile.forEach(([n, u0, u1], nr) => {
       const t = { art: e.art, nr, anzahl: n, von: u0, bis: u1, start: von, zeilen: null, lauf: null };
@@ -180,6 +183,22 @@ function ladeKopf(k, art) {
     .finally(() => { a.kopfLauf = null; });
   return a.kopfLauf;
 }
+
+/**
+ * The second head of a big kind: the next best rows after the head. true while there is one left to load, so the
+ * list knows whether scrolling on can bring more.
+ */
+export const hatKopf2 = (k, art) => { const a = k.arten.get(art); return Boolean(a && a.kopf2Anzahl && !a.kopf2 && !a.fertig); };
+export function ladeKopf2(k, art) {
+  const a = k.arten.get(art);
+  if (!a || !a.kopf2Anzahl || a.kopf2 || a.fertig) return Promise.resolve();
+  a.kopf2Lauf ??= holeJson(`/data/index/${art}/kopf2.json`)
+    .then((d) => { aufnehmen(k, art, d); a.kopf2 = true; })
+    .finally(() => { a.kopf2Lauf = null; });
+  return a.kopf2Lauf;
+}
+/** A big kind shown without all its rows: the list ends after the heads and says so. */
+export const nurKoepfe = (k, art) => { const a = k.arten.get(art); return Boolean(a && a.kopf2Anzahl && !a.fertig); };
 
 function ladeTeil(k, a, t) {
   if (t.zeilen) return Promise.resolve();
@@ -324,7 +343,9 @@ export function hat(k, was) {
   }
 }
 
-function hintergrund(k, arten, was) {
+function hintergrund(k, alle, was) {
+  // a big kind stays at its heads: all parts of Projekte are 94 MB, nobody scrolls that far
+  const arten = alle.filter((a) => !a.kopf2Anzahl);
   if (k.hinten.has(was) || arten.every((a) => a.fertig)) return;
   k.hinten.set(
     was,

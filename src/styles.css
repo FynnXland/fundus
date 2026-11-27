@@ -420,6 +420,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 .liste__gruppe .liste__name .symbol { color: var(--akzent); }
 .info__gruppe { margin: 0; font-size: 14.5px; color: var(--bleistift); }
 .mehr { display: flex; justify-content: center; padding: 28px 0 0; }
+.mehr--ende { margin: 0; text-align: center; font-size: 14px; color: var(--bleistift); }
 .stand { margin: 28px 0 0; font-size: 13px; color: var(--bleistift); }
 
 /* ---------- Liste ---------- */

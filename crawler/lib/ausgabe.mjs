@@ -2,6 +2,9 @@
 //
 //   index/<art>/kopf.json    the KOPF best rows of the kind (order "empfohlen": rang, then mixed): the folder shows
 //                            them first, so a folder shows its best entries before the rest has loaded
+//   index/<art>/kopf2.json   only for kinds with more than GROSS rows: the next best rows after the head (up to
+//                            KOPF2 in all). The site scrolls through these instead of loading every part of the
+//                            kind (Projekte: 634 parts, 94 MB); the rest is reached through subfolders and search.
 //   index/<art>/<nn>.json    all rows of the kind in parts of at most TEIL rows, ordered by subfolder, group,
 //                            tags, mix. Neighbouring rows are alike, so a search, a subfolder or a group needs few parts.
 //   suche/k_<key>.json       search tiles (suchindex.mjs), refs point to rows in the parts
@@ -18,13 +21,19 @@ import { baueKacheln, kachelDatei } from './suchindex.mjs';
 
 export const TEIL = 500;
 export const KOPF = 240;
+export const GROSS = 20000;
+export const KOPF2 = 2400;
 
 const mischwert = (it) => it.sig.slice(-5);
 // members of a group sit next to each other within their subfolder, so opening a group needs few parts
 const ordnung = (it) => `${it.unter}\u0000${it.serie?.id ?? ''}\u0000${it.tags.slice(0, 8).join(' ')}\u0000${mischwert(it)}`;
 const vergleich = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-/** Recommended order: higher rang first, then the mixed order. rang comes from crawler/lib/bewertung.mjs (missing = 0). */
-export const empfohlen = (a, b) => (b.rang ?? 0) - (a.rang ?? 0) || vergleich(mischwert(a), mischwert(b)) || vergleich(a.id, b.id);
+/**
+ * Recommended order: higher rang first, then the popularity count itself, then the mixed order. rang comes from
+ * crawler/lib/bewertung.mjs (missing = 0); it caps at the 99th percentile and rounds, so without the count the
+ * 3,000 most starred projects would tie and come mixed. src/katalog.js sorts the same way.
+ */
+export const empfohlen = (a, b) => (b.rang ?? 0) - (a.rang ?? 0) || (b.popularity?.value ?? 0) - (a.popularity?.value ?? 0) || vergleich(mischwert(a), mischwert(b)) || vergleich(a.id, b.id);
 export const BILDER_JE_GRUPPE = 4;
 const eigenesBild = (it) => (it.vorschau?.pfad ? { v: it.vorschau.pfad, b: it.vorschau.b, h: it.vorschau.h } : null);
 
@@ -62,7 +71,7 @@ function gruppenDatei(mitglieder, teilVon, bild) {
  * without own preview ({ f: url } or null).
  * Returns { dateien: Map path -> JSON-able, index: the block for stand.json, teilVon: Map id -> part number }.
  */
-export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgruppe, teil = TEIL, kopf = KOPF, budget, bild = () => null }) {
+export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgruppe, teil = TEIL, kopf = KOPF, gross = GROSS, kopf2 = KOPF2, budget, bild = () => null }) {
   const dateien = new Map();
   const teilVon = new Map();
   const proArt = new Map(arten.map((a) => [a, []]));
@@ -73,7 +82,10 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
   let ref = 0;
   for (const [art, liste] of proArt) {
     if (!liste.length) continue;
-    dateien.set(`index/${art}/kopf.json`, { felder, zeilen: [...liste].sort(empfohlen).slice(0, kopf).map(zeile) });
+    const beste = [...liste].sort(empfohlen);
+    dateien.set(`index/${art}/kopf.json`, { felder, zeilen: beste.slice(0, kopf).map(zeile) });
+    const zweiter = liste.length > gross ? beste.slice(kopf, kopf2) : [];
+    if (zweiter.length) dateien.set(`index/${art}/kopf2.json`, { felder, zeilen: zweiter.map(zeile) });
     const sortiert = liste.map((it) => [ordnung(it), it]).sort((a, b) => vergleich(a[0], b[0])).map((e) => e[1]);
     const unter = [...new Set(sortiert.map((it) => it.unter))];
     const nr = new Map(unter.map((u, i) => [u, i]));
@@ -92,7 +104,7 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
       // [rows, first subfolder, last subfolder] as positions in the list unter
       teile.push([stueck.length, nr.get(stueck[0].unter), nr.get(stueck[stueck.length - 1].unter)]);
     }
-    index.arten.push({ art, anzahl: liste.length, kopf: Math.min(kopf, liste.length), unter, teile });
+    index.arten.push({ art, anzahl: liste.length, kopf: Math.min(kopf, liste.length), ...(zweiter.length ? { kopf2: zweiter.length } : {}), unter, teile });
     const mitglieder = new Map();
     for (const it of sortiert) {
       if (!it.serie) continue;

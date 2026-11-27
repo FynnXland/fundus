@@ -1,5 +1,5 @@
 import './styles.css';
-import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, zusammenfassen, gruppeVon, artVonSerie, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN, STANDARD_SORT } from './katalog.js';
+import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, hatKopf2, ladeKopf2, nurKoepfe, zusammenfassen, gruppeVon, artVonSerie, ARTEN, LIZENZGRUPPEN, SORTIERUNGEN, STANDARD_SORT } from './katalog.js';
 import { vorschau, hoerprobe, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
@@ -354,10 +354,7 @@ function katalogBauen() {
   ablage.addEventListener('click', (e) => {
     const knopf = e.target.closest('[data-hoerprobe]');
     if (knopf) hoerprobe(knopf, knopf.dataset.hoerprobe);
-    if (e.target.closest('#mehrknopf')) {
-      zustand.sichtbar += SEITENGROESSE;
-      trefferZeigen({ behalteAnzahl: true, fokusAb: zustand.sichtbar - SEITENGROESSE });
-    }
+    if (e.target.closest('#mehrknopf')) mehrZeigen({ fokus: true });
     if (e.target.closest('#allesknopf')) {
       // keep what is already on screen and add the next page once everything is loaded
       const n = zustand.sichtbar + SEITENGROESSE;
@@ -492,6 +489,80 @@ function bilderBeobachten(wurzel) {
   }
 }
 
+/**
+ * Endless list: the next page is added when the "Weitere anzeigen" button comes within a screen height of the
+ * view. The button stays for keyboard users and for browsers without IntersectionObserver.
+ */
+const unten = 'IntersectionObserver' in window
+  ? new IntersectionObserver((eintraege) => {
+    if (eintraege.some((e) => e.isIntersecting)) mehrZeigen();
+  }, { rootMargin: '0px 0px 100% 0px' })
+  : null;
+
+/** The kind whose folder is shown as a whole, without subfolder, search, group or a filter that needs every row; else ''. */
+function artWurzel() {
+  const f = zustand.filter;
+  return f.art && !f.serie && !/[|!]/.test(brauche()) ? f.art : '';
+}
+
+/**
+ * What stands below the last card of a big folder shown as a whole: it holds only its best rows here, so first a
+ * button for the second head, then a pointer to subfolders and search. '' everywhere else.
+ */
+function endeHtml(geladen, gesamt) {
+  const art = artWurzel();
+  if (!art) return '';
+  if (hatKopf2(zustand.katalog, art)) return `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">${mehrText(SEITENGROESSE)}</button></div>`;
+  if (nurKoepfe(zustand.katalog, art)) return `<p class="mehr mehr--ende">Hier enden die ersten ${zahl(geladen)} von ${zahl(gesamt)} Objekten. Alle weiteren findest du in den Unterordnern und über die Suche.</p>`;
+  return '';
+}
+
+const mehrText = (rest) => `Weitere ${zahl(Math.min(SEITENGROESSE, rest))} anzeigen`;
+
+function endeBeobachten() {
+  unten?.disconnect();
+  const knopf = main.querySelector('#mehrknopf');
+  if (knopf) unten?.observe(knopf);
+}
+
+/** Adds the next page to the grid or table without rebuilding what is there. fokus: move the focus to the first new entry (button pressed). */
+function mehrZeigen({ fokus = false } = {}) {
+  const ablage = main.querySelector('#ablage');
+  const ziel = ablage?.querySelector('.raster, .liste tbody');
+  const karten = zustand.karten ?? [];
+  const von = zustand.sichtbar;
+  if (!ziel) return;
+  if (von >= karten.length) {
+    // the end of the head of a big folder: fetch its second head, then go on from the same place
+    const art = artWurzel();
+    if (!art || !hatKopf2(zustand.katalog, art)) return;
+    const lauf = zustand.lauf;
+    ladeKopf2(zustand.katalog, art).then(() => {
+      if (lauf !== zustand.lauf || artWurzel() !== art) return;
+      trefferZeigen({ behalteAnzahl: true });
+      mehrZeigen({ fokus });
+    }).catch(() => {});
+    return;
+  }
+  zustand.sichtbar += SEITENGROESSE;
+  const neue = karten.slice(von, zustand.sichtbar);
+  const letzte = ziel.lastElementChild;
+  const mitVorschau = vorschau.an();
+  ziel.insertAdjacentHTML('beforeend', ziel.matches('.raster')
+    ? neue.map((c) => (c.gruppe ? gruppenkarte(c, mitVorschau) : karte(c.o, mitVorschau))).join('')
+    : neue.map((c) => (c.gruppe ? gruppenzeile(c) : listenzeile(c.o))).join(''));
+  for (let el = letzte?.nextElementSibling; el; el = el.nextElementSibling) bilderBeobachten(el);
+  const rest = karten.length - zustand.sichtbar;
+  if (rest > 0) ablage.querySelector('#mehrknopf').textContent = mehrText(rest);
+  else {
+    ablage.querySelector('.mehr')?.remove();
+    ablage.insertAdjacentHTML('beforeend', endeHtml(...(zustand.ende ?? [0, 0])));
+  }
+  if (fokus) letzte?.nextElementSibling?.querySelector('.karte__link, .liste__name a')?.focus();
+  // observing again reports at once when the button is still near the view (tall screens, short rows)
+  endeBeobachten();
+}
+
 function karte(o, mitVorschau) {
   let flaeche;
   const foto = o.art === 'bild' ? ' karte__bild--foto' : '';
@@ -622,6 +693,8 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   main.querySelector('#gruppenwahl').hidden = Boolean(f.q || f.serie || auswahl);
   const karten = gruppiert ? zusammenfassen(k, liste, f) : liste.map((o) => ({ o }));
   if (!behalteAnzahl) zustand.sichtbar = SEITENGROESSE;
+  zustand.karten = karten;
+  unten?.disconnect();
   const zeigen = karten.slice(0, zustand.sichtbar);
   // while a folder is still loading, the list is shorter than the folder: the full count is in the data already
   const ohneFilter = !f.unter && !f.q && !f.serie && (!f.lizenz || f.lizenz === 'alle') && !f.format && !f.quelle;
@@ -637,9 +710,11 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   }
   const mitVorschau = vorschau.an();
   let mehr = '';
-  if (karten.length > zeigen.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">Weitere ${zahl(Math.min(SEITENGROESSE, karten.length - zeigen.length))} anzeigen</button></div>`;
+  if (karten.length > zeigen.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">${mehrText(karten.length - zeigen.length)}</button></div>`;
   // the first screen is a sample; everything else loads on request
   else if (auswahl && k.stand.total > liste.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="allesknopf">Alle ${zahl(k.stand.total)} Objekte laden</button></div>`;
+  else mehr = endeHtml(liste.length, gesamt);
+  zustand.ende = [liste.length, gesamt];
   if (zustand.ansicht === 'liste') {
     ablage.innerHTML = `<div class="liste-rahmen"><table class="liste"><thead><tr><th scope="col">Name</th><th scope="col">Art</th><th scope="col">Lizenz</th><th scope="col">Quelle</th><th scope="col">Formate</th></tr></thead><tbody>${zeigen.map((c) => (c.gruppe ? gruppenzeile(c) : listenzeile(c.o))).join('')}</tbody></table></div>${mehr}`;
   } else {
@@ -648,6 +723,7 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
     bilderBeobachten(ablage);
   }
   if (fokusAb !== undefined) ablage.querySelectorAll('.karte__link, .liste__name a')[fokusAb]?.focus();
+  endeBeobachten();
 }
 
 /* ---------------- Start ---------------- */
