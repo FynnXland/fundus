@@ -52,7 +52,8 @@
     // "1" switches the link to the fynn.land account on (500 instead of 300 calls, the key in the account, on every
     // device). Needs ZUGANG "1", the column from worker/zugang-konto.sql, the entry "fundus" in the account server's
     // ACCOUNT_GAMES and the privacy text for it (docs/MCP-ZUGANG-ENTWURF.md, Stufe 2).
-    "KONTO": "0",
+    // On since 27.11.2026 evening (entry and privacy texts live on fynn.land, commit 1a9885d there).
+    "KONTO": "1",
     // "1" only with the Workers Paid plan: contact sheets decode pictures (CPU time beyond the free 10 ms)
     "KONTAKTBOGEN": "0"
   },

@@ -300,3 +300,6 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - GitHub: Es gab noch keinen geplanten Lauf. Das Repository besteht seit 26.11.2026 19:16 UTC; der einzige Lauf
   (von Hand, 26.11. 19:54 UTC) lief im Schritt `npm run vorschau` in die 90-Minuten-Grenze, damals ohne
   `--max-minuten`. Der Lauf in der Nacht zum 28.11. ist der erste mit Zeitgrenze und `FUNDUS_DEPLOY=1`.
+- **Stufe 2 des MCP-Zugangs ist eingeschaltet** (`KONTO: "1"`, 27.11.2026 abends, mit Fynns Ja). Geprüft bis zur
+  Anmeldeseite, Einzelheiten in `docs/MCP-ZUGANG-ENTWURF.md` (letzter Abschnitt). Offen ist der Durchlauf mit einem
+  echten Konto: anmelden, verbinden, zweites Gerät, abmelden, Zugang löschen.

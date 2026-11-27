@@ -244,7 +244,7 @@ Nachtrag am selben Tag, nach einer Gegenprüfung:
 - Der Token „fundus-deploy (GitHub Actions)“ hat seit 27.11.2026, 13:09 UTC, zusätzlich das Recht Account, D1, Edit
   (von Fynn im Dashboard gespeichert). Ob der nächtliche Lauf damit durchläuft, zeigt erst die Nacht auf den 28.11.
 
-## Stufe 2: Zugang am fynn.land-Konto (gebaut am 27.11.2026, ausgeschaltet)
+## Stufe 2: Zugang am fynn.land-Konto (gebaut am 27.11.2026, eingeschaltet am Abend, siehe letzter Abschnitt)
 
 Wer mit seinem fynn.land-Konto angemeldet ist, bekommt 500 statt 300 Aufrufe am Tag (`GRENZEN.konto`), und sein Zugang ist
 auf jedem Gerät da, auf dem er sich anmeldet. Gebaut und getestet, aber **ausgeschaltet**: `KONTO: "0"` in
@@ -339,3 +339,26 @@ Rückkehr, Verbinden, Lösen).
   zu beenden ginge nur mit einer neuen Methode am Kontoserver.
 - Steht es im Text des Kontoservers, dass ein Spiel Daten im Konto ablegt, die der Betreiber des Spiels in seiner
   Datenbank nicht kennt (nur Stufe und Ablauf)?
+
+## Stufe 2 eingeschaltet am 27.11.2026 abends
+
+`KONTO: "1"` ist live (Fynns Ja im Fundus-Chat, nachdem der fynn.land-Hauptchat Kontoeintrag und Texte live gemeldet
+hat: fynn.land `1a9885d`, Kontoserver `0302c2b`). Die Schritte 1 bis 4 oben sind damit erledigt bis auf den Test mit
+einem echten Konto.
+
+Vor dem Einschalten geprüft: `fynn.land/datenschutz` (Abschnitt „Zugang am Fynnland-Konto (freiwillig)“) und
+`fynn.land/datenschutz-konto#fundus`, beide mit Stand 27. November 2026; `fynn.land/konto/login?game=fundus&…` zeigt
+die Anmeldung, eine nicht eingetragene Kennung weiter „Dieses Spiel ist hier nicht eingetragen“ (HTTP 400); die Spalte
+`konto_bis` steht in der Live-Datenbank.
+
+Nach dem Einschalten geprüft, ohne Anmeldung:
+
+- `/api/zugang/info` meldet `konto: true`, `hub`, `kontoTage: 90`, Grenze 500.
+- `POST /api/zugang/konto/tausch` mit einem erfundenen Code: 400 `code`. `verbinden` mit einer erfundenen Sitzung:
+  401 `sitzung`. Der Kontoserver lässt also `exchange` und `me` für die Herkunft `https://fundus.fynn.land` zu
+  (sonst käme 503 `nicht-bereit`). `/mcp` antwortet weiter.
+- Im Browser: Die Karte „Mit fynn.land-Konto“ steht auf `#/zugang`, „Mit Konto anmelden“ führt zu „Bei Fundus anmelden“.
+
+Offen, nur mit einem echten Konto möglich (Fynn): anmelden, Rückkehr nach `#/zugang`, verbinden, auf einem zweiten
+Gerät anmelden, abmelden, Zugang löschen (danach ist der Datenstand im Konto leer). `gamedata` und `savegame` sind
+damit noch nicht gegen den echten Kontoserver gelaufen.
