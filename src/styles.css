@@ -2,6 +2,11 @@
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
 
+/* Georgia scaled to the width of Fraunces (measured: 626 px against 710 px for the start headline at 56 px). Until
+   the web font arrives, lines break at the same words, so the headline does not go from two lines to one and push
+   everything below it up by a line. vite.config.js also preloads the font file. */
+@font-face { font-family: 'Fraunces Ersatz'; src: local('Georgia'); size-adjust: 89%; }
+
 /* Tokens and the reason for each: DESIGN.md. Contrast measured with the antislop contrast checker. */
 :root {
   --seite: #faf9f5;
@@ -26,7 +31,7 @@
   --raus: cubic-bezier(0.22, 1, 0.36, 1); /* ease-out for things that enter */
   --blatt: cubic-bezier(0.32, 0.72, 0, 1); /* sheet curve */
 
-  --serif: 'Fraunces Variable', Georgia, serif;
+  --serif: 'Fraunces Variable', 'Fraunces Ersatz', Georgia, serif;
   --sans: system-ui, -apple-system, 'Segoe UI Variable Text', 'Segoe UI', Roboto, sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
   --kopfhoehe: 64px;
@@ -276,7 +281,7 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 .ki__weg[hidden] { display: block; visibility: hidden; }
 .ki__karte .ki__klein { margin: 12px 10px 10px; }
 /* "Kopieren", "Kopiert" and "Markiert" take the same room */
-[data-kopieren] { min-width: 96px; justify-content: center; text-align: center; }
+.ki [data-kopieren] { min-width: 96px; justify-content: center; text-align: center; }
 .ki__weg p { margin: 0 0 10px; max-width: 56ch; }
 .ki__weg code { font: 0.88em var(--mono); }
 .ki__weg p code { background: var(--flaeche); padding: 1px 5px; border-radius: 5px; }
