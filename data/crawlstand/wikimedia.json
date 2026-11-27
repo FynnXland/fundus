@@ -4,46 +4,44 @@
   "exzellent": {
    "quelle": "kategorie:Category:Featured_pictures_on_Wikimedia_Commons",
    "weiter": {
-    "gcmcontinue": "20260415210259|165084791",
+    "gcmcontinue": "20250619223621|134429378",
     "continue": "gcmcontinue||"
    },
-   "seiten": 28,
+   "seiten": 95,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-23T14:00:03.155Z"
+   "zuletzt": "2026-11-26T21:38:59.620Z"
   },
   "wertvoll": {
    "quelle": "kategorie:Category:Valued_images_sorted_by_promotion_date",
    "weiter": {
-    "gcmcontinue": "20260506001906|130460435",
+    "gcmcontinue": "20250707001907|163814376",
     "continue": "gcmcontinue||"
    },
-   "seiten": 28,
+   "seiten": 95,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-23T14:00:04.884Z"
+   "zuletzt": "2026-11-26T21:39:01.840Z"
   },
   "qualitaet": {
    "quelle": "kategorie:Category:Quality_images",
    "weiter": {
-    "gcmcontinue": "20261115051849|198789480",
+    "gcmcontinue": "20261025053003|198721336",
     "continue": "gcmcontinue||"
    },
-   "seiten": 28,
+   "seiten": 95,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-23T14:00:08.633Z"
+   "zuletzt": "2026-11-26T21:39:04.465Z"
   },
   "clipart": {
    "quelle": "kategorie:Category:PD_OpenClipart",
-   "weiter": {
-    "gcmcontinue": "20250618161540|64462002",
-    "continue": "gcmcontinue||"
-   },
-   "seiten": 28,
-   "fertig": false,
+   "weiter": null,
+   "seiten": 60,
+   "fertig": true,
    "runde": 1,
-   "zuletzt": "2026-11-23T14:00:10.191Z"
+   "zuletzt": "2026-11-26T21:34:18.313Z",
+   "fertigAm": "2026-11-26"
   },
   "clipart-openclipart": {
    "quelle": "kategorie:Category:Images_from_openclipart.org",
@@ -75,13 +73,13 @@
   "3d": {
    "quelle": "suche:filetype:3d -intitle:Noto",
    "weiter": {
-    "gsroffset": 1400,
+    "gsroffset": 4750,
     "continue": "gsroffset||"
    },
-   "seiten": 28,
+   "seiten": 95,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-23T14:01:01.155Z"
+   "zuletzt": "2026-11-26T21:39:05.665Z"
   }
  }
 }

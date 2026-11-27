@@ -2,88 +2,88 @@
  "version": 1,
  "straenge": {
   "pdm-bilder-vor-1600": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 5
   },
   "pdm-bilder-1600er": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 19
   },
   "pdm-bilder-1700er": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 57
   },
   "pdm-bilder-1800-1849": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 91
   },
   "pdm-bilder-1850-1899": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 57
   },
   "pdm-bilder-1900-1949": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 17
   },
   "pdm-bilder-ab-1950": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 5
   },
   "pdm-bilder-alle": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 100
   },
   "pdm-digital": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 51
   },
   "pdm-handschriften": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 32
   },
   "by-digital": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 100
   },
   "by-handschriften": {
-   "weiter": 4,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 3
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 87
   },
   "by-bilder": {
-   "weiter": 3,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 2
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 5
   },
   "cc0-digital": {
-   "weiter": 3,
-   "fertig": false,
-   "fertigAm": null,
-   "seiten": 2
+   "weiter": null,
+   "fertig": true,
+   "fertigAm": "2026-11-26",
+   "seiten": 9
   }
  }
 }

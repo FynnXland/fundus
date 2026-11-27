@@ -4,29 +4,35 @@
   "netlabels": {
    "art": "musik",
    "richtung": "asc",
-   "offset": 198,
-   "fertig": false,
+   "offset": 7270,
+   "fertig": true,
    "runde": 1,
-   "zuletzt": "2026-11-23T13:23:38.522Z",
-   "treffer": 5887
+   "lizenzen": 2,
+   "zuletzt": "2026-11-27T02:27:53.385Z",
+   "treffer": 7270,
+   "fertigAm": "2026-11-27"
   },
   "freemusicarchive": {
    "art": "musik",
    "richtung": "asc",
-   "offset": 198,
-   "fertig": false,
+   "offset": 377,
+   "fertig": true,
    "runde": 1,
-   "zuletzt": "2026-11-23T13:27:02.502Z",
-   "treffer": 286
+   "lizenzen": 2,
+   "zuletzt": "2026-11-26T23:00:09.186Z",
+   "treffer": 377,
+   "fertigAm": "2026-11-26"
   },
   "radio-aporee-maps": {
    "art": "sound",
-   "richtung": "asc",
-   "offset": 198,
-   "fertig": false,
+   "richtung": "desc",
+   "offset": 10000,
+   "fertig": true,
    "runde": 1,
-   "zuletzt": "2026-11-23T13:30:24.160Z",
-   "treffer": 58714
+   "lizenzen": 2,
+   "zuletzt": "2026-11-27T05:31:48.143Z",
+   "treffer": 58752,
+   "fertigAm": "2026-11-27"
   }
  }
 }

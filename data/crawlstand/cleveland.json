@@ -1,9 +1,9 @@
 {
  "version": 1,
  "strang": {
-  "weiter": 5000,
-  "fertig": false,
-  "fertigAm": null,
-  "seiten": 25
+  "weiter": null,
+  "fertig": true,
+  "fertigAm": "2026-11-26",
+  "seiten": 210
  }
 }
