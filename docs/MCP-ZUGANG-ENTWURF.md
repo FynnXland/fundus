@@ -302,6 +302,10 @@ Sitzung. Die Dashboard-Methoden (`counts`, `list`, …) geben weiter weder Schl�
 
 ### Was zum Einschalten fehlt
 
+Stand 27.11.2026 abends: Schritt 1 ist erledigt (Spalte `konto_bis` steht in der Live-Datenbank), der Stand ist mit
+`KONTO: "0"` veröffentlicht und vom Orchestrator gegen den Code geprüft. Die Punkte für die Texte sind dem
+fynn.land-Hauptchat bestätigt; offen sind die Schritte 2 bis 4.
+
 In dieser Reihenfolge:
 
 1. **Datenbank:** `npx wrangler d1 execute fundus --remote --file worker/zugang-konto.sql`, **vor** dem Veröffentlichen
