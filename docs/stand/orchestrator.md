@@ -243,16 +243,21 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - **Detaildateien** (`karten/`): 4.096 Dateien nach drei Hex-Stellen statt 256 (größte 437 KB statt 3,4 MB).
   `stand.index.karten` nennt die Stellenzahl, ältere Daten ohne Feld haben 2. `src/katalog.js` versucht bei 404 die
   andere Stellenzahl, weil `stand.json` eine Stunde im Browser-Cache liegt (`/data/*` in `public/_headers`).
-  Drei `fundus_details` in einem Aufruf: 0,4 bis 0,6 s statt 1,9 s.
+  Drei `fundus_details` in einem Aufruf brauchten vorher 1,9 s (kalt), danach 1,7 s kalt und 0,4 bis 0,6 s warm;
+  belastbar ist die Dateigröße, die Zeiten schwanken mit dem Isolate.
 - **Beliebtheit in der MCP-Suche** (`gereiht` in `mcp/src/kern.mjs`): `index/<art>/beste.json` hält die bis zu 30.000
   beliebtesten Zeilen einer Art (Refs, beste zuerst). Treffer daraus zählen mal 1 + BONUS (1,5) für den ersten Platz,
-  fallend mit dem Logarithmus des Platzes. Geprüft an 19 festen Anfragen (`rang-test.mjs` im Scratchpad, nicht im
-  Repo): „game engine“ Godot von Platz >50 auf 1, „static site generator“ Hugo, Gatsby, Jekyll, Hexo; Arten ohne
+  fallend mit dem Logarithmus des Platzes. Geprüft an 19 festen Anfragen (`node mcp/scripts/rang-messen.mjs`,
+  mit BONUS 0 als Vergleich): Godot bei „game engine“, Hugo bei „static site generator“, Alacritty bei „terminal
+  emulator“, MarkText bei „markdown editor“ und Milvus bei „vector database“ lagen alle jenseits von Platz 50 und
+  stehen jetzt auf 1, 1, 2, 3 und 12; Arten ohne
   Beliebtheit (Bilder, Icons) unverändert. Suchzeilen haben eine Spalte `popularity`, wenn die Seite Zahlen hat.
   Ohne Suchwort liefert `fundus_search` weiter die Indexreihenfolge.
 - Gemessen: Die Verbindung ist zustandslos, ein Kern mit Zwischenspeichern je Isolate, Daten über `ASSETS` (kein
   Weg ins Internet). Warm rund 0,1 s je Aufruf, kalt 0,3 bis 0,7 s, weil Cloudflare zwischen mehreren Isolates wechselt
-  und jedes seine Speicher neu füllt. CPU je Suche auf dem Entwicklungsrechner: Median 4,5 ms, höchstens 27 ms.
+  und jedes seine Speicher neu füllt. `suche-messen.mjs` (ohne Projekt-Anfragen, vor dem Umbau): Median 4,5 ms,
+  höchstens 27 ms auf dem Entwicklungsrechner. Projekt-Suchen laden 4 bis 8 Indexteile und brauchen dort samt
+  Dateilesen 15 bis 105 ms; ob das im Worker die CPU-Grenze des Tarifs berührt, zeigt nur das Cloudflare-Dashboard.
 - **Startansicht**: Die Anleitungen der fünf Reiter liegen übereinander (kein Sprung mehr beim Wechsel, vorher bis
   84 px), Kopieren-Knöpfe behalten ihre Breite. `Fraunces Ersatz` (Georgia, `size-adjust: 89%`) und zwei
   vorgeladene Schriftdateien (`vite.config.js`): Die Überschrift brach vorher mit Georgia zweizeilig um und sprang
@@ -262,3 +267,5 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - Kosten: `/mcp` und jedes Vorschaubild (`/vorschau/*`) laufen durch das Worker-Skript und zählen als
   Worker-Anfrage; die Seite und `/data` nicht. Grenze je Besucher: 60 MCP-Aufrufe je Minute, Anthropics Adressen
   1.200. Ein Tagesdeckel für `/mcp` fehlt.
+- Impressum und Datenschutz stehen zusätzlich am Ende der Seitenleiste (ab 761 px). Schmaler lädt die Liste nicht von
+  selbst nach, nur per Knopf: mit zwei Spalten läge der Fuß nach 600 Karten rund 120.000 px tief.

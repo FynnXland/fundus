@@ -461,7 +461,8 @@ function leisteZeigen() {
     }
     teile.push('</li>');
   }
-  teile.push('</ul>');
+  // the legal pages again where they are always in reach: with a list that grows while scrolling the footer is far
+  teile.push('</ul>', '<p class="leiste__recht"><a href="#/impressum">Impressum</a><a href="#/datenschutz">Datenschutz</a></p>');
   leiste.innerHTML = teile.join('');
   // on narrow screens the folders are a horizontal row: keep the chosen one in view
   const aktiv = leiste.querySelector('[aria-current]');
@@ -502,7 +503,7 @@ const unten = 'IntersectionObserver' in window
   ? new IntersectionObserver((eintraege) => {
     // after AUTO_SEITEN pages the list waits for the button: the footer with Impressum and Datenschutz must stay
     // within reach, and a folder of 40,000 entries would otherwise never end
-    if (!eintraege.some((e) => e.isIntersecting) || zustand.autoSeiten >= AUTO_SEITEN) return;
+    if (!eintraege.some((e) => e.isIntersecting) || zustand.autoSeiten >= AUTO_SEITEN || SCHMAL.matches) return;
     zustand.autoSeiten++;
     mehrZeigen();
   }, { rootMargin: '0px 0px 100% 0px' })
@@ -531,6 +532,9 @@ function endeHtml(geladen, gesamt) {
 }
 
 const AUTO_SEITEN = 4;
+// On a phone the grid has two columns and the folders are a row of chips without room for the legal links: 600
+// cards would put the footer 120,000 px away. There the list grows only by the button, as before.
+const SCHMAL = matchMedia('(max-width: 760px)');
 const mehrText = (rest) => `Weitere ${zahl(Math.min(SEITENGROESSE, rest))} anzeigen`;
 
 function endeBeobachten() {
