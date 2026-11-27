@@ -278,15 +278,15 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - Ergebnis: 35 Einträge „fremd“ (vorher 23), 459 „zum Ansehen“. 13 kamen neu dazu, einer ist wieder sichtbar
   („For you“ von Czxttkl, ein chinesisches Lied; die gebündelte Suche zählt 36 gleichnamige Werke statt weniger).
 - Die 13 neuen an der Quelle angesehen (Commons-Beschreibung, Titelliste im Internet Archive). Neun stehen jetzt in
-   unter . Das hat der Chat eingetragen, nicht Fynn; seine Bestätigung
+  `crawler/config.json` unter `rechte.freigegeben`. Das hat der Chat eingetragen, nicht Fynn; seine Bestätigung
   steht aus. Alle neun waren vorher ungeprüft und damit schon sichtbar.
-  - Von der Quelle selbst belegt (2):  (Album, laut Beschreibung live improvisierte
-    Stücke, neun eigene Titel) und  (laut Beschreibung eine Komposition von
+  - Von der Quelle selbst belegt (2): `internetarchive:AIOT_YesAnd` (Album, laut Beschreibung live improvisierte
+    Stücke, neun eigene Titel) und `internetarchive:out-of-my-dreams` (laut Beschreibung eine Komposition von
     George L Smyth nach einem Haiku von Ryōkan).
   - Geschlossen, nicht belegt (7): fünf Stücke von Antti Luode auf Commons (Happy Children, El paso, Mostly
     Harmless, T R O U B L E, Walking the dog). Die Seiten sagen nur „by Antti Luode“; im Katalog stehen 1.785 Stücke
-    von ihm, alle Instrumentalstücke mit Alltagstiteln. Dazu  und
-    : Alben von La Machine de la Mort mit 15 und 25 Titeln, Beschreibung leer.
+    von ihm. Dazu `internetarchive:cemetery-gates_202611` und
+    `internetarchive:electric-funeral`: Alben von La Machine de la Mort mit 15 und 25 Titeln, Beschreibung leer.
     Das Stück „Cemetery Gates“ dauert dort 3:01, „Electric Funeral“ 2:37; bei MusicBrainz liegt der Median der
     Aufnahmen von Pantera bei 7:10 (24 Aufnahmen, kürzeste 5:14), der von Black Sabbath bei 4:50 (22 Aufnahmen).
 - Ausgeblendet bleiben vier neue: „I Got Rhythm“ (laut Beschreibung ein Cover, Ira Gershwin starb 1983), „Ain't
