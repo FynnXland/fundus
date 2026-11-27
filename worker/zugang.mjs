@@ -10,8 +10,13 @@
 // If D1 fails, the caller is let through: the per-minute limit (schutz.mjs) and the panic switch still hold.
 import { ausKiNetz } from './schutz.mjs';
 
-/** Calls per day. gesamtOhne caps everybody without a key together; neueSchluessel = new keys per address and day. */
-export const GRENZEN = { anonym: 150, ki: 4000, browser: 300, konto: 500, gesamtOhne: 10000, neueSchluessel: 3 };
+/**
+ * Calls per day. gesamtOhne caps everybody without a key together, gesamtSchluessel all keys that have no grant by
+ * hand: without it, somebody who changes addresses could create keys without end and the daily total would have
+ * no ceiling. Keys with a grant are outside both caps. neueSchluessel = new keys per address and day,
+ * neueSchluesselGesamt = new keys per day for everybody together.
+ */
+export const GRENZEN = { anonym: 150, ki: 4000, browser: 300, konto: 500, gesamtOhne: 10000, gesamtSchluessel: 10000, neueSchluessel: 3, neueSchluesselGesamt: 200 };
 export const SEITE = 'https://fundus.fynn.land/#/zugang';
 const KONTAKT = 'Discord https://discord.gg/JTHPxAxFpE or https://fynn.land/impressum.html';
 const SCHLUESSEL = /^[A-Za-z0-9_-]{32,64}$/;
@@ -60,6 +65,12 @@ export function schluesselVon(request) {
 /** What a holder of a key calls it when asking for more: the first eight hex digits of its hash. */
 export const kennungVon = (hash) => hash.slice(0, 8);
 
+// Callers without a key that are over their allowance, per isolate: counter name -> day. Keys are not remembered
+// here, because a grant or reset from the dashboard must take effect at once.
+const ueber = new Map();
+/** Tests only. */
+export const vergiss = () => ueber.clear();
+
 const zaehle = (db, tag, wer, n) => db.prepare('INSERT INTO zaehler (tag, wer, n) VALUES (?1, ?2, ?3) ON CONFLICT(tag, wer) DO UPDATE SET n = n + excluded.n RETURNING n').bind(tag, wer, n);
 
 /**
@@ -86,17 +97,28 @@ export async function pruefe(env, request, n = 1, jetzt = Date.now()) {
       if (z.zuletzt !== tag) lauf.push(env.DB.prepare('UPDATE zugang SET zuletzt = ?1 WHERE hash = ?2').bind(tag, hash));
       const [r] = await env.DB.batch(lauf);
       const verbraucht = r.results[0].n;
-      return { erlaubt: verbraucht <= grenze, verbraucht, grenze, stufe: z.stufe, kennung, grund: verbraucht <= grenze ? null : 'limit' };
+      if (verbraucht > grenze) return { erlaubt: false, verbraucht, grenze, stufe: z.stufe, kennung, grund: 'limit' };
+      // keys without a grant by hand share a ceiling; a refused call above does not count towards it
+      if (z.grenze == null && (await zaehle(env.DB, tag, 'schluessel', n).first()).n > GRENZEN.gesamtSchluessel) return { erlaubt: false, verbraucht, grenze, stufe: z.stufe, kennung, grund: 'gesamt' };
+      return { erlaubt: true, verbraucht, grenze, stufe: z.stufe, kennung, grund: null };
     }
     const ip = request.headers.get('CF-Connecting-IP');
     const ki = ausKiNetz(ip);
     const wer = ki ? 'ki' : await ipKennung(env, ip, tag);
     const grenze = ki ? GRENZEN.ki : GRENZEN.anonym;
-    const [eigen, alle] = await env.DB.batch([zaehle(env.DB, tag, wer, n), zaehle(env.DB, tag, 'ohne', n)]);
-    const verbraucht = eigen.results[0].n;
-    if (verbraucht > grenze) return { erlaubt: false, verbraucht, grenze, stufe: ki ? 'ki' : 'anonym', kennung: null, grund: 'limit' };
-    if (alle.results[0].n > GRENZEN.gesamtOhne) return { erlaubt: false, verbraucht, grenze, stufe: ki ? 'ki' : 'anonym', kennung: null, grund: 'gesamt' };
-    return { erlaubt: true, verbraucht, grenze, stufe: ki ? 'ki' : 'anonym', kennung: null, grund: null };
+    const stufe = ki ? 'ki' : 'anonym';
+    // A caller already over its allowance costs no more database writes today, and above all does not count
+    // towards the shared cap: one address hammering away must not use up the day for everybody else.
+    if (ueber.get(wer) === tag) return { erlaubt: false, verbraucht: grenze + 1, grenze, stufe, kennung: null, grund: 'limit' };
+    const verbraucht = (await zaehle(env.DB, tag, wer, n).first()).n;
+    if (verbraucht > grenze) {
+      if (ueber.size >= 5000) ueber.clear();
+      ueber.set(wer, tag);
+      return { erlaubt: false, verbraucht, grenze, stufe, kennung: null, grund: 'limit' };
+    }
+    const alle = (await zaehle(env.DB, tag, 'ohne', n).first()).n;
+    if (alle > GRENZEN.gesamtOhne) return { erlaubt: false, verbraucht, grenze, stufe, kennung: null, grund: 'gesamt' };
+    return { erlaubt: true, verbraucht, grenze, stufe, kennung: null, grund: null };
   } catch {
     return offen;
   }
@@ -107,6 +129,7 @@ export function limitText(p) {
   const mehr = `Need more for a project? Tell Fynn what you are building: ${KONTAKT}.`;
   if (p.grund === 'unbekannt') return `This Fundus access key is not known (it may have been deleted). Tell the user: create a new personal access at ${SEITE} and put its address into the assistant, or use the plain address https://fundus.fynn.land/mcp.`;
   if (p.grund === 'gesperrt') return `This Fundus access key is blocked. Tell the user to get in touch: ${KONTAKT}.`;
+  if (p.grund === 'gesamt' && p.kennung) return `Fundus has reached today's ceiling for all personal accesses together (resets at 00:00 UTC). Tell the user this, do not retry now. ${mehr} Name the access ${p.kennung}.`;
   if (p.grund === 'gesamt') return `Fundus has reached today's shared allowance for callers without a personal access (resets at 00:00 UTC). Tell the user: a free personal access with its own daily allowance can be created at ${SEITE}. ${mehr}`;
   const eigen = p.stufe === 'ki'
     ? 'The allowance that all users of this assistant share without a personal access is used up for today'
@@ -162,6 +185,7 @@ export async function api(request, env, jetzt = Date.now()) {
       const wer = `neu:${(await ipKennung(env, request.headers.get('CF-Connecting-IP'), tag)).slice(3)}`;
       const r = await zaehle(env.DB, tag, wer, 1).first();
       if (r.n > GRENZEN.neueSchluessel) return json({ fehler: 'zuviele' }, 429);
+      if ((await zaehle(env.DB, tag, 'neu', 1).first()).n > GRENZEN.neueSchluesselGesamt) return json({ fehler: 'zuviele-heute' }, 429);
       const key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(30)))).replace(/\+/g, '-').replace(/\//g, '_');
       const hash = await sha256(key);
       await env.DB.prepare("INSERT INTO zugang (hash, kennung, stufe, erzeugt) VALUES (?1, ?2, 'browser', ?3)").bind(hash, kennungVon(hash), tag).run();
@@ -197,7 +221,7 @@ export const admin = {
   /** Today's calls: by tier, in total, and how many callers without a key there were. */
   counts: (env, jetzt = Date.now()) => sicher(async () => {
     const tag = heute(jetzt);
-    const { results } = await env.DB.prepare("SELECT CASE WHEN wer = 'ki' THEN 'ki' WHEN wer = 'ohne' THEN 'ohne' WHEN wer LIKE 'k:%' THEN 'schluessel' WHEN wer LIKE 'neu:%' THEN 'neu' ELSE 'anonym' END AS art, COUNT(*) AS wer, SUM(n) AS n FROM zaehler WHERE tag = ?1 GROUP BY art").bind(tag).all();
+    const { results } = await env.DB.prepare("SELECT CASE WHEN wer = 'ki' THEN 'ki' WHEN wer IN ('ohne', 'schluessel', 'neu') THEN wer WHEN wer LIKE 'k:%' THEN 'zugaenge' WHEN wer LIKE 'neu:%' THEN 'neuJeAdresse' ELSE 'anonym' END AS art, COUNT(*) AS wer, SUM(n) AS n FROM zaehler WHERE tag = ?1 GROUP BY art").bind(tag).all();
     return { ok: true, an: an(env), tag, grenzen: GRENZEN, arten: Object.fromEntries(results.map((r) => [r.art, { aufrufe: r.n, zaehler: r.wer }])) };
   }),
   /** Every access key by its short name, with tier, allowance, note and today's calls. */

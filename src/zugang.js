@@ -92,7 +92,7 @@ export function zugangBereit(main) {
     if (was === 'neu') {
       const r = await frage('neu', {}).catch(() => ({ ok: false, status: 0 }));
       if (r.ok && r.key) { store.set(MERK, r.key); feld.innerHTML = mitZugang(r.key, r); return; }
-      if (status) status.textContent = r.status === 429 ? 'Von diesem Anschluss wurden heute schon drei Zugänge erzeugt. Morgen geht es wieder.' : 'Das hat gerade nicht geklappt. Versuch es gleich noch einmal.';
+      if (status) status.textContent = r.fehler === 'zuviele-heute' ? 'Heute wurden schon sehr viele Zugänge erzeugt. Morgen geht es wieder.' : r.status === 429 ? 'Von diesem Anschluss wurden heute schon drei Zugänge erzeugt. Morgen geht es wieder.' : 'Das hat gerade nicht geklappt. Versuch es gleich noch einmal.';
     }
     if (was === 'loeschen') {
       const r = await frage('loeschen', { key: store.get(MERK) }).catch(() => ({ ok: false }));

@@ -216,3 +216,16 @@ Einschalten, in dieser Reihenfolge:
 
 Nicht gebaut: Schlüssel am Konto (Stufe 2, braucht den Eintrag `fundus` in `ACCOUNT_GAMES` des Kontoservers) und der
 Verlauf. Zu prüfen: ob der API-Token des nächtlichen GitHub-Laufs einen Worker mit D1-Bindung veröffentlichen darf.
+
+Nachtrag am selben Tag, nach einer Gegenprüfung:
+
+- Wer ohne Schlüssel sein Tageskontingent überzogen hat, zählt nicht mehr in den Deckel für alle ohne Schlüssel und
+  kostet nach der ersten Absage keine Schreibvorgänge mehr (Merkliste je Isolate). Vorher hätte eine einzelne Adresse
+  mit 60 Aufrufen je Minute den Deckel in unter drei Stunden für alle aufgebraucht.
+- Zugänge ohne Freigabe von Hand teilen eine eigene Obergrenze (`gesamtSchluessel`, 10.000 am Tag), und je Tag
+  entstehen insgesamt höchstens 200 neue Zugänge (`neueSchluesselGesamt`). Ohne das hätte jemand mit wechselnden
+  Adressen beliebig viele Zugänge erzeugen können. Rechnerisch sind damit höchstens 20.000 Aufrufe am Tag möglich,
+  die nicht von Fynn freigegeben sind. Beide Zahlen sind Vorschläge.
+- Diese Schicht ersetzt nicht den Not-Aus: Der greift weiter erst ab 3 US-Dollar Mehrkosten des ganzen Kontos.
+- Beim Einschalten nachziehen: Die Datenschutzseite von Fundus nennt drei gespeicherte Einstellungen; `fundus.zugang`
+  kommt dazu, und es ist zu entscheiden, ob der Knopf „Einstellungen löschen“ auch den Zugang entfernt.

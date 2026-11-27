@@ -4,7 +4,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import worker from '../worker/index.mjs';
-import { SCHEMA, GRENZEN, pruefe, api, admin, aufraeumen, netz, limitText, werkzeugAufrufe, schluesselVon, sha256, kennungVon } from '../worker/zugang.mjs';
+import { beforeEach } from 'node:test';
+import { SCHEMA, GRENZEN, pruefe, api, admin, aufraeumen, netz, limitText, werkzeugAufrufe, schluesselVon, sha256, kennungVon, vergiss } from '../worker/zugang.mjs';
+beforeEach(() => vergiss());
 
 function d1() {
   const db = new DatabaseSync(':memory:');
@@ -128,7 +130,7 @@ test('Freigabe von Hand: Grenze setzen, zurücksetzen, sperren; nie eine Ausnahm
   await admin.block(env, kennung, false);
   assert.equal((await pruefe(env, anfrage('198.51.100.9', key), 1, TAG1)).erlaubt, true);
   const zahlen = await admin.counts(env, TAG1);
-  assert.equal(zahlen.arten.schluessel.zaehler, 1);
+  assert.equal(zahlen.arten.zugaenge.zaehler, 1);
   assert.deepEqual(await admin.grant(env, 'nicht-hex', 5), { ok: false, fehler: 'eingabe' });
   assert.equal((await admin.list({})).ok, false, 'ohne Datenbank eine Antwort, kein Wurf');
 });
@@ -171,4 +173,35 @@ test('Worker: nur Werkzeug-Aufrufe zählen, die Absage ist ein lesbares Werkzeug
     assert.deepEqual([d.id, d.result.isError], [7, true]);
     assert.match(d.result.content[0].text, /Daily allowance.*Tell the user/s);
   } finally { GRENZEN.anonym = vorher; }
+});
+
+test('wer sein Kontingent überzogen hat, verbraucht nicht den Deckel für alle und kostet keine Schreibvorgänge mehr', async () => {
+  const env = umgebung();
+  await pruefe(env, anfrage('203.0.113.7'), GRENZEN.anonym, TAG1);
+  const ohne = () => env.DB.roh.prepare("SELECT n FROM zaehler WHERE wer = 'ohne'").get().n;
+  assert.equal(ohne(), GRENZEN.anonym);
+  for (let i = 0; i < 50; i++) assert.equal((await pruefe(env, anfrage('203.0.113.7'), 1, TAG1)).grund, 'limit');
+  assert.equal(ohne(), GRENZEN.anonym, 'abgewiesene Aufrufe zählen nicht in den Gesamtdeckel');
+  const eigen = env.DB.roh.prepare("SELECT n FROM zaehler WHERE wer LIKE 'ip:%'").get().n;
+  assert.equal(eigen, GRENZEN.anonym + 1, 'nach der ersten Absage wird für diese Adresse nichts mehr geschrieben');
+  assert.equal((await pruefe(env, anfrage('203.0.113.8'), 1, TAG1)).erlaubt, true);
+  assert.equal((await pruefe(env, anfrage('203.0.113.7'), 1, TAG2)).erlaubt, true, 'am nächsten Tag gilt die Merkliste nicht mehr');
+});
+
+test('Schlüssel ohne Freigabe teilen einen Deckel, freigegebene nicht; neue Schlüssel sind auch insgesamt begrenzt', async () => {
+  const env = umgebung();
+  const a = await (await api(seite('neu', '203.0.113.7'), env, TAG1)).json();
+  const b = await (await api(seite('neu', '203.0.113.8'), env, TAG1)).json();
+  const vorher = { ...GRENZEN };
+  GRENZEN.gesamtSchluessel = 3; GRENZEN.neueSchluesselGesamt = 2;
+  try {
+    assert.equal((await pruefe(env, anfrage('198.51.100.1', a.key), 3, TAG1)).erlaubt, true);
+    const p = await pruefe(env, anfrage('198.51.100.1', b.key), 1, TAG1);
+    assert.deepEqual([p.erlaubt, p.grund], [false, 'gesamt']);
+    assert.match(limitText(p), /ceiling for all personal accesses/);
+    await admin.grant(env, b.kennung, 1000, 'Projekt');
+    assert.equal((await pruefe(env, anfrage('198.51.100.1', b.key), 1, TAG1)).erlaubt, true, 'eine Freigabe von Hand liegt außerhalb des Deckels');
+    const r = await api(seite('neu', '203.0.113.9'), env, TAG1);
+    assert.deepEqual([r.status, (await r.json()).fehler], [429, 'zuviele-heute']);
+  } finally { Object.assign(GRENZEN, vorher); }
 });
