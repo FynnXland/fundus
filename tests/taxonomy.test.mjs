@@ -69,3 +69,30 @@ test('3D: Drohnen und Gazebo-Fahrzeuge', () => {
     assert.equal(u('3d', t), 'Fahrzeuge & Raumfahrt', t);
   }
 });
+
+const p = (title, description, tags = [], sprache) => unterkategorie({ kind: 'projekt', title, description, tags, meta: { sprache } });
+
+test('Projekte: GitHub-Themen entscheiden, die meisten Treffer gewinnen', () => {
+  assert.equal(p('godot-xterm', 'Terminal emulator for the Godot game engine.', ['godot', 'godot-engine', 'terminal']), 'Spiele & Spieleentwicklung');
+  assert.equal(p('obsidian-mcp-server', 'Read and edit Obsidian notes', ['ai-agents', 'mcp', 'obsidian']), 'KI-Agenten & Skills');
+  assert.equal(p('basement-grotesque', 'The basement grotesque typeface.', ['font', 'typeface']), 'Schriften & Icons');
+  assert.equal(p('vulkano', 'Safe and rich Rust wrapper around the Vulkan API', ['rust', 'vulkan']), '3D, Grafik & Bildbearbeitung');
+});
+
+test('Projekte ohne Themen: das erste Fachwort der Beschreibung, dann der Name, dann die Sprache', () => {
+  assert.equal(p('MobileIE', '[ICCV2025] Implementation of "MobileIE"'), 'KI & Machine Learning');
+  assert.equal(p('skillfish', 'The skill manager for AI coding agents.'), 'KI-Agenten & Skills');
+  assert.equal(p('x', 'PoC for CVE-2024-1234'), 'Sicherheit & Hacking');
+  assert.equal(p('DeepSeek-V3', ''), 'KI & Machine Learning');
+  assert.equal(p('juliex', '', [], 'Solidity'), 'Blockchain & Finanzen');
+  assert.equal(p('libdxfrw', 'C++ library to read and write DXF/DWG files'), 'Bibliotheken & Werkzeuge');
+  assert.equal(p('juliex', '', [], 'Rust'), 'Sonstiges');
+});
+
+test('Projekte: allgemeine Wörter kapern keinen Ordner', () => {
+  // "network" in a neural network, "learning" in a paper title, "bootstrap" as a verb, a GitHub link in the text
+  assert.notEqual(p('ifrnet', 'Intermediate Feature Refine Network for Frame Interpolation'), 'Netzwerk & Selbst hosten');
+  assert.notEqual(p('stream-of-search', 'Repository for the paper Stream of Search: Learning to Search in Language'), 'Lernen & Listen');
+  assert.notEqual(p('MVPAndroidBootstrap', 'Clean MVP bootstrap architecture'), 'Web-Frontend');
+  assert.notEqual(p('java-notes', 'moved to https://github.com/someone/snote'), 'DevOps & Cloud');
+});

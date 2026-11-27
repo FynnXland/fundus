@@ -3,6 +3,8 @@
 // jacket tagged "boat" is not a vehicle). Within each pass the first matching rule wins, so more specific
 // rules come first. Entries that match nothing land in "Sonstiges".
 
+import { projektOrdner } from './projekte.mjs';
+
 const ESC = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 // R: word starts ("microscop" finds "microscopy"); used where the lists were written that way (video, shader, …).
@@ -124,11 +126,8 @@ export const UNTER = {
     R('Shell & Automation', 'shell', 'bash', 'automation', 'powershell', 'zsh'),
     R('Python', 'python'),
   ],
-  projekt: [
-    R('Spiele', 'game', 'game-engine', 'gamedev', 'godot'),
-    R('Vorlagen', 'boilerplate', 'template', 'starter'),
-    R('Selbst hosten', 'self-hosted', 'selfhosted'),
-  ],
+  // projekt: crawler/lib/projekte.mjs (topics first, see there)
+  projekt: [],
   skill: [
     R('Entwicklung', 'code', 'coding', 'git', 'test', 'debug', 'refactor', 'review', 'api', 'typescript', 'python', 'frontend', 'backend', 'devops'),
     R('Dokumente', 'pdf', 'docx', 'xlsx', 'pptx', 'document', 'spreadsheet', 'slides', 'markdown'),
@@ -174,6 +173,7 @@ const ICON_STILE = new Set(['Emoji', '3D', 'Farbig', 'Illustrationen', 'Pixel', 
 export function unterkategorie(item) {
   const regeln = UNTER[item.kind];
   if (!regeln) return SONSTIGES;
+  if (item.kind === 'projekt') return projektOrdner(item.title, item.description, item.tags, item.meta?.sprache) ?? SONSTIGES;
   if (item.kind === 'icon') {
     if (ICON_STILE.has(item.meta?.stil)) return item.meta.stil;
     // Iconify sets: the set's category ("UI Multicolor", "Emoji", "Flags") says more than its name
