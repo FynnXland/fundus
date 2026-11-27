@@ -36,10 +36,12 @@ export function geschuetzt(autor, jahr = new Date().getFullYear()) {
 /**
  * How strongly a title points to one protected work: a rare title with a standard behind it ("Jingle Bell Rock",
  * 3 works of that name, 324 recordings), or a world hit whose title a few minor works share as well
- * ("Bohemian Rhapsody", 6 works, 461 recordings). Thresholds checked against the Jamendo titles, 26.11.2026.
+ * ("Bohemian Rhapsody", 6 works, 461 recordings). Thresholds checked against the Jamendo titles, 26.11.2026; the
+ * first full pass (27.11.2026) hid "Hush" by Kevin MacLeod and four tracks called "Rock", hence the word rule.
  */
-export function einstufen(aufnahmen, gleichnamig) {
-  if ((gleichnamig <= 3 && aufnahmen >= 20) || (gleichnamig <= 10 && aufnahmen >= 150)) return 'fremd';
+export function einstufen(aufnahmen, gleichnamig, woerter = 2) {
+  // a one-word title ("Rock", "Hush", "Crazy") is too thin to hide an entry: at most it goes into the report
+  if ((gleichnamig <= 3 && aufnahmen >= 20) || (gleichnamig <= 10 && aufnahmen >= 150)) return woerter >= 2 ? 'fremd' : 'verdacht';
   if (gleichnamig <= 3 && aufnahmen >= 3) return 'verdacht';
   return null;
 }
@@ -67,7 +69,7 @@ export function urteil(item, fakten, { jahr = new Date().getFullYear() } = {}) {
     if (eigen) return { stufe: 'ok', grund: 'Hochlader ist Urheber des Werks', werk: w };
     const schutz = w.autoren.map((a) => geschuetzt(a, jahr));
     if (!schutz.includes(true)) continue; // public domain, or nothing known about the writers
-    const stufe = einstufen(w.aufnahmen, fakten.gleichnamig ?? 999);
+    const stufe = einstufen(w.aufnahmen, fakten.gleichnamig ?? 999, titelNormal(item.title).split(' ').length);
     const rang = (b) => (b.stufe === 'fremd' ? 1e9 : 0) + b.werk.aufnahmen;
     if (stufe && (!best || rang({ stufe, werk: w }) > rang(best))) best = { stufe, werk: w };
   }

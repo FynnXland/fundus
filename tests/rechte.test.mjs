@@ -51,3 +51,8 @@ test('Rechte: publishable lässt fremde Lieder weg, außer sie sind freigegeben'
   const frei = publishable(katalog, {}, {}, rechte, [it.id]);
   assert.equal(frei.skipped.rechte, 0);
 });
+
+test('Rechte: Ein-Wort-Titel werden nie ausgeblendet, nur zum Ansehen gelistet', () => {
+  assert.equal(einstufen(181, 2, 1), 'verdacht'); // Hush (Kevin MacLeod, eigenes Stück)
+  assert.equal(einstufen(324, 3, 3), 'fremd'); // Jingle Bell Rock
+});
