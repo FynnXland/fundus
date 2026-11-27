@@ -183,3 +183,17 @@ test('merge: unveränderte Einträge behalten ihre alte Zeile samt Zeitstempel',
   assert.equal(neu.fetchedAt, '2026-11-27');
   assert.equal(neu.firstSeen, '2026-10-01');
 });
+
+test('Vorschaubilder: mehrere Hosts laufen nebeneinander, jeder in seiner Reihenfolge', async () => {
+  const { poolNachHost } = await import('../crawler/thumbs.mjs');
+  const items = [...Array(6)].map((_, i) => ({ h: 'a', n: i })).concat([...Array(3)].map((_, i) => ({ h: 'b', n: i })), [{ h: 'c', n: 0 }]);
+  const reihe = [];
+  await poolNachHost(items, 1, (it) => it.h, (h) => (h === 'a' ? 10 : 30), async (it) => { reihe.push(`${it.h}${it.n}`); });
+  assert.equal(reihe.length, 10);
+  // b and c start right away instead of waiting behind all of a
+  assert.ok(reihe.indexOf('b0') < 3 && reihe.indexOf('c0') < 3, reihe.join(' '));
+  for (const h of ['a', 'b']) {
+    const eigene = reihe.filter((x) => x[0] === h);
+    assert.deepEqual(eigene, [...eigene].sort());
+  }
+});

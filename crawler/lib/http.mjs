@@ -10,10 +10,14 @@ export function setHostGap(host, ms) {
   hostGap.set(host, ms);
 }
 
+export function getHostGap(host) {
+  return hostGap.get(host) ?? 1000;
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function waitForHost(host) {
-  const gap = hostGap.get(host) ?? 1000;
+  const gap = getHostGap(host);
   const last = lastHit.get(host) ?? 0;
   const wait = last + gap - Date.now();
   lastHit.set(host, Math.max(Date.now(), last + gap));

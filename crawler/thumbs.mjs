@@ -11,7 +11,7 @@ import { readFile, writeFile, mkdir, readdir, unlink, access } from 'node:fs/pro
 import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
-import { politeFetch, setHostGap } from './lib/http.mjs';
+import { politeFetch, setHostGap, getHostGap } from './lib/http.mjs';
 import { ladeKatalog } from './lib/store.mjs';
 import { SOURCES } from './sources/index.mjs';
 
@@ -90,10 +90,30 @@ async function existiert(p) {
   try { await access(p); return true; } catch { return false; }
 }
 
-async function pool(items, size, fn) {
-  let i = 0;
+/**
+ * Works through the items with `size` workers, several hosts at the same time. Each worker takes the next item
+ * of the host whose next free slot comes first, so every host keeps its gap while the others keep going.
+ * In catalogue order only one host was ever busy and the whole run moved at that one host's pace.
+ */
+export async function poolNachHost(items, size, hostVon, abstand, fn) {
+  const schlangen = new Map();
+  for (const it of items) {
+    const h = hostVon(it);
+    if (!schlangen.has(h)) schlangen.set(h, { liste: [], i: 0, frei: 0 });
+    schlangen.get(h).liste.push(it);
+  }
+  const naechstes = () => {
+    let wahl = null;
+    for (const [h, s] of schlangen) {
+      if (s.i >= s.liste.length) { schlangen.delete(h); continue; }
+      if (!wahl || s.frei < wahl.s.frei) wahl = { h, s };
+    }
+    if (!wahl) return null;
+    wahl.s.frei = Math.max(Date.now(), wahl.s.frei) + abstand(wahl.h);
+    return wahl.s.liste[wahl.s.i++];
+  };
   await Promise.all(Array.from({ length: size }, async () => {
-    while (i < items.length) await fn(items[i++]);
+    for (let it = naechstes(); it; it = naechstes()) await fn(it);
   }));
 }
 
@@ -108,8 +128,9 @@ async function main() {
   for (const host of ['thumb.wikimedia.org', 'upload.wikimedia.org']) setHostGap(host, 700);
   for (const host of ['cdn.polyhaven.org', 'acg-media.struffelproductions.com', 'api.openverse.org', 'api.iconify.design', 'archive.org', 'ids.si.edu']) setHostGap(host, 250);
   setHostGap('cdn.jsdelivr.net', 120);
-  // museum image servers behind a CDN (Wellcome about 55,000, Cleveland several thousand pictures)
-  for (const host of ['iiif.wellcomecollection.org', 'openaccess-cdn.clevelandart.org']) setHostGap(host, 250);
+  // museum image servers behind a CDN (Wellcome about 55,000, Cleveland several thousand pictures);
+  // 27,000 Wellcome pictures at 250 ms brought not one 429 or 5xx, so 125 ms
+  for (const host of ['iiif.wellcomecollection.org', 'openaccess-cdn.clevelandart.org']) setHostGap(host, 125);
   // opengameart.org/robots.txt asks for Crawl-delay: 10
   setHostGap('opengameart.org', 10000);
   // icons (about 14,600 files) and the Khronos/Godot pictures: GitHub names no limit for raw, politeFetch backs off on 429
@@ -140,7 +161,7 @@ async function main() {
   let ok = 0, fehler = 0, seitSichern = 0, vertagt = 0;
   // the register is saved every few hundred pictures, so a long run that is interrupted loses little
   const sichern = () => writeFile('data/vorschauen.json', JSON.stringify(register));
-  await pool(offen, 6, async (it) => {
+  await poolNachHost(offen, 16, (it) => new URL(bildquelle(it)).host, getHostGap, async (it) => {
     if (Date.now() > ende) { vertagt++; return; }
     const von = bildquelle(it);
     try {
