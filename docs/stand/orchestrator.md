@@ -236,3 +236,29 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   gepushte Register nicht nennt.
 - Offen: Sterne zählen nur auf der Seite. Der MCP-Server liefert ohne Suchwort die Indexreihenfolge und zeigt keine
   Sterne; eine Suche bricht Gleichstände zufällig.
+
+## 27.11.2026 mittags: MCP und Startansicht
+
+- Runde 3 der Vorschaubilder ist live: 179.999 Bilder im Register, 179.865 veröffentlicht, 53.729 davon in 110 Minuten.
+- **Detaildateien** (`karten/`): 4.096 Dateien nach drei Hex-Stellen statt 256 (größte 437 KB statt 3,4 MB).
+  `stand.index.karten` nennt die Stellenzahl, ältere Daten ohne Feld haben 2. `src/katalog.js` versucht bei 404 die
+  andere Stellenzahl, weil `stand.json` eine Stunde im Browser-Cache liegt (`/data/*` in `public/_headers`).
+  Drei `fundus_details` in einem Aufruf: 0,4 bis 0,6 s statt 1,9 s.
+- **Beliebtheit in der MCP-Suche** (`gereiht` in `mcp/src/kern.mjs`): `index/<art>/beste.json` hält die bis zu 30.000
+  beliebtesten Zeilen einer Art (Refs, beste zuerst). Treffer daraus zählen mal 1 + BONUS (1,5) für den ersten Platz,
+  fallend mit dem Logarithmus des Platzes. Geprüft an 19 festen Anfragen (`rang-test.mjs` im Scratchpad, nicht im
+  Repo): „game engine“ Godot von Platz >50 auf 1, „static site generator“ Hugo, Gatsby, Jekyll, Hexo; Arten ohne
+  Beliebtheit (Bilder, Icons) unverändert. Suchzeilen haben eine Spalte `popularity`, wenn die Seite Zahlen hat.
+  Ohne Suchwort liefert `fundus_search` weiter die Indexreihenfolge.
+- Gemessen: Die Verbindung ist zustandslos, ein Kern mit Zwischenspeichern je Isolate, Daten über `ASSETS` (kein
+  Weg ins Internet). Warm rund 0,1 s je Aufruf, kalt 0,3 bis 0,7 s, weil Cloudflare zwischen mehreren Isolates wechselt
+  und jedes seine Speicher neu füllt. CPU je Suche auf dem Entwicklungsrechner: Median 4,5 ms, höchstens 27 ms.
+- **Startansicht**: Die Anleitungen der fünf Reiter liegen übereinander (kein Sprung mehr beim Wechsel, vorher bis
+  84 px), Kopieren-Knöpfe behalten ihre Breite. `Fraunces Ersatz` (Georgia, `size-adjust: 89%`) und zwei
+  vorgeladene Schriftdateien (`vite.config.js`): Die Überschrift brach vorher mit Georgia zweizeilig um und sprang
+  beim Eintreffen der Schrift um 64 px.
+- Link „fynn.land“ im Kopf (ab 921 px Breite) und im Fuß. Das Nachladen beim Scrollen hält nach vier Seiten
+  (600 Karten) an und wartet auf den Knopf, damit Impressum und Datenschutz im Fuß erreichbar bleiben.
+- Kosten: `/mcp` und jedes Vorschaubild (`/vorschau/*`) laufen durch das Worker-Skript und zählen als
+  Worker-Anfrage; die Seite und `/data` nicht. Grenze je Besucher: 60 MCP-Aufrufe je Minute, Anthropics Adressen
+  1.200. Ein Tagesdeckel für `/mcp` fehlt.
