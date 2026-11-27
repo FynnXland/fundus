@@ -362,3 +362,9 @@ Nach dem Einschalten geprüft, ohne Anmeldung:
 Offen, nur mit einem echten Konto möglich (Fynn): anmelden, Rückkehr nach `#/zugang`, verbinden, auf einem zweiten
 Gerät anmelden, abmelden, Zugang löschen (danach ist der Datenstand im Konto leer). `gamedata` und `savegame` sind
 damit noch nicht gegen den echten Kontoserver gelaufen.
+
+Nachtrag 27.11.2026 spät: Fynn hat sich mit seinem Konto angemeldet und abgemeldet, beides ging. In der Live-Datenbank
+steht danach ein Zugang auf Stufe `konto` mit `konto_bis` 2027-02-25 (heute plus 90 Tage). Die Stufe setzt der Worker
+erst, wenn der Kontoserver den Schlüssel angenommen hat; `savegame` läuft also gegen den echten Kontoserver.
+Nicht getestet, Fynn geht davon aus, dass es geht: Anmeldung auf einem zweiten Gerät und „Zugang löschen“ mit Sitzung
+(leert den Datenstand im Konto). Der Streaming-Schalter im Admin-Panel von fynn.land ist live und verdeckt die Kennungen.
