@@ -5,6 +5,8 @@
 //   index/<art>/kopf2.json   only for kinds with more than GROSS rows: the next best rows after the head (up to
 //                            KOPF2 in all). The site scrolls through these instead of loading every part of the
 //                            kind (Projekte: 634 parts, 94 MB); the rest is reached through subfolders and search.
+//   index/<art>/beste.json   row numbers (refs) of the up to BESTE most recommended rows that have a rang, best first.
+//                            The MCP search lifts popular entries with it without loading their rows.
 //   index/<art>/<nn>.json    all rows of the kind in parts of at most TEIL rows, ordered by subfolder, group,
 //                            tags, mix. Neighbouring rows are alike, so a search, a subfolder or a group needs few parts.
 //   suche/k_<key>.json       search tiles (suchindex.mjs), refs point to rows in the parts
@@ -23,6 +25,7 @@ export const TEIL = 500;
 export const KOPF = 240;
 export const GROSS = 20000;
 export const KOPF2 = 2400;
+export const BESTE = 30000;
 
 const mischwert = (it) => it.sig.slice(-5);
 // members of a group sit next to each other within their subfolder, so opening a group needs few parts
@@ -90,6 +93,7 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
     const unter = [...new Set(sortiert.map((it) => it.unter))];
     const nr = new Map(unter.map((u, i) => [u, i]));
     const teile = [];
+    const refVon = new Map();
     for (let i = 0; i < sortiert.length; i += teil) {
       const stueck = sortiert.slice(i, i + teil);
       const n = teile.length;
@@ -99,12 +103,15 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
         const b = bloecke.at(-1);
         if (it.serie && b && b[2] === it.serie.id && b[0] + b[1] === ref) b[1]++;
         else if (it.serie) bloecke.push([ref, 1, it.serie.id]);
+        refVon.set(it.id, ref);
         eintraege.push([ref++, suchfelder(it)]);
       }
       // [rows, first subfolder, last subfolder] as positions in the list unter
       teile.push([stueck.length, nr.get(stueck[0].unter), nr.get(stueck[stueck.length - 1].unter)]);
     }
-    index.arten.push({ art, anzahl: liste.length, kopf: Math.min(kopf, liste.length), ...(zweiter.length ? { kopf2: zweiter.length } : {}), unter, teile });
+    const besteRefs = beste.filter((it) => (it.rang ?? 0) > 0).slice(0, BESTE).map((it) => refVon.get(it.id));
+    if (besteRefs.length) dateien.set(`index/${art}/beste.json`, besteRefs);
+    index.arten.push({ art, anzahl: liste.length, kopf: Math.min(kopf, liste.length), ...(zweiter.length ? { kopf2: zweiter.length } : {}), ...(besteRefs.length ? { beste: besteRefs.length } : {}), unter, teile });
     const mitglieder = new Map();
     for (const it of sortiert) {
       if (!it.serie) continue;

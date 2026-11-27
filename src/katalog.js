@@ -3,7 +3,7 @@
 //   index/<art>/kopf.json              the best rows of a kind (order "empfohlen"): a folder can show them at once
 //   index/<art>/<nn>.json              parts of 500 rows, ordered by subfolder: a subfolder or a search loads few
 //   suche/k_<key>.json                 search tiles, loaded for the words of a query; the hits are row numbers
-//   karten/<xx>.json                   one shard per opened detail sheet; it names the index part of its entry
+//   karten/<xxx>.json                  one shard per opened detail sheet; it names the index part of its entry
 //   index/<art>/gruppen.json           the groups of a kind (name, size, pictures, parts), for the folder cards
 //
 // Two modes. Without beimNachladen() every need is complete before hole() resolves, so a filter always sees
@@ -493,14 +493,26 @@ const shards = new Map();
 /** The full entry. Its index part is loaded as well, so the sheet can list similar entries. */
 export async function ladeKarte(id) {
   const hash = new Uint8Array(await crypto.subtle.digest('SHA-1', new TextEncoder().encode(id)));
-  const s = hash[0].toString(16).padStart(2, '0');
-  if (!shards.has(s)) shards.set(s, holeJson(`/data/karten/${s}.json`));
+  // How many hex digits name a shard: stand.index.karten, 2 in data from before 27.11.2026. stand.json may come
+  // from the browser cache (an hour) while the shards are already the new ones, or the other way round: when the
+  // shard for that count is missing, the other count is tried before the sheet gives up.
+  const hex = [...hash.slice(0, 2)].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const stellen = aktuell?.stand.index.karten ?? 2;
+  const holeAus = async (n) => {
+    const s = hex.slice(0, n);
+    if (!shards.has(s)) shards.set(s, holeJson(`/data/karten/${s}.json`));
+    try {
+      return (await shards.get(s))[id] ?? null;
+    } catch (err) {
+      shards.delete(s);
+      throw err;
+    }
+  };
   let it;
   try {
-    it = (await shards.get(s))[id] ?? null;
+    it = await holeAus(stellen);
   } catch (err) {
-    shards.delete(s);
-    throw err;
+    it = await holeAus(stellen === 3 ? 2 : 3).catch(() => { throw err; });
   }
   const a = it && aktuell?.arten.get(it.kind);
   const t = a?.teile[it.indexTeil];

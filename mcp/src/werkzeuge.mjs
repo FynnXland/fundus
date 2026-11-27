@@ -18,6 +18,13 @@ const fehler = (err) => {
   throw err;
 };
 
+/** "4.6/5 (120 votes)" for a rated entry, else "155837 GitHub-Sterne", else "-". */
+function beliebtheitSpalte(r) {
+  if (Array.isArray(r.bew)) return `${r.bew[0]}/5 (${r.bew[1]} votes)`;
+  if (Array.isArray(r.pop)) return `${r.pop[0]} ${r.pop[1]}`;
+  return '-';
+}
+
 function vorschauSpalte(r) {
   if (r.vorschau) return 'yes';
   if (r.fremd) return 'source';
@@ -26,9 +33,11 @@ function vorschauSpalte(r) {
 
 /** Rows as a tab table; with a fallback a last column "missing" names the query words a row lacks. */
 export function suchzeilen(treffer, { rueckfall = false } = {}) {
-  const kopf = `id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview${rueckfall ? '\tmissing' : ''}`;
+  // a column for stars, downloads or ratings only when a row on the page has one (pictures and icons have none)
+  const mitZahl = treffer.some((r) => r.bew || r.pop);
+  const kopf = `id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview${mitZahl ? '\tpopularity' : ''}${rueckfall ? '\tmissing' : ''}`;
   const zeilen = treffer.map((r) =>
-    [r.id, `${zeichen(r.titel, 70)}${gruppenMarke(r)}`, `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
+    [r.id, `${zeichen(r.titel, 70)}${gruppenMarke(r)}`, `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(mitZahl ? [beliebtheitSpalte(r)] : []), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
   );
   return [kopf, ...zeilen].join('\n');
 }

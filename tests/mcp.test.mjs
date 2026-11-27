@@ -519,3 +519,31 @@ describe('Download (lokal)', () => {
     assert.equal(s.log.length, 0, 'nothing fetched');
   });
 });
+
+test('Suche: beliebte Einträge steigen, ein Beschreibungstreffer überholt keinen Titeltreffer', async () => {
+  const { baueAusgabe } = await import('../crawler/lib/ausgabe.mjs');
+  const { erstelleKern, BONUS } = await import('../mcp/src/kern.mjs');
+  const eintrag = (id, titel, tags, rang, text = '') => ({ id, sig: `PRJ·GH·${id.padStart(5, '0')}`, kind: 'projekt', unter: 'Spiele', title: titel, tags, description: text, rang, license: { name: 'MIT' }, popularity: rang ? { value: rang, label: 'GitHub-Sterne' } : undefined });
+  const items = [
+    eintrag('klein', 'game-engine-2d', [], 0),
+    eintrag('gross', 'godot', ['game', 'engine'], 19000),
+    eintrag('text', 'riesig', [], 19999, 'a game engine of sorts'),
+    ...Array.from({ length: 40 }, (_, i) => eintrag(`f${i}`, `filler ${i}`, [], 0)),
+  ];
+  const felder = ['id', 'sig', 'unter', 'titel', 'pop', 'serie'];
+  const { dateien, index } = baueAusgabe(items, {
+    arten: ['projekt'], felder, lizenzgruppe: () => 'nennung',
+    zeile: (it) => [it.id, it.sig, it.unter, it.title, it.popularity ? [it.popularity.value, it.popularity.label] : null, null],
+    suchfelder: (it) => [[it.title, 0], [it.tags.join(' '), 1], [it.description, 3]],
+  });
+  assert.equal(index.arten[0].beste, 2, 'nur Einträge mit Rang stehen in beste.json');
+  dateien.set('stand.json', { crawledAt: 'x', total: items.length, perKind: { projekt: items.length }, perUnter: { projekt: { Spiele: items.length } }, sources: [], index });
+  const holen = async (url) => { const d = dateien.get(new URL(url).pathname.replace(/^\/data\//, '')); return d === undefined ? new Response('', { status: 404 }) : new Response(JSON.stringify(d)); };
+  const e = await erstelleKern({ daten: 'http://x/data', fetch: holen }).suchen({ q: 'game engine', art: 'projekt', limit: 5 });
+  const ids = e.treffer.map((r) => r.id);
+  // tags 2 + 2, times up to 1 + BONUS for the most popular, beats the unknown repository with both words in its name (3 + 3)
+  assert.ok(BONUS >= 0.5);
+  assert.deepEqual(ids.slice(0, 2), ['gross', 'klein']);
+  // description only: 0.5 + 0.5, even at the very top of popularity it stays behind the title match
+  assert.equal(ids[2], 'text');
+});

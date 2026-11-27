@@ -5,7 +5,7 @@
 //   public/data/index/<art>/<nn>.json all rows of a kind in parts of 500, ordered by subfolder and tags
 //   public/data/suche/k_<key>.json    search tiles: term -> row numbers (crawler/lib/suchindex.mjs)
 //   public/data/index/<art>/gruppen.json groups of the kind (crawler/lib/gruppen.mjs), one folder card each
-//   public/data/karten/<xx>.json      full entries, 256 shards by the first two hex digits of sha1(id);
+//   public/data/karten/<xxx>.json     full entries, 4,096 shards by the first three hex digits of sha1(id);
 //                                     the detail sheet loads one shard
 // Which parts and tiles exist is listed in stand.json under "index" (crawler/lib/ausgabe.mjs).
 // Before writing: drop invalid, broken and blocked entries, merge duplicates (same address, same checksum,
@@ -24,7 +24,11 @@ import { beschreibungsWoerter } from './lib/suchindex.mjs';
 import { titelNormal, urteil } from './lib/rechte.mjs';
 import { bildeGruppen } from './lib/gruppen.mjs';
 
-export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, 2);
+// Three hex digits: 4,096 shards of about 200 KB. With two digits a shard had grown to 3.4 MB, and the detail sheet
+// and every fundus_details call loaded and parsed that for one entry. Readers take the digit count from
+// stand.index.karten (older data without the field: 2).
+export const KARTEN_STELLEN = 3;
+export const shardVon = (id) => createHash('sha1').update(id).digest('hex').slice(0, KARTEN_STELLEN);
 export const STARTGROESSE = 240;
 // output folder; --ziel <ordner> writes elsewhere (measurements, tests)
 const ZIEL = process.argv.includes('--ziel') ? process.argv[process.argv.indexOf('--ziel') + 1] : 'public/data';
@@ -205,6 +209,7 @@ async function main() {
   // index parts, search tiles and the block for stand.json (crawler/lib/ausgabe.mjs)
   const bild = (it) => { const f = ohneTracking(kleineFremdvorschau(it)); return f ? { f } : null; };
   const { dateien, index, teilVon } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe, bild });
+  index.karten = KARTEN_STELLEN;
   const shards = new Map();
   for (const it of items) {
     it.indexTeil = teilVon.get(it.id); // the detail sheet loads this part for "similar entries"

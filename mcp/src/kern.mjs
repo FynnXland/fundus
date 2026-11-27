@@ -4,7 +4,8 @@
 //   stand.json                 counts, sources, index.arten (parts per kind), index.kacheln (search tile keys)
 //   index/<art>/<nn>.json      parts of 500 rows, ordered by subfolder; a row is an array in the order of index.felder
 //   suche/k_<key>.json         search tiles: term -> ref lists (suchindex.mjs)
-//   karten/<xx>.json           full entries, xx = first two hex digits of sha1(id)
+//   karten/<xxx>.json          full entries, by the first hex digits of sha1(id) (stand.index.karten digits, 2 in older data)
+//   index/<art>/beste.json     refs of the most popular rows of a kind, best first (the search lifts them)
 //   vorschau/<xx>/<14 hex>.webp own 320 px previews, path from sha1(id) like crawler/thumbs.mjs vorschauPfad()
 //
 // Nothing loads a whole kind: a search walks its ranked hits, a listing walks the parts in order, and both stop
@@ -13,6 +14,9 @@ import { woerter, kachelnFuerAnfrage, kachelDatei, kartenFuer, undVerknuepft, te
 
 /** Below this many entries matching all words (after kind and subfolder), entries matching most words follow. */
 export const RUECKFALL_UNTER = 3;
+/** Popularity in the search: the most popular entry of a kind counts (1 + BONUS) times, place BONUS_BIS and beyond once. */
+export const BONUS = 1.5;
+export const BONUS_BIS = 30000;
 
 export const VERSION = '0.1.0'; // keep equal to mcp/package.json
 
@@ -61,7 +65,8 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
   let k = null; // derived from stand.json: blocks, kinds, tiles
   const teile = new Merker(120); // part file -> rows (about 160 KB raw each)
   const kacheln = new Merker(200);
-  const karten = new Merker(24); // shard -> { id: entry } (about 290 KB raw each)
+  const karten = new Merker(48); // shard -> { id: entry } (about 200 KB raw each)
+  const beste = new Merker(16); // art -> Map ref -> place among the most popular of the kind
   const zeilen = new Merker(5000); // id -> row, filled by everything that loads rows
   const serien = new Merker(16); // art -> { <group id>: group } from index/<art>/gruppen.json, only for listing a group
 
@@ -89,7 +94,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     standLauf ??= holeJson('stand.json')
       .then((s) => {
         if (s.index?.version !== 2) throw new FundusFehler(`Unknown data format (stand.index.version ${s.index?.version ?? 'missing'}, expected 2)`);
-        if (k && k.stand.crawledAt !== s.crawledAt) { teile.clear(); kacheln.clear(); karten.clear(); zeilen.clear(); serien.clear(); }
+        if (k && k.stand.crawledAt !== s.crawledAt) { teile.clear(); kacheln.clear(); karten.clear(); zeilen.clear(); serien.clear(); beste.clear(); }
         k = baue(s);
         standZeit = Date.now();
         return k;
@@ -104,7 +109,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     const bloecke = [];
     let ref = 0;
     for (const e of ix.arten) {
-      const a = { art: e.art, anzahl: e.anzahl, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [] };
+      const a = { art: e.art, anzahl: e.anzahl, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [], beste: e.beste ?? 0 };
       let von = ref;
       e.teile.forEach(([n, u0, u1], nr) => {
         const t = { art: e.art, nr, anzahl: n, von: u0, bis: u1, start: von, datei: `index/${e.art}/${String(nr).padStart(2, '0')}.json` };
@@ -197,6 +202,34 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     return teile.set(t.datei, rows);
   }
 
+  /**
+   * Hits best first. The word score counts, raised for entries that are popular in their kind (stars, downloads,
+   * ratings: index/<art>/beste.json): times 1 + BONUS for the very first, falling with the logarithm of the place, so that
+   * "game engine" shows Godot before a little-known repository that has both words in its name. An entry whose only
+   * match is in the description (0.5 a word) still cannot pass one with the word in its title (3). Entries of equal
+   * value keep a fixed pseudo-random order, so a cursor stays valid.
+   */
+  async function gereiht(treffer) {
+    const arten = new Set();
+    for (const [r] of treffer) arten.add(blockVon(r).art);
+    const plaetze = new Map();
+    await Promise.all([...arten].map(async (name) => {
+      if (!k.arten.get(name).beste) return;
+      let m = beste.get(name);
+      if (!m) {
+        const l = await holeJson(`index/${name}/beste.json`, { fehlend: [] });
+        m = beste.set(name, new Map((Array.isArray(l) ? l : []).map((r, i) => [r, i])));
+      }
+      plaetze.set(name, m);
+    }));
+    if (!plaetze.size) return rangfolge(treffer);
+    const wert = ([r, p]) => {
+      const platz = plaetze.get(blockVon(r).art)?.get(r);
+      return platz === undefined ? p : p * (1 + BONUS * Math.max(0, 1 - Math.log1p(platz) / Math.log1p(BONUS_BIS)));
+    };
+    return rangfolge(treffer.map((e) => [e[0], wert(e)]));
+  }
+
   async function ladeKachel(s) {
     const da = kacheln.get(s);
     if (da) return da;
@@ -283,7 +316,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       await Promise.all(kachelnFuerAnfrage(q, k.schluessel).map(async (s) => geladen.set(s, await ladeKachel(s))));
       const { ws, karten } = kartenFuer(q, geladen, k.schluessel);
       const imBereich = (r) => (!a || (r >= a.start && r < a.ende)) && (ui < 0 || deckt(blockVon(r)));
-      refs = rangfolge(undVerknuepft(karten)).filter(imBereich);
+      refs = await gereiht([...undVerknuepft(karten)].filter(([r]) => imBereich(r)));
       voll = refs.length;
       // Row filters (licence, format, …) can drop every full hit, which only the walk below sees: with them the
       // partial hits always follow the full ones and show up only once those are used up.
@@ -391,7 +424,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
 
   async function eintrag(id) {
     await stand();
-    const s = (await sha1(id)).slice(0, 2);
+    const s = (await sha1(id)).slice(0, k.stand.index.karten ?? 2);
     let shard = karten.get(s);
     if (!shard) shard = karten.set(s, await holeJson(`karten/${s}.json`, { fehlend: {} }));
     const it = shard[id];
