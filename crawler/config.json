@@ -358,7 +358,17 @@
     "limit": 3000
   },
   "rechte": {
-    "freigegeben": []
+    "freigegeben": [
+      "commonsaudio:84700208",
+      "commonsaudio:84700240",
+      "commonsaudio:84700530",
+      "commonsaudio:84701681",
+      "commonsaudio:84701683",
+      "internetarchive:AIOT_YesAnd",
+      "internetarchive:cemetery-gates_202611",
+      "internetarchive:electric-funeral",
+      "internetarchive:out-of-my-dreams"
+    ]
   },
   "githubschriften": {
     "maxNeu": 300,

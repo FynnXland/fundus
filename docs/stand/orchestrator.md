@@ -269,3 +269,29 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   1.200. Ein Tagesdeckel für `/mcp` fehlt.
 - Impressum und Datenschutz stehen zusätzlich am Ende der Seitenleiste (ab 761 px). Schmaler lädt die Liste nicht von
   selbst nach, nur per Knopf: mit zwei Spalten läge der Fuß nach 600 Karten rund 120.000 px tief.
+
+## 27.11.2026 abends: Rechteprüfung Musik vollständig, live
+
+- Voller Lauf mit der gebündelten Suche (`--max-minuten 360 --treffer-neu`): 35.850 Titel in 3 h 44 min mit 5.566
+  Suchen. Nach dem ersten Durchgang fehlten 2.366 Antworten, nach dem dritten 99; die holt der nächste Lauf.
+  Von 52.435 Musikeinträgen sind 193 ungeprüft.
+- Ergebnis: 35 Einträge „fremd“ (vorher 23), 459 „zum Ansehen“. 13 kamen neu dazu, einer ist wieder sichtbar
+  („For you“ von Czxttkl, ein chinesisches Lied; die gebündelte Suche zählt 36 gleichnamige Werke statt weniger).
+- Die 13 neuen an der Quelle angesehen (Commons-Beschreibung, Titelliste im Internet Archive). Neun sind eigene Werke
+  mit zufällig gleichem Titel und stehen in `crawler/config.json` unter `rechte.freigegeben`:
+  fünf Stücke von Antti Luode (Commons, „by Antti Luode“: Happy Children, El paso, Mostly Harmless, T R O U B L E,
+  Walking the dog), `internetarchive:AIOT_YesAnd` (Album mit neun improvisierten Stücken),
+  `internetarchive:cemetery-gates_202611` und `internetarchive:electric-funeral` (Alben von La Machine de la Mort mit
+  15 und 25 eigenen Titeln, die Längen passen nicht zu Pantera und Black Sabbath), `internetarchive:out-of-my-dreams`
+  (Komposition von George L Smyth nach einem Haiku).
+- Ausgeblendet bleiben vier neue: „I Got Rhythm“ (Cover, Ira Gershwin starb 1983), „Ain't misbehavin“ (Aufnahme des
+  Lieds von Waller, Brooks und Razaf), „Ain't That A Kick In The Head“ von Kyle Dearn (Swing, 2:26 wie das Original,
+  vermutlich Cover) und „Anyone of US“ von ARDOSANT (Beschreibung „AA“, nicht zu klären).
+- Muster der Fehltreffer: Ein Album im Internet Archive wird über seinen Albumtitel mit einem Lied verglichen, und
+  Antti Luode hat mehrere hundert eigene Stücke mit Alltagstiteln. Unter den 22 schon vorher ausgeblendeten stehen
+  auch Bearbeitungen traditioneller Melodien (The Marines' Hymn, Maggie Mae, Over the Hills and Far Away, Faith of
+  Our Fathers, National Emblem); nicht angefasst.
+- Live: 567.702 Einträge, 25 fremde Lieder und 1 gesperrtes ausgelassen, 328 Tests grün, `ZUGANG "1"`, `KONTO "0"`.
+- GitHub: Es gab noch keinen geplanten Lauf. Das Repository besteht seit 26.11.2026 19:16 UTC; der einzige Lauf
+  (von Hand, 26.11. 19:54 UTC) lief im Schritt `npm run vorschau` in die 90-Minuten-Grenze, damals ohne
+  `--max-minuten`. Der Lauf in der Nacht zum 28.11. ist der erste mit Zeitgrenze und `FUNDUS_DEPLOY=1`.
