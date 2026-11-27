@@ -4,6 +4,7 @@
 // consent banner (§ 25 Abs. 2 Nr. 2 TDDDG, see docs/MCP-ZUGANG-ENTWURF.md). The server side is worker/zugang.mjs.
 import { esc, store, zahl, datum } from './util.js';
 import { BETREIBER } from './betreiber.js';
+import { sitzung, sitzungVergessen, anmelden, abschliessen, verbinden, loesen } from './konto.js';
 
 const MERK = 'fundus.zugang';
 const MCP = 'https://fundus.fynn.land/mcp';
@@ -23,12 +24,21 @@ export function zugangSeite() {
   <div class="zugang" id="zugang" aria-live="polite"><p>Wird geladen …</p></div>`;
 }
 
+/** What to tell a visitor whose new key was refused (the same limits apply on the page and through the account). */
+const zuVieleText = (r) => (r.fehler === 'zuviele-heute' ? 'Heute wurden schon sehr viele Zugänge erzeugt. Morgen geht es wieder.' : 'Von diesem Anschluss wurden heute schon drei Zugänge erzeugt. Morgen geht es wieder.');
+
+// set while the page is shown: the sign-in page's address, and a line for the next rendering
+let kontoHub = null;
+let kontoTage = null;
+let nachricht = '';
+
 const adressfeld = (adresse, haupt = true) => `<div class="ki__adresse"><code class="ki__url">${esc(adresse)}</code><button type="button" class="knopf${haupt ? ' knopf--haupt' : ''}" data-zugang="kopieren" data-text="${esc(adresse)}">Kopieren</button></div>`;
 
-const gespeichert = `
+const gespeichert = (konto) => `
   <details class="zk zk--ruhig">
     <summary>Was dabei gespeichert wird</summary>
-    <p>Fundus speichert von deinem Zugang nur einen Hashwert des Schlüssels, den Tag der Erzeugung, den Tag der letzten Nutzung und die Zahl der Aufrufe der letzten Tage. Was dein Assistent sucht, wird nicht festgehalten. Der Schlüssel selbst liegt nur in diesem Browser (<code>${MERK}</code>), und erst, wenn du auf „Zugang erzeugen“ klickst. Löschst du den Zugang, sind Hashwert und Zahlen weg. Alles Weitere steht in der <a href="${esc(BETREIBER.datenschutz)}" rel="noopener" target="_blank">Datenschutzerklärung</a>.</p>
+    <p>Fundus speichert von deinem Zugang nur einen Hashwert des Schlüssels, den Tag der Erzeugung, den Tag der letzten Nutzung und die Zahl der Aufrufe der letzten Tage. Was dein Assistent sucht, wird nicht festgehalten. Der Schlüssel selbst liegt nur in diesem Browser (<code>${MERK}</code>), und erst, wenn du auf „Zugang erzeugen“ klickst. Löschst du den Zugang, sind Hashwert und Zahlen weg. Alles Weitere steht in der <a href="${esc(BETREIBER.datenschutz)}" rel="noopener" target="_blank">Datenschutzerklärung</a>.</p>${konto ? `
+    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus erfährt und speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis zu „Verbindung lösen“. Den Namen siehst du nur hier, gespeichert wird er nicht.</p>` : ''}
   </details>`;
 
 const mehr = (kennung) => `
@@ -38,6 +48,35 @@ const mehr = (kennung) => `
     ${kennung ? `<p class="zugang__kennung"><span>Kennung</span><code>${esc(kennung)}</code></p>` : ''}
     <p class="zugang__wege"><a class="knopf" href="${DISCORD}" rel="noopener" target="_blank">Discord</a><a class="knopf" href="${IMPRESSUM}" rel="noopener" target="_blank">Kontakt im Impressum</a></p>
   </section>`;
+
+/** The card "Mit fynn.land-Konto". k = { name, ersetzt, bis } while signed in; s = the key's state, if there is one. */
+function kontoKarte(g, k, s) {
+  if (kontoHub === null) return '';
+  const meldung = nachricht ? `<p class="hinweis" role="status">${esc(nachricht)}</p>` : '';
+  const status = '<p class="zugang__klein" id="konto-status" role="status"></p>';
+  if (k) {
+    return `
+  <section class="zk zugang__konto">
+    <h2>Mit fynn.land-Konto verbunden</h2>
+    ${meldung}
+    <p>${k.name ? `Angemeldet als <strong>${esc(k.name)}</strong>. ` : 'Angemeldet. '}Dein Zugang hat ${zahl(g.konto)} Aufrufe am Tag und ist auf jedem Gerät da, auf dem du dich anmeldest.</p>
+    ${k.ersetzt ? '<p class="zugang__klein">Der Zugang, den dieser Browser vorher hatte, bleibt bestehen, wird hier aber nicht mehr angezeigt. Ab jetzt gilt der aus deinem Konto.</p>' : ''}
+    <p class="zugang__klein">Die Verbindung gilt ${kontoTage} Tage ab dem letzten Besuch dieser Seite, derzeit bis zum ${esc(datum(k.bis))}. Löst du sie, bleibt der Zugang in diesem Browser mit ${zahl(g.browser)} Aufrufen am Tag, und der Schlüssel verschwindet aus deinem Konto.</p>
+    <p><button type="button" class="knopf knopf--klein" data-zugang="trennen">Verbindung lösen</button></p>
+    ${status}
+  </section>`;
+  }
+  const verbunden = s?.stufe === 'konto';
+  return `
+  <section class="zk zugang__konto">
+    <h2>Mit fynn.land-Konto</h2>
+    ${meldung}
+    <p>${verbunden ? 'Dieser Zugang hängt an einem fynn.land-Konto, aber du bist hier nicht angemeldet. Melde dich an, damit die Verbindung bestehen bleibt.' : `Mit deinem fynn.land-Konto bekommst du ${zahl(g.konto)} Aufrufe am Tag statt ${zahl(g.browser)}, und dein Zugang ist auf jedem Gerät da, auf dem du dich anmeldest.`}</p>
+    <p><button type="button" class="knopf${verbunden ? '' : ' knopf--haupt'}" data-zugang="anmelden">Mit Konto anmelden</button></p>
+    <p class="zugang__klein">Du gehst kurz zu fynn.land und kommst hierher zurück. Fundus speichert weder deinen Namen noch deine E-Mail-Adresse noch die Kennung deines Kontos.</p>
+    ${status}
+  </section>`;
+}
 
 /** The ring: how much of today's allowance is used. Drawn as two circles, the second one cut to the share. */
 function ring(heute, grenze) {
@@ -60,7 +99,7 @@ function woche(tage) {
   return `<ol class="zugang__woche">${tage.map((t, i) => `<li${i === tage.length - 1 ? ' class="ist-heute"' : ''}><span class="zugang__n">${zahl(t.n)}</span><span class="zugang__saeule"><span class="zugang__balken" style="height:${Math.max(3, Math.round((t.n / hoch) * 100))}%"></span></span><span class="zugang__tag">${i === tage.length - 1 ? 'Heute' : esc(wochentag.format(new Date(`${t.tag}T12:00:00Z`)).replace('.', ''))}</span></li>`).join('')}</ol>`;
 }
 
-function ohneZugang(g) {
+function ohneZugang(g, konto) {
   return `
   <div class="zugang__stufen">
     <section class="zk">
@@ -76,11 +115,12 @@ function ohneZugang(g) {
       <p class="zugang__klein" id="zugang-status"></p>
     </section>
   </div>
+  ${konto}
   ${mehr(null)}
-  ${gespeichert}`;
+  ${gespeichert(Boolean(konto))}`;
 }
 
-function mitZugang(key, s) {
+function mitZugang(key, s, konto) {
   const adresse = `${MCP}?key=${key}`;
   const rest = Math.max(0, s.grenze - s.heute);
   return `
@@ -102,10 +142,19 @@ function mitZugang(key, s) {
     <h2>Letzte sieben Tage</h2>
     ${woche(s.tage)}
   </section>
+  ${konto}
   ${mehr(s.kennung)}
-  ${gespeichert}
+  ${gespeichert(Boolean(konto))}
   <p class="zugang__ende">Zugang erzeugt am ${esc(datum(s.erzeugt))}. <button type="button" class="knopf knopf--klein" data-zugang="loeschen">Zugang löschen</button> <span id="zugang-status"></span></p>`;
 }
+
+/** What the visitor is told when a sign-in or a call to the account did not work. */
+function kontoProblem(r) {
+  if (r.status === 429) return zuVieleText(r);
+  if (r.fehler === 'sitzung') return 'Deine Anmeldung ist abgelaufen. Melde dich neu an, damit dein Zugang mit Konto weiter gilt.';
+  return 'Das Konto ist gerade nicht erreichbar. Dein Zugang gilt weiter wie bisher.';
+}
+const ruckText = { abgebrochen: 'Die Anmeldung wurde abgebrochen.', 'anderer-tab': 'Die Anmeldung konnte nicht abgeschlossen werden, weil sie in einem anderen Tab begonnen wurde oder zu lange gedauert hat. Versuch es noch einmal.', code: 'Die Anmeldung hat nicht geklappt. Versuch es noch einmal.', 'nicht-bereit': 'Die Anmeldung mit dem Konto ist noch nicht freigeschaltet.', konto: 'Das Konto ist gerade nicht erreichbar. Versuch es gleich noch einmal.' };
 
 async function zeigen(feld) {
   let info;
@@ -121,14 +170,34 @@ async function zeigen(feld) {
     </section>`;
     return;
   }
-  const key = store.get(MERK);
-  if (!key) { feld.innerHTML = ohneZugang(info.grenzen); return; }
-  const s = await frage('stand', { key }).catch(() => ({ ok: false, status: 0 }));
-  if (s.ok) { feld.innerHTML = mitZugang(key, s); return; }
+  kontoHub = info.konto ? info.hub : null;
+  kontoTage = info.konto ? info.kontoTage : null;
+  let key = store.get(MERK);
+  let k = null;          // the account, while a valid session is there: { name, ersetzt, bis }
+  let stand = null;      // the key's state, as far as the account call already told it
+  let hinweis = '';
+  if (info.konto) {
+    const rueck = await abschliessen();
+    if (rueck && !rueck.ok) hinweis = ruckText[rueck.grund] ?? ruckText.konto;
+    if (sitzung()) {
+      // opening the page with a valid session also renews the ninety days
+      const r = await verbinden(key);
+      if (r.ok) { key = r.key; store.set(MERK, key); stand = r; k = { name: r.name, ersetzt: r.ersetzt, bis: r.kontoBis }; }
+      else {
+        if (r.status === 401) sitzungVergessen();
+        hinweis = kontoProblem(r);
+      }
+    }
+  }
+  nachricht = nachricht || hinweis;
+  const karte = (s) => { const t = kontoKarte(info.grenzen, k, s); nachricht = ''; return t; };
+  if (!key) { feld.innerHTML = ohneZugang(info.grenzen, karte(null)); return; }
+  const s = stand ?? await frage('stand', { key }).catch(() => ({ ok: false, status: 0 }));
+  if (s.ok) { feld.innerHTML = mitZugang(key, s, karte(s)); return; }
   if (s.status === 404) {
     // deleted on the server (ninety unused days, or deleted from another tab): the address here is dead
     store.remove(MERK);
-    feld.innerHTML = `<p class="hinweis">Der Zugang, den dieser Browser sich gemerkt hatte, existiert nicht mehr.</p>${ohneZugang(info.grenzen)}`;
+    feld.innerHTML = `<p class="hinweis">Der Zugang, den dieser Browser sich gemerkt hatte, existiert nicht mehr.</p>${ohneZugang(info.grenzen, karte(null))}`;
     return;
   }
   feld.innerHTML = '<p>Der Verbrauch ließ sich gerade nicht laden. Dein Zugang ist davon nicht betroffen; versuch es gleich noch einmal.</p>';
@@ -142,8 +211,8 @@ export function zugangBereit(main) {
   feld.addEventListener('click', async (e) => {
     const knopf = e.target.closest('[data-zugang]');
     if (!knopf) return;
-    const status = feld.querySelector('#zugang-status');
     const was = knopf.dataset.zugang;
+    const status = feld.querySelector(was === 'anmelden' || was === 'trennen' ? '#konto-status' : '#zugang-status');
     if (was === 'kopieren') {
       try { await navigator.clipboard.writeText(knopf.dataset.text); knopf.textContent = 'Kopiert'; } catch { getSelection().selectAllChildren(knopf.parentElement.querySelector('code')); knopf.textContent = 'Markiert'; }
       setTimeout(() => { knopf.textContent = 'Kopieren'; }, 1800);
@@ -153,11 +222,20 @@ export function zugangBereit(main) {
     if (was === 'neu') {
       const r = await frage('neu', {}).catch(() => ({ ok: false, status: 0 }));
       if (r.ok && r.key) { store.set(MERK, r.key); feld.innerHTML = mitZugang(r.key, r); return; }
-      if (status) status.textContent = r.fehler === 'zuviele-heute' ? 'Heute wurden schon sehr viele Zugänge erzeugt. Morgen geht es wieder.' : r.status === 429 ? 'Von diesem Anschluss wurden heute schon drei Zugänge erzeugt. Morgen geht es wieder.' : 'Das hat gerade nicht geklappt. Versuch es gleich noch einmal.';
+      if (status) status.textContent = r.status === 429 ? zuVieleText(r) : 'Das hat gerade nicht geklappt. Versuch es gleich noch einmal.';
+    }
+    if (was === 'anmelden') {
+      if (!(await anmelden(kontoHub))) { if (status) status.textContent = 'Dein Browser lässt die Anmeldung nicht zu, weil er für diese Seite nichts zwischenspeichern darf.'; knopf.disabled = false; }
+      return; // the page is being left
+    }
+    if (was === 'trennen') {
+      const r = await loesen(store.get(MERK));
+      if (r.ok) { nachricht = r.imKonto ? 'Die Verbindung ist gelöst. Der Schlüssel ist aus deinem Konto entfernt und der Zugang bleibt in diesem Browser.' : 'Die Verbindung ist gelöst. Deine Anmeldung war abgelaufen, darum liegt der Schlüssel noch in deinem Konto. Er verschwindet, wenn du dich anmeldest und die Verbindung noch einmal löst.'; await zeigen(feld); return; }
+      if (status) status.textContent = 'Das Lösen hat gerade nicht geklappt. Versuch es gleich noch einmal.';
     }
     if (was === 'loeschen') {
-      const r = await frage('loeschen', { key: store.get(MERK) }).catch(() => ({ ok: false }));
-      if (r.ok) { store.remove(MERK); await zeigen(feld); return; }
+      const r = await frage('loeschen', { key: store.get(MERK), ...(sitzung() ? { session: sitzung() } : {}) }).catch(() => ({ ok: false }));
+      if (r.ok) { store.remove(MERK); sitzungVergessen(); await zeigen(feld); return; }
       if (status) status.textContent = 'Das Löschen hat gerade nicht geklappt. Versuch es gleich noch einmal.';
     }
     knopf.disabled = false;
@@ -172,5 +250,6 @@ export async function datenschutzBereit(main) {
   if (!info.ok || !info.an) return;
   feld.innerHTML = `
   <h2>Zugang für KI-Assistenten</h2>
-  <p>Damit niemand den Zugang unter <code>${MCP}</code> mit Anfragen überflutet, zählt Fundus die Aufrufe je Tag: ohne eigenen Zugang zu einem Hashwert aus deiner IP-Adresse, dem Datum und einem geheimen Wert, der jeden Tag ein anderer ist und nach dem folgenden Tag gelöscht wird. Die IP-Adresse selbst und deine Suchbegriffe werden nicht gespeichert. Einen eigenen Zugang mit eigenem Kontingent erzeugst du freiwillig auf der Seite <a href="#/zugang">Dein Zugang</a>; dort steht auch, was dazu gespeichert wird. Dein Browser merkt sich den Schlüssel dann im lokalen Speicher (<code>${MERK}</code>). Du löschst ihn auf derselben Seite; der Knopf unten lässt ihn stehen.</p>`;
+  <p>Damit niemand den Zugang unter <code>${MCP}</code> mit Anfragen überflutet, zählt Fundus die Aufrufe je Tag: ohne eigenen Zugang zu einem Hashwert aus deiner IP-Adresse, dem Datum und einem geheimen Wert, der jeden Tag ein anderer ist und nach dem folgenden Tag gelöscht wird. Die IP-Adresse selbst und deine Suchbegriffe werden nicht gespeichert. Einen eigenen Zugang mit eigenem Kontingent erzeugst du freiwillig auf der Seite <a href="#/zugang">Dein Zugang</a>; dort steht auch, was dazu gespeichert wird. Dein Browser merkt sich den Schlüssel dann im lokalen Speicher (<code>${MERK}</code>). Du löschst ihn auf derselben Seite; der Knopf unten lässt ihn stehen.</p>${info.konto ? `
+  <p>Wenn du deinen Zugang mit deinem fynn.land-Konto verbindest, speichert Fundus dazu nur, dass er ein Konto-Zugang ist, und den Tag, bis zu dem das gilt (${info.kontoTage} Tage nach deinem letzten Besuch von <a href="#/zugang">Dein Zugang</a> mit gültiger Anmeldung). Der Schlüssel liegt dann in deinem Konto. Fundus erfährt und speichert weder deinen Namen noch deine E-Mail-Adresse noch die Kennung deines Kontos. Dein Browser merkt sich die Anmeldung im lokalen Speicher (<code>fundus.konto</code>), bis du die Verbindung auf derselben Seite löst.</p>` : ''}`;
 }

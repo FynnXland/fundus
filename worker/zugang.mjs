@@ -26,12 +26,34 @@ const SCHLUESSEL = /^[A-Za-z0-9_-]{32,64}$/;
 
 export const SCHEMA = [
   'CREATE TABLE IF NOT EXISTS zaehler (tag TEXT NOT NULL, wer TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (tag, wer)) WITHOUT ROWID',
-  "CREATE TABLE IF NOT EXISTS zugang (hash TEXT PRIMARY KEY, kennung TEXT NOT NULL, stufe TEXT NOT NULL DEFAULT 'browser', grenze INTEGER, gesperrt INTEGER NOT NULL DEFAULT 0, notiz TEXT, erzeugt TEXT NOT NULL, zuletzt TEXT) WITHOUT ROWID",
+  "CREATE TABLE IF NOT EXISTS zugang (hash TEXT PRIMARY KEY, kennung TEXT NOT NULL, stufe TEXT NOT NULL DEFAULT 'browser', grenze INTEGER, gesperrt INTEGER NOT NULL DEFAULT 0, notiz TEXT, erzeugt TEXT NOT NULL, zuletzt TEXT, konto_bis TEXT) WITHOUT ROWID",
 ];
+// A database made before the account link (Stufe 2) gets the column once, from worker/zugang-konto.sql, BEFORE the
+// deploy: pruefe() reads konto_bis, and a failing read lets everybody through (see the catch there).
+export const SCHEMA_KONTO = ['ALTER TABLE zugang ADD COLUMN konto_bis TEXT'];
 
 export const an = (env) => env?.ZUGANG === '1' && Boolean(env?.DB) && Boolean(env?.ZAEHLER_GEHEIM);
+/** The account link (docs/MCP-ZUGANG-ENTWURF.md, Stufe 2): its own switch, and the service binding must exist. */
+export const kontoAn = (env) => an(env) && env?.KONTO === '1' && Boolean(env?.ACCOUNTS);
 export const heute = (jetzt = Date.now()) => new Date(jetzt).toISOString().slice(0, 10);
 const tagVor = (n, jetzt = Date.now()) => heute(jetzt - n * 864e5);
+export const KONTO_TAGE = 90;
+const GAME = 'fundus';
+
+// The column konto_bis is read only while KONTO is on, so the code can be deployed before or after the ALTER
+// without changing anything for anybody as long as the switch is off.
+const kontoSpalte = (env) => (env?.KONTO === '1' ? ', konto_bis' : '');
+
+/**
+ * The tier a key has today. 'konto' holds only while the switch is on and konto_bis has not passed; otherwise the key
+ * counts like one from the browser. pruefe, the page and the dashboard all go through this, so the ring never shows a
+ * number other than the one that is enforced.
+ */
+export function wirkStufe(env, z, tag) {
+  if (z.stufe !== 'konto') return z.stufe;
+  return env?.KONTO === '1' && z.konto_bis && z.konto_bis >= tag ? 'konto' : 'browser';
+}
+const grenzeVon = (z, stufe) => z.grenze ?? GRENZEN[stufe] ?? GRENZEN.browser;
 const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 
 export async function sha256(text) {
@@ -90,11 +112,12 @@ export async function pruefe(env, request, n = 1, jetzt = Date.now()) {
     if (key === '') return { ...offen, erlaubt: false, stufe: 'schluessel', grund: 'unbekannt' };
     if (key) {
       const hash = await sha256(key);
-      const z = await env.DB.prepare('SELECT stufe, grenze, gesperrt, zuletzt FROM zugang WHERE hash = ?1').bind(hash).first();
+      const z = await env.DB.prepare(`SELECT stufe, grenze, gesperrt, zuletzt${kontoSpalte(env)} FROM zugang WHERE hash = ?1`).bind(hash).first();
       const kennung = kennungVon(hash);
       if (!z) return { ...offen, erlaubt: false, stufe: 'schluessel', kennung, grund: 'unbekannt' };
+      z.stufe = wirkStufe(env, z, tag);
       if (z.gesperrt) return { ...offen, erlaubt: false, stufe: z.stufe, kennung, grund: 'gesperrt' };
-      const grenze = z.grenze ?? GRENZEN[z.stufe] ?? GRENZEN.browser;
+      const grenze = grenzeVon(z, z.stufe);
       const lauf = [zaehle(env.DB, tag, `k:${hash.slice(0, 32)}`, n)];
       // one extra row a day, not one per call
       if (z.zuletzt !== tag) lauf.push(env.DB.prepare('UPDATE zugang SET zuletzt = ?1 WHERE hash = ?2').bind(tag, hash));
@@ -160,13 +183,14 @@ export function limitAntwort(ids, text) {
 const json = (daten, status = 200) => new Response(JSON.stringify(daten), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 
 async function standVon(env, hash, jetzt) {
-  const z = await env.DB.prepare('SELECT kennung, stufe, grenze, gesperrt, erzeugt FROM zugang WHERE hash = ?1').bind(hash).first();
+  const z = await env.DB.prepare(`SELECT kennung, stufe, grenze, gesperrt, erzeugt${kontoSpalte(env)} FROM zugang WHERE hash = ?1`).bind(hash).first();
   if (!z) return null;
+  const stufe = wirkStufe(env, z, heute(jetzt));
   const seit = tagVor(6, jetzt);
   const { results } = await env.DB.prepare('SELECT tag, n FROM zaehler WHERE wer = ?1 AND tag >= ?2 ORDER BY tag').bind(`k:${hash.slice(0, 32)}`, seit).all();
   const nach = new Map(results.map((r) => [r.tag, r.n]));
   const tage = Array.from({ length: 7 }, (_, i) => { const tag = tagVor(6 - i, jetzt); return { tag, n: nach.get(tag) ?? 0 }; });
-  return { kennung: z.kennung, stufe: z.stufe, grenze: z.grenze ?? GRENZEN[z.stufe] ?? GRENZEN.browser, gesperrt: Boolean(z.gesperrt), erzeugt: z.erzeugt, heute: tage[6].n, tage };
+  return { kennung: z.kennung, stufe, grenze: grenzeVon(z, stufe), gesperrt: Boolean(z.gesperrt), erzeugt: z.erzeugt, ...(stufe === 'konto' ? { kontoBis: z.konto_bis } : {}), heute: tage[6].n, tage };
 }
 
 /**
@@ -176,31 +200,23 @@ async function standVon(env, hash, jetzt) {
 export async function api(request, env, jetzt = Date.now()) {
   const url = new URL(request.url);
   const was = url.pathname.replace(/^\/api\/zugang\/?/, '');
-  if (was === 'info') return json({ an: an(env), grenzen: an(env) ? { anonym: GRENZEN.anonym, browser: GRENZEN.browser, konto: GRENZEN.konto } : null });
+  if (was === 'info') {
+    const hub = typeof env.FYNNLAND_HUB === 'string' && /^https?:\/\/[^/]+$/.test(env.FYNNLAND_HUB) ? env.FYNNLAND_HUB : HUB;
+    return json({ an: an(env), konto: kontoAn(env), ...(kontoAn(env) ? { hub, kontoTage: KONTO_TAGE } : {}), grenzen: an(env) ? { anonym: GRENZEN.anonym, browser: GRENZEN.browser, konto: GRENZEN.konto } : null });
+  }
   if (!an(env)) return json({ fehler: 'aus' }, 404);
   if (request.method !== 'POST') return json({ fehler: 'methode' }, 405);
   if (request.headers.get('Origin') !== url.origin) return json({ fehler: 'herkunft' }, 403);
   let eingabe = {};
-  try { eingabe = JSON.parse((await request.text()).slice(0, 400)); } catch { /* leer */ }
+  try { eingabe = JSON.parse((await request.text()).slice(0, 600)); } catch { /* leer */ }
+  if (!eingabe || typeof eingabe !== 'object') eingabe = {};
   try {
+    if (was.startsWith('konto/')) return kontoApi(was.slice(6), request, env, eingabe, jetzt);
     if (was === 'neu') {
-      const tag = heute(jetzt);
-      const wer = `neu:${(await ipKennung(env, request.headers.get('CF-Connecting-IP'), tag)).slice(3)}`;
-      const r = await zaehle(env.DB, tag, wer, 1).first();
-      if (r.n > GRENZEN.neueSchluessel) return json({ fehler: 'zuviele' }, 429);
-      if ((await zaehle(env.DB, tag, 'neu', 1).first()).n > GRENZEN.neueSchluesselGesamt) return json({ fehler: 'zuviele-heute' }, 429);
-      // The short name is what a grant, a block or a reset goes by, so it must name one key only: with eight hex
-      // digits two keys meet once there are some tens of thousands. A new key whose name is taken is thrown again.
-      let key;
-      let hash;
-      for (let versuch = 0; ; versuch++) {
-        key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(30)))).replace(/\+/g, '-').replace(/\//g, '_');
-        hash = await sha256(key);
-        if (!(await env.DB.prepare('SELECT 1 AS da FROM zugang WHERE kennung = ?1').bind(kennungVon(hash)).first())) break;
-        if (versuch >= 5) return json({ fehler: 'speicher' }, 503);
-      }
-      await env.DB.prepare("INSERT INTO zugang (hash, kennung, stufe, erzeugt) VALUES (?1, ?2, 'browser', ?3)").bind(hash, kennungVon(hash), tag).run();
-      return json({ key, ...(await standVon(env, hash, jetzt)) });
+      const n = await neuerSchluessel(env, request, jetzt);
+      if (n.antwort) return n.antwort;
+      await anlegen(env, n.hash, 'browser', heute(jetzt));
+      return json({ key: n.key, ...(await standVon(env, n.hash, jetzt)) });
     }
     const key = typeof eingabe.key === 'string' && SCHLUESSEL.test(eingabe.key) ? eingabe.key : null;
     if (!key) return json({ fehler: 'schluessel' }, 400);
@@ -214,12 +230,158 @@ export async function api(request, env, jetzt = Date.now()) {
         env.DB.prepare('DELETE FROM zugang WHERE hash = ?1').bind(hash),
         env.DB.prepare('DELETE FROM zaehler WHERE wer = ?1').bind(`k:${hash.slice(0, 32)}`),
       ]);
+      // A key that hangs on an account must not come back from there: the page names its session, and the key leaves
+      // the account's data too (best effort; the key is gone from Fundus either way).
+      if (kontoAn(env) && SITZUNG.test(eingabe.session)) await kontoTrennen(env, eingabe.session, kontoMeta(request));
       return json({ ok: true });
     }
     return json({ fehler: 'pfad' }, 404);
   } catch {
     return json({ fehler: 'speicher' }, 503);
   }
+}
+
+/**
+ * A fresh key, not yet stored: counts against the new-key limits per address and for everybody (so the account link
+ * is no way around them) and makes sure its short name is free. { key, hash } or { antwort } (the refusal).
+ * The short name is what a grant, a block or a reset goes by, so it must name one key only: with eight hex
+ * digits two keys meet once there are some tens of thousands. A new key whose name is taken is thrown again.
+ */
+async function neuerSchluessel(env, request, jetzt) {
+  const tag = heute(jetzt);
+  const wer = `neu:${(await ipKennung(env, request.headers.get('CF-Connecting-IP'), tag)).slice(3)}`;
+  const r = await zaehle(env.DB, tag, wer, 1).first();
+  if (r.n > GRENZEN.neueSchluessel) return { antwort: json({ fehler: 'zuviele' }, 429) };
+  if ((await zaehle(env.DB, tag, 'neu', 1).first()).n > GRENZEN.neueSchluesselGesamt) return { antwort: json({ fehler: 'zuviele-heute' }, 429) };
+  for (let versuch = 0; versuch <= 5; versuch++) {
+    const key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(30)))).replace(/\+/g, '-').replace(/\//g, '_');
+    const hash = await sha256(key);
+    if (!(await env.DB.prepare('SELECT 1 AS da FROM zugang WHERE kennung = ?1').bind(kennungVon(hash)).first())) return { key, hash };
+  }
+  return { antwort: json({ fehler: 'speicher' }, 503) };
+}
+
+const tagNach = (n, jetzt) => heute(jetzt + n * 864e5);
+
+/** Stores a key's row. Tier 'konto' carries the day until which it holds. */
+async function anlegen(env, hash, stufe, tag, bis = null) {
+  if (stufe === 'konto') await env.DB.prepare("INSERT INTO zugang (hash, kennung, stufe, erzeugt, konto_bis) VALUES (?1, ?2, 'konto', ?3, ?4)").bind(hash, kennungVon(hash), tag, bis).run();
+  else await env.DB.prepare("INSERT INTO zugang (hash, kennung, stufe, erzeugt) VALUES (?1, ?2, 'browser', ?3)").bind(hash, kennungVon(hash), tag).run();
+}
+
+/* ---------------- The link to the fynn.land account (Stufe 2) ---------------- */
+// Routes /api/zugang/konto/…, only with ZUGANG and KONTO on and the service binding ACCOUNTS (the account server,
+// entrypoint Accounts, sdk/README.md of fynnland-konto). The game id there is "fundus".
+//   tausch     { code, verifier }       the code from the sign-in page against a session of this site (PKCE)
+//   verbinden  { session, key? }        the key from the account's data; without one the browser's key or a new one goes in
+//   loesen     { session?, key? }       back to the browser tier; the key leaves the account's data, the session ends
+// Fundus stores of all this: the tier 'konto' and its end date on the key's row. Not the account id, not the name, not
+// an e-mail address, not the session: the session lives in the visitor's browser, the name goes to the page only.
+// The tier follows what the ACCOUNT holds, never what the request body claims: otherwise one account could lift any
+// number of keys to the higher allowance.
+
+export const HUB = 'https://fynn.land';
+const SITZUNG = /^[A-Za-z0-9._~-]{20,100}$/;
+const CODE = /^[A-Za-z0-9_-]{22}$/;
+const VERIFIER = /^[A-Za-z0-9._~-]{43,128}$/;
+const kontoMeta = (request) => ({ origin: new URL(request.url).origin, ip: request.headers.get('CF-Connecting-IP') || '127.0.0.1' });
+
+/** A call to the account server. The methods do not throw, but a binding can; an answer is always an object. */
+async function beimKonto(fn) {
+  try {
+    const r = await fn();
+    return r && typeof r === 'object' ? r : { ok: false, status: 502, code: 'badAnswer' };
+  } catch {
+    return { ok: false, status: 502, code: 'binding' };
+  }
+}
+
+/** The page's answer to a refused call: a dead session, a busy server, "Fundus is not registered there yet", the rest. */
+function kontoFehler(r) {
+  if (r.status === 401) return json({ fehler: 'sitzung' }, 401);
+  if (r.status === 429) return json({ fehler: 'zuviele' }, 429);
+  if (r.status === 403 || r.status === 404) return json({ fehler: 'nicht-bereit' }, 503);
+  return json({ fehler: 'konto' }, 502);
+}
+
+/** Only what the page shows: the account's name, else the provider's. Never stored. */
+function nameVon(konto) {
+  for (const n of [konto?.name, konto?.providerName]) if (typeof n === 'string' && n.trim()) return n.trim().slice(0, 40);
+  return null;
+}
+
+/** The key an account holds in its data for this site, if it is one. */
+const schluesselImKonto = (daten) => (typeof daten?.key === 'string' && SCHLUESSEL.test(daten.key) ? daten.key : null);
+
+const zeile = (env, hash) => env.DB.prepare(`SELECT kennung, stufe, grenze, gesperrt${kontoSpalte(env)} FROM zugang WHERE hash = ?1`).bind(hash).first();
+
+/** Ends a session and clears the key from the account's data. Best effort; true when the data was cleared. */
+async function kontoTrennen(env, session, meta) {
+  const weg = await beimKonto(() => env.ACCOUNTS.saveGameData(GAME, session, null, meta));
+  await beimKonto(() => env.ACCOUNTS.op(GAME, 'logout', { session }, meta));
+  return weg.ok === true;
+}
+
+async function kontoApi(was, request, env, eingabe, jetzt) {
+  if (!kontoAn(env)) return json({ fehler: 'aus' }, 404);
+  const meta = kontoMeta(request);
+  const tag = heute(jetzt);
+
+  if (was === 'tausch') {
+    if (!CODE.test(eingabe.code) || !VERIFIER.test(eingabe.verifier)) return json({ fehler: 'code' }, 400);
+    const r = await beimKonto(() => env.ACCOUNTS.op(GAME, 'exchange', { code: eingabe.code, verifier: eingabe.verifier }, meta));
+    if (!r.ok) return r.status === 400 ? json({ fehler: 'code' }, 400) : kontoFehler(r);
+    if (!SITZUNG.test(r.session)) return json({ fehler: 'konto' }, 502);
+    return json({ session: r.session, name: nameVon(r.account) });
+  }
+
+  if (!SITZUNG.test(eingabe.session)) return json({ fehler: 'sitzung' }, 401);
+  const browserKey = typeof eingabe.key === 'string' && SCHLUESSEL.test(eingabe.key) ? eingabe.key : null;
+
+  if (was === 'verbinden') {
+    const d = await beimKonto(() => env.ACCOUNTS.gameData(GAME, eingabe.session, meta));
+    if (!d.ok) return kontoFehler(d);
+    const bis = tagNach(KONTO_TAGE, jetzt);
+    let key = schluesselImKonto(d.data);
+    let hash = key ? await sha256(key) : null;
+    let z = hash ? await zeile(env, hash) : null;
+    // A key the account holds whose row is gone (ninety unused days) comes back as it is, unless its short name has
+    // been taken by another key meanwhile.
+    if (key && !z && await env.DB.prepare('SELECT 1 AS da FROM zugang WHERE kennung = ?1').bind(kennungVon(hash)).first()) { key = null; hash = null; }
+    if (!key && browserKey) {
+      // The account holds nothing: this browser's key moves in, but only a key that exists.
+      const h = await sha256(browserKey);
+      const row = await zeile(env, h);
+      if (row) { key = browserKey; hash = h; z = row; }
+    }
+    let neu = null;
+    if (!key) {
+      neu = await neuerSchluessel(env, request, jetzt);
+      if (neu.antwort) return neu.antwort;
+      ({ key, hash } = neu);
+    }
+    // The account first: if it cannot take the key, nothing changes on this side and the visitor keeps what they had.
+    if (schluesselImKonto(d.data) !== key) {
+      const s = await beimKonto(() => env.ACCOUNTS.saveGameData(GAME, eingabe.session, { key }, meta));
+      if (!s.ok) return kontoFehler(s);
+    }
+    if (!z) await anlegen(env, hash, 'konto', tag, bis);
+    else if (z.stufe !== 'konto' || z.konto_bis !== bis) await env.DB.prepare("UPDATE zugang SET stufe = 'konto', konto_bis = ?1 WHERE hash = ?2").bind(bis, hash).run();
+    const me = await beimKonto(() => env.ACCOUNTS.op(GAME, 'me', { session: eingabe.session }, meta));
+    return json({ key, name: me.ok ? nameVon(me.account) : null, ersetzt: Boolean(browserKey && browserKey !== key), ...(await standVon(env, hash, jetzt)) });
+  }
+
+  if (was === 'loesen') {
+    // Back to the browser tier for the key the account holds and the one this browser holds (a holder may already
+    // delete their key, so downgrading it needs no proof from the account). Then the key leaves the account.
+    const d = await beimKonto(() => env.ACCOUNTS.gameData(GAME, eingabe.session, meta));
+    const hashes = new Set();
+    for (const k of [d.ok ? schluesselImKonto(d.data) : null, browserKey]) if (k) hashes.add(await sha256(k));
+    for (const h of hashes) await env.DB.prepare("UPDATE zugang SET stufe = 'browser', konto_bis = NULL WHERE hash = ?1 AND stufe = 'konto'").bind(h).run();
+    const imKonto = d.ok ? await kontoTrennen(env, eingabe.session, meta) : false;
+    return json({ ok: true, imKonto });
+  }
+  return json({ fehler: 'pfad' }, 404);
 }
 
 /* ---------------- The admin dashboard (service binding, worker/admin.mjs) ---------------- */
@@ -238,8 +400,9 @@ export const admin = {
   /** Every access key by its short name, with tier, allowance, note and today's calls. */
   list: (env, jetzt = Date.now()) => sicher(async () => {
     const tag = heute(jetzt);
-    const { results } = await env.DB.prepare("SELECT z.kennung, z.stufe, z.grenze, z.gesperrt, z.notiz, z.erzeugt, z.zuletzt, COALESCE(c.n, 0) AS heute FROM zugang z LEFT JOIN zaehler c ON c.tag = ?1 AND c.wer = 'k:' || substr(z.hash, 1, 32) ORDER BY heute DESC, z.zuletzt DESC LIMIT 500").bind(tag).all();
-    return { ok: true, zugaenge: results.map((r) => ({ ...r, gesperrt: Boolean(r.gesperrt), grenze: r.grenze ?? GRENZEN[r.stufe] ?? GRENZEN.browser, eigeneGrenze: r.grenze != null })) };
+    const { results } = await env.DB.prepare(`SELECT z.kennung, z.stufe, z.grenze, z.gesperrt, z.notiz, z.erzeugt, z.zuletzt${kontoSpalte(env).replace(', ', ', z.')}, COALESCE(c.n, 0) AS heute FROM zugang z LEFT JOIN zaehler c ON c.tag = ?1 AND c.wer = 'k:' || substr(z.hash, 1, 32) ORDER BY heute DESC, z.zuletzt DESC LIMIT 500`).bind(tag).all();
+    // the tier as it holds today (an ended account link counts as browser); the end date itself stays here
+    return { ok: true, zugaenge: results.map(({ konto_bis: bis, ...r }) => { const stufe = wirkStufe(env, { stufe: r.stufe, konto_bis: bis }, tag); return { ...r, stufe, gesperrt: Boolean(r.gesperrt), grenze: grenzeVon(r, stufe), eigeneGrenze: r.grenze != null }; }) };
   }),
   /** A daily allowance of its own for one key (grenze null takes it back), with a note that names no person. */
   grant: (env, kennung, grenze, notiz = '') => sicher(async () => {
@@ -275,5 +438,12 @@ export async function aufraeumen(env, jetzt = Date.now()) {
     env.DB.prepare("DELETE FROM zaehler WHERE tag < ?1 AND wer LIKE 'k:%'").bind(tagVor(8, jetzt)),
     env.DB.prepare("DELETE FROM zugang WHERE stufe = 'browser' AND grenze IS NULL AND gesperrt = 0 AND COALESCE(zuletzt, erzeugt) < ?1").bind(tagVor(90, jetzt)),
   ]);
-  return r.map((x) => x.meta.changes);
+  const geaendert = r.map((x) => x.meta.changes);
+  // An ended account link goes back to the browser tier. On its own, so a database that has not got the column yet
+  // (before worker/zugang-konto.sql ran) does not stop the clean-up above.
+  try {
+    const k = await env.DB.prepare("UPDATE zugang SET stufe = 'browser', konto_bis = NULL WHERE stufe = 'konto' AND (konto_bis IS NULL OR konto_bis < ?1)").bind(heute(jetzt)).run();
+    geaendert.push(k.meta.changes);
+  } catch { /* no column yet */ }
+  return geaendert;
 }

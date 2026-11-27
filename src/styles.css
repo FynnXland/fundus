@@ -717,3 +717,5 @@ a.rundknopf[aria-current='page'] { background: var(--akzent-ton); color: var(--a
 .beliebt { display: inline-block; margin: 4px 4px 0; font-size: 12.5px; color: var(--bleistift); font-variant-numeric: tabular-nums; }
 .info__bewertung { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin: 6px 0 2px; }
 .info__bewertung .beliebt { margin: 0; }
+.zugang__konto strong { font-weight: 600; }
+.dokument .zugang__konto .hinweis { margin: 0 0 12px; }

@@ -243,3 +243,91 @@ Nachtrag am selben Tag, nach einer Gegenprüfung:
   13,5 Millionen ms im Monat (45 % des Enthaltenen), die rechnerisch möglichen 20.000 ohne Freigabe 27 Millionen (90 %).
 - Der Token „fundus-deploy (GitHub Actions)“ hat seit 27.11.2026, 13:09 UTC, zusätzlich das Recht Account, D1, Edit
   (von Fynn im Dashboard gespeichert). Ob der nächtliche Lauf damit durchläuft, zeigt erst die Nacht auf den 28.11.
+
+## Stufe 2: Zugang am fynn.land-Konto (gebaut am 27.11.2026, ausgeschaltet)
+
+Wer mit seinem fynn.land-Konto angemeldet ist, bekommt 500 statt 300 Aufrufe am Tag (`GRENZEN.konto`), und sein Zugang ist
+auf jedem Gerät da, auf dem er sich anmeldet. Gebaut und getestet, aber **ausgeschaltet**: `KONTO: "0"` in
+`wrangler.jsonc`. Mit `"0"` verhalten sich Worker und Seite wie vor Stufe 2.
+
+### Was gebaut ist
+
+| Teil | Wo |
+|---|---|
+| Schalter `KONTO`, Bindung `ACCOUNTS` (`fynnland-konto`, Entrypoint `Accounts`) | `wrangler.jsonc` |
+| Routen `POST /api/zugang/konto/tausch`, `/verbinden`, `/loesen`; `info` meldet `konto`, `hub`, `kontoTage` | `worker/zugang.mjs` |
+| Stufe `konto` mit Ablauf (`konto_bis`), eine Funktion `wirkStufe` für Zähler, Seite und Dashboard | `worker/zugang.mjs` |
+| Neue Spalte, einmal auf der Live-Datenbank auszuführen | `worker/zugang-konto.sql` (`SCHEMA_KONTO` im Code) |
+| Anmeldung im Browser (PKCE), Sitzung, Rückkehr | `src/konto.js`, Aufruf in `src/main.js` |
+| Karte „Mit fynn.land-Konto“ auf `#/zugang`, Ring und Balken zeigen 500 | `src/zugang.js`, `src/styles.css` |
+| Tests mit nachgebautem `ACCOUNTS` | `tests/zugang.test.mjs` (13 neue) |
+
+Ablauf: Die Seite schickt zu `https://fynn.land/konto/login?game=fundus&state=…&challenge=…&prompt=select` (PKCE wie in
+`sdk/README.md` des Kontoservers). Der Kontoserver schickt zu `https://fundus.fynn.land/?fl_code=…&state=…` zurück, auf
+die Wurzel der Seite (eine andere Rückkehradresse gibt es dort nicht); `main.js` stellt `#/zugang` wieder her. Der Worker
+tauscht den Code über `ACCOUNTS.op('fundus', 'exchange', …)` gegen eine Sitzung, die nur für Fundus gilt (der Kontoserver
+löscht sie nach 6 Monaten ohne Nutzung). Mit der Sitzung liest er den Datenstand des Spiels `fundus` (`gameData`):
+
+- Liegt dort ein Schlüssel, gilt er, egal was der Browser mitschickt. Hat Fundus keine Zeile mehr dazu, entsteht sie neu.
+- Liegt dort keiner: Ein Schlüssel dieses Browsers, den es gibt, zieht ins Konto um (`saveGameData`). Sonst entsteht ein
+  neuer, und der zählt gegen dieselben Grenzen wie auf der Seite (3 je Adresse, 200 insgesamt am Tag).
+- Erst wenn das Konto den Schlüssel angenommen hat, setzt Fundus die Zeile auf Stufe `konto` bis heute plus 90 Tage.
+- Jeder Besuch von `#/zugang` mit gültiger Sitzung wiederholt das und verlängert damit auf 90 Tage ab dem Besuch.
+- „Verbindung lösen“: Der Zugang fällt auf `browser` zurück, der Schlüssel wird aus dem Datenstand des Kontos gelöscht,
+  die Sitzung beendet. „Zugang löschen“ mit Sitzung nimmt den Schlüssel ebenfalls aus dem Konto, sonst käme er von dort zurück.
+- Nach Ablauf (`konto_bis` vorbei) zählt der Zugang wie `browser`: im Zähler, auf der Seite und im Dashboard. Der nächtliche
+  Lauf setzt die Zeile dann zurück. Freigaben von Hand (`grenze`) bleiben, wie sie sind.
+
+Der Name des Kontos geht nur zur Seite (`name`, sonst `providerName`), nicht in die Datenbank, und nicht die Kennung
+(`publicId`).
+
+### Was gespeichert wird
+
+| Was | Inhalt | Zweck | Dauer |
+|---|---|---|---|
+| Stufe „Konto“ in der Datenbank von Fundus | in der Zeile des Zugangs: Stufe `konto` und das Datum `konto_bis`. Keine Kontokennung, kein Name, keine E-Mail-Adresse, keine Sitzung | 500 statt 300 Aufrufe, Verwaltung im Konto | 90 Tage ab dem letzten Besuch von `#/zugang` mit gültiger Sitzung, dann zählt der Zugang wieder wie `browser` |
+| Schlüssel im Konto | Datenstand des Spiels `fundus`: `{ "key": "<Schlüssel>" }`, beim Kontoserver (fynn.land, Cloudflare D1) | Zugang auf jedem Gerät | bis zum Lösen der Verbindung, zum Löschen des Zugangs oder des Kontos |
+| Sitzung im Browser | `localStorage` `fundus.konto`: Sitzungsschlüssel, nur für Fundus gültig | angemeldet bleiben | bis „Verbindung lösen“ oder „Zugang löschen“, serverseitig 6 Monate ohne Nutzung |
+| Anmeldung im Browser | `sessionStorage` `fundus.anmeldung`: Zustand und Prüfwert der Anmeldung (PKCE) | Anmeldung abschließen | bis zur Rückkehr von der Anmeldeseite, höchstens 15 Minuten; geht beim Schließen des Tabs weg |
+| Name des Kontos | kommt vom Kontoserver, wird auf der Seite angezeigt | Anzeige „Angemeldet als …“ | nicht gespeichert, nur im Arbeitsspeicher der geöffneten Seite |
+
+Dazu fließen beim Anmelden und bei jedem Besuch folgende Angaben an den Kontoserver (Dienstbindung innerhalb von
+Cloudflare): Spiel `fundus`, Herkunft der Seite, IP-Adresse (nur für dessen Grenzen; er speichert sie nicht) und die
+Sitzung. Die Dashboard-Methoden (`counts`, `list`, …) geben weiter weder Schlüssel noch Hash noch Konto-Angaben heraus;
+`list` zeigt die Stufe so, wie sie heute gilt.
+
+### Was zum Einschalten fehlt
+
+In dieser Reihenfolge:
+
+1. **Datenbank:** `npx wrangler d1 execute fundus --remote --file worker/zugang-konto.sql`, **vor** dem Veröffentlichen
+   dieses Standes, genau einmal (ein zweiter Lauf scheitert an „duplicate column name“). Der Code liest die Spalte nur
+   bei `KONTO: "1"` und das nächtliche Aufräumen fängt eine fehlende Spalte ab, trotzdem zuerst die Spalte.
+2. **Kontoserver (fynn.land-Hauptchat):** Eintrag `fundus` in `ACCOUNT_GAMES` von `fynnland-konto`, mit Fynns OK
+   veröffentlicht:
+   `"fundus": { "name": "Fundus", "origins": ["https://fundus.fynn.land"], "ops": ["exchange", "me", "logout", "gamedata", "savegame"] }`
+   Kennung `fundus` (danach nie mehr ändern), Herkunft `https://fundus.fynn.land`, Rückkehradresse
+   `https://fundus.fynn.land/` (der Kontoserver hängt `?fl_code=…&state=…` an). `saves` bleibt unbelegt (= Standard,
+   die Einwilligung sagt „speichert darin seine eigenen Spieldaten“); `consentSince` ist beim ersten Eintrag nicht nötig.
+   Lokal zum Testen zusätzlich `http://localhost:4572` nur über `.dev.vars` oder `--var` des Kontoservers, nie live.
+3. **Datenschutztexte:** Absatz in der Datenschutzerklärung von fynn.land und der Kontoserver-Erklärung (Tabelle oben).
+   Die Datenschutzseite von Fundus und die Karte auf `#/zugang` haben schon einen Absatz, der nur bei `KONTO: "1"` erscheint.
+4. **Schalter:** `KONTO` auf `"1"`, veröffentlichen, pushen. Dann mit einem echten Konto anmelden, verbinden, auf einem
+   zweiten Gerät anmelden, lösen.
+
+Nur über die Tests gezeigt (kein Kontoserver zum Anbinden): der Ablauf mit nachgebautem `ACCOUNTS`. Gegen den echten
+Kontoserver ist nur geprüft, dass `fynn.land/konto/login?game=fundus&…` mit „Dieses Spiel ist hier nicht eingetragen“
+antwortet, solange der Eintrag fehlt. Die Seite ist im Browser mit nachgebauten Antworten durchgespielt (Karte,
+Rückkehr, Verbinden, Lösen).
+
+### Offene Fragen an den Hauptchat
+
+- Einwilligungstext der Anmeldeseite: Bei `saves` im Standard heißt er „speichert darin seine eigenen Spieldaten“. Der
+  Schlüssel liegt lesbar im Datenstand und steht im Datenexport des Kontos. Reicht das, oder ein eigener Wortlaut?
+- `ops`: `gameData` und `saveGameData` prüft der Kontoserver nach `saves`, nicht nach `ops` (`games.mjs`); die Liste oben
+  enthält `gamedata` und `savegame` trotzdem, wie beim Studienverlaufsplan. Ohne Liste wären alle Ops offen.
+- Nach „Verbindung lösen“ auf einem Gerät melden sich andere Geräte beim nächsten Besuch von `#/zugang` mit ihrer
+  Sitzung wieder an und legen einen Schlüssel neu ab (ihren eigenen oder einen neuen). Gewollt, oder soll das Lösen alle
+  Sitzungen des Kontos für Fundus beenden? Dafür fehlt dem Spiel eine Methode am Kontoserver.
+- Steht es im Text des Kontoservers, dass ein Spiel Daten im Konto ablegt, die der Betreiber des Spiels in seiner
+  Datenbank nicht kennt (nur Stufe und Ablauf)?

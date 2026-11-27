@@ -3,6 +3,7 @@ import { ladeKatalog, beimNachladen, filtern, bedarf, hat, hole, hatKopf2, ladeK
 import { vorschau, hoerprobe, alleAnhalten, DRITTLAND_HINWEIS } from './vorschau.js';
 import { infoOeffnen, infoSchliessen } from './karte.js';
 import { SEITEN } from './seiten.js';
+import { rueckkehrLesen } from './konto.js';
 import { symbol } from './symbole.js';
 import { esc, store, zahl, datum, sterneHtml, beliebtheitHtml } from './util.js';
 
@@ -768,4 +769,6 @@ document.addEventListener('fundus:schliessen', () => {
   if (location.hash.startsWith('#/karte/')) location.hash = zustand.katalogHash;
 });
 window.addEventListener('hashchange', route);
+// back from the fynn.land sign-in page: it can only return to the site's root, so #/zugang is restored before routing
+rueckkehrLesen();
 route();
