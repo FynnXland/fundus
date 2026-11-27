@@ -42,9 +42,10 @@
   // aufraeumen() in worker/zugang.mjs, once a night
   "triggers": { "crons": ["23 2 * * *"] },
   "vars": {
-    // "1" switches the daily allowances and the page #/zugang on. Only after the new privacy texts are live on
-    // fynn.land (docs/MCP-ZUGANG-ENTWURF.md). Needs the secret ZAEHLER_GEHEIM (wrangler secret put).
-    "ZUGANG": "0",
+    // "1" switches the daily allowances and the page #/zugang on (since 27.11.2026, after the new privacy text went
+    // live on fynn.land, docs/MCP-ZUGANG-ENTWURF.md). "0" switches all of it off again without losing data.
+    // Needs the secret ZAEHLER_GEHEIM (wrangler secret put).
+    "ZUGANG": "1",
     // "1" only with the Workers Paid plan: contact sheets decode pictures (CPU time beyond the free 10 ms)
     "KONTAKTBOGEN": "0"
   },

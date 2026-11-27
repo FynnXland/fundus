@@ -172,5 +172,5 @@ export async function datenschutzBereit(main) {
   if (!info.ok || !info.an) return;
   feld.innerHTML = `
   <h2>Zugang für KI-Assistenten</h2>
-  <p>Damit niemand den Zugang unter <code>${MCP}</code> mit Anfragen überflutet, zählt Fundus die Aufrufe je Tag: ohne eigenen Zugang zu einem Hashwert aus deiner IP-Adresse, dem Datum und einem geheimen Wert, der jeden Tag ein anderer ist und nach dem folgenden Tag gelöscht wird. Die IP-Adresse selbst und deine Suchbegriffe werden nicht gespeichert. Einen eigenen Zugang mit eigenem Kontingent erzeugst du freiwillig auf der Seite <a href="#/zugang">Dein Zugang</a>; dort steht auch, was dazu gespeichert wird.</p>`;
+  <p>Damit niemand den Zugang unter <code>${MCP}</code> mit Anfragen überflutet, zählt Fundus die Aufrufe je Tag: ohne eigenen Zugang zu einem Hashwert aus deiner IP-Adresse, dem Datum und einem geheimen Wert, der jeden Tag ein anderer ist und nach dem folgenden Tag gelöscht wird. Die IP-Adresse selbst und deine Suchbegriffe werden nicht gespeichert. Einen eigenen Zugang mit eigenem Kontingent erzeugst du freiwillig auf der Seite <a href="#/zugang">Dein Zugang</a>; dort steht auch, was dazu gespeichert wird. Dein Browser merkt sich den Schlüssel dann im lokalen Speicher (<code>${MERK}</code>). Du löschst ihn auf derselben Seite; der Knopf unten lässt ihn stehen.</p>`;
 }

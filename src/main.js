@@ -204,6 +204,7 @@ function kiBlock() {
         <code class="ki__url">${esc(MCP_URL)}</code>
         ${kopierknopf(MCP_URL, 'Adresse kopieren', 'knopf knopf--haupt')}
       </div>
+      <p class="ki__prinzip">Der Zugang ist ohne Anmeldung frei, mit einer Grenze je Tag. Mehr bekommst du mit einem <a href="#/zugang">eigenen Zugang</a>, dort siehst du auch deinen Verbrauch.</p>
       <p class="ki__prinzip">Die Dateien bleiben bei der Quelle, Fundus verweist nur darauf. Jede Karte nennt Lizenz und Namensnennung.</p>
       <button type="button" class="ki__weiter" id="zumkatalog">Lieber selbst stöbern? Zum Katalog <span aria-hidden="true">↓</span></button>
     </div>
