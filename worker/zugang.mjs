@@ -232,7 +232,7 @@ export async function api(request, env, jetzt = Date.now()) {
       ]);
       // A key that hangs on an account must not come back from there: the page names its session, and the key leaves
       // the account's data too (best effort; the key is gone from Fundus either way).
-      if (kontoAn(env) && SITZUNG.test(eingabe.session)) await vomKontoLoesen(env, eingabe.session, key, kontoMeta(request));
+      if (kontoAn(env) && SITZUNG.test(eingabe.session)) await vomKontoLoesen(env, eingabe.session, key, kontoMeta(request), true);
       return json({ ok: true });
     }
     return json({ fehler: 'pfad' }, 404);
@@ -284,9 +284,11 @@ async function anlegen(env, hash, stufe, tag, bis = null) {
 // entrypoint Accounts, sdk/README.md of fynnland-konto). The game id there is "fundus".
 //   tausch     { code, verifier }       the code from the sign-in page against a session of this site (PKCE)
 //   verbinden  { session, key? }        the key from the account's data; without one the browser's key or a new one goes in
-//   loesen     { session?, key? }       back to the browser tier; the key leaves the account's data, the session ends
+//   abmelden   { session, key? }        back to the browser tier, the session ends; the key stays in the account's data
+// "Delete access" (route loeschen) with a session also clears the account's data.
 // Fundus stores of all this: the tier 'konto' and its end date on the key's row. Not the account id, not the name, not
-// an e-mail address, not the session: the session lives in the visitor's browser, the name goes to the page only.
+// an e-mail address, not the session: the session lives in the visitor's browser. What the account server answers
+// (name, provider name, public id) is dropped; the page shows no name. The only thing put into the account is { key }.
 // The tier follows what the ACCOUNT holds, never what the request body claims: otherwise one account could lift any
 // number of keys to the higher allowance.
 
@@ -315,12 +317,6 @@ function kontoFehler(r) {
   return json({ fehler: 'konto' }, 502);
 }
 
-/** Only what the page shows: the account's name, else the provider's. Never stored. */
-function nameVon(konto) {
-  for (const n of [konto?.name, konto?.providerName]) if (typeof n === 'string' && n.trim()) return n.trim().slice(0, 40);
-  return null;
-}
-
 /** The key an account holds in its data for this site, if it is one. */
 const schluesselImKonto = (daten) => (typeof daten?.key === 'string' && SCHLUESSEL.test(daten.key) ? daten.key : null);
 
@@ -328,18 +324,19 @@ const zeile = (env, hash) => env.DB.prepare(`SELECT kennung, stufe, grenze, gesp
 
 /**
  * Takes an account link apart: the key the account holds and the one the browser names go back to the browser tier (a
- * holder may delete their key, so downgrading it needs no proof from the account), the key leaves the account's data and
- * the session ends. True when the account's data was cleared; false when the session had ended already.
+ * holder may delete their key, so downgrading it needs no proof from the account) and the session ends. With
+ * datenLoeschen the key also leaves the account's data (deleting the access); signing out leaves it there, so the next
+ * sign-in on any device finds it. True when the account's data was cleared; false when it was not or the session had ended.
  */
-async function vomKontoLoesen(env, session, browserKey, meta) {
+async function vomKontoLoesen(env, session, browserKey, meta, datenLoeschen = false) {
   const d = await beimKonto(() => env.ACCOUNTS.gameData(GAME, session, meta));
   const hashes = new Set();
   for (const k of [d.ok ? schluesselImKonto(d.data) : null, browserKey]) if (k) hashes.add(await sha256(k));
   for (const h of hashes) await env.DB.prepare("UPDATE zugang SET stufe = 'browser', konto_bis = NULL WHERE hash = ?1 AND stufe = 'konto'").bind(h).run();
   if (!d.ok) return false;
-  const weg = await beimKonto(() => env.ACCOUNTS.saveGameData(GAME, session, null, meta));
+  const weg = datenLoeschen ? await beimKonto(() => env.ACCOUNTS.saveGameData(GAME, session, null, meta)) : null;
   await beimKonto(() => env.ACCOUNTS.op(GAME, 'logout', { session }, meta));
-  return weg.ok === true;
+  return weg?.ok === true;
 }
 
 async function kontoApi(was, request, env, eingabe, jetzt) {
@@ -352,7 +349,7 @@ async function kontoApi(was, request, env, eingabe, jetzt) {
     const r = await beimKonto(() => env.ACCOUNTS.op(GAME, 'exchange', { code: eingabe.code, verifier: eingabe.verifier }, meta));
     if (!r.ok) return r.status === 400 ? json({ fehler: 'code' }, 400) : kontoFehler(r);
     if (!SITZUNG.test(r.session)) return json({ fehler: 'konto' }, 502);
-    return json({ session: r.session, name: nameVon(r.account) });
+    return json({ session: r.session });
   }
 
   if (!SITZUNG.test(eingabe.session)) return json({ fehler: 'sitzung' }, 401);
@@ -361,6 +358,10 @@ async function kontoApi(was, request, env, eingabe, jetzt) {
   if (was === 'verbinden') {
     const d = await beimKonto(() => env.ACCOUNTS.gameData(GAME, eingabe.session, meta));
     if (!d.ok) return kontoFehler(d);
+    // "me" keeps the account in use and fails once the visitor has withdrawn the permission on the account page
+    // (that ends the sessions): then this is as good as signed out. Its answer is not used for anything.
+    const me = await beimKonto(() => env.ACCOUNTS.op(GAME, 'me', { session: eingabe.session }, meta));
+    if (!me.ok) return kontoFehler(me);
     const bis = tagNach(KONTO_TAGE, jetzt);
     let key = schluesselImKonto(d.data);
     let hash = key ? await sha256(key) : null;
@@ -390,12 +391,12 @@ async function kontoApi(was, request, env, eingabe, jetzt) {
       if (!neu) { const zuviel = await neuZaehlen(env, request, jetzt); if (zuviel) return zuviel; }
       await anlegen(env, hash, 'konto', tag, bis);
     } else if (z.stufe !== 'konto' || z.konto_bis !== bis) await env.DB.prepare("UPDATE zugang SET stufe = 'konto', konto_bis = ?1 WHERE hash = ?2").bind(bis, hash).run();
-    const me = await beimKonto(() => env.ACCOUNTS.op(GAME, 'me', { session: eingabe.session }, meta));
-    return json({ key, name: me.ok ? nameVon(me.account) : null, ersetzt: Boolean(browserKey && browserKey !== key), ...(await standVon(env, hash, jetzt)) });
+    return json({ key, ersetzt: Boolean(browserKey && browserKey !== key), ...(await standVon(env, hash, jetzt)) });
   }
 
-  if (was === 'loesen') {
-    return json({ ok: true, imKonto: await vomKontoLoesen(env, eingabe.session, browserKey, meta) });
+  if (was === 'abmelden') {
+    await vomKontoLoesen(env, eingabe.session, browserKey, meta);
+    return json({ ok: true });
   }
   return json({ fehler: 'pfad' }, 404);
 }

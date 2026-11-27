@@ -4,7 +4,7 @@
 // consent banner (§ 25 Abs. 2 Nr. 2 TDDDG, see docs/MCP-ZUGANG-ENTWURF.md). The server side is worker/zugang.mjs.
 import { esc, store, zahl, datum } from './util.js';
 import { BETREIBER } from './betreiber.js';
-import { sitzung, sitzungVergessen, anmelden, abschliessen, verbinden, loesen } from './konto.js';
+import { sitzung, sitzungVergessen, anmelden, abschliessen, verbinden, abmelden } from './konto.js';
 
 const MERK = 'fundus.zugang';
 const MCP = 'https://fundus.fynn.land/mcp';
@@ -38,7 +38,7 @@ const gespeichert = (konto) => `
   <details class="zk zk--ruhig">
     <summary>Was dabei gespeichert wird</summary>
     <p>Fundus speichert von deinem Zugang nur einen Hashwert des Schlüssels, den Tag der Erzeugung, den Tag der letzten Nutzung und die Zahl der Aufrufe der letzten Tage. Was dein Assistent sucht, wird nicht festgehalten. Der Schlüssel selbst liegt nur in diesem Browser (<code>${MERK}</code>), und erst, wenn du auf „Zugang erzeugen“ klickst. Löschst du den Zugang, sind Hashwert und Zahlen weg. Alles Weitere steht in der <a href="${esc(BETREIBER.datenschutz)}" rel="noopener" target="_blank">Datenschutzerklärung</a>.</p>${konto ? `
-    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis zu „Verbindung lösen“. Den Namen siehst du nur hier, gespeichert wird er nicht.</p>` : ''}
+    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis du dich abmeldest. Nur während der Anmeldung liegen ihr Zustand und ihr Prüfwert dort (<code>fundus.anmeldung</code>, höchstens 15 Minuten). Löschst du den Zugang, verschwindet der Schlüssel auch aus deinem Konto.</p>` : ''}
   </details>`;
 
 const mehr = (kennung) => `
@@ -49,7 +49,7 @@ const mehr = (kennung) => `
     <p class="zugang__wege"><a class="knopf" href="${DISCORD}" rel="noopener" target="_blank">Discord</a><a class="knopf" href="${IMPRESSUM}" rel="noopener" target="_blank">Kontakt im Impressum</a></p>
   </section>`;
 
-/** The card "Mit fynn.land-Konto". k = { name, ersetzt, bis } while signed in; s = the key's state, if there is one. */
+/** The card "Mit fynn.land-Konto". k = { ersetzt, bis } while signed in; s = the key's state, if there is one. */
 function kontoKarte(g, k, s) {
   if (kontoHub === null) return '';
   const meldung = nachricht ? `<p class="hinweis" role="status">${esc(nachricht)}</p>` : '';
@@ -59,10 +59,10 @@ function kontoKarte(g, k, s) {
   <section class="zk zugang__konto">
     <h2>Mit fynn.land-Konto verbunden</h2>
     ${meldung}
-    <p>${k.name ? `Angemeldet als <strong>${esc(k.name)}</strong>. ` : 'Angemeldet. '}Dein Zugang hat ${zahl(g.konto)} Aufrufe am Tag und ist auf jedem Gerät da, auf dem du dich anmeldest.</p>
+    <p>Dein Zugang ist mit deinem fynn.land-Konto verbunden: ${zahl(g.konto)} Aufrufe am Tag, und er ist auf jedem Gerät da, auf dem du dich anmeldest.</p>
     ${k.ersetzt ? '<p class="zugang__klein">Der Zugang, den dieser Browser vorher hatte, bleibt bestehen, wird hier aber nicht mehr angezeigt. Ab jetzt gilt der aus deinem Konto.</p>' : ''}
-    <p class="zugang__klein">Die Verbindung gilt ${kontoTage} Tage ab dem letzten Besuch dieser Seite, derzeit bis zum ${esc(datum(k.bis))}. Löst du sie, bleibt der Zugang in diesem Browser mit ${zahl(g.browser)} Aufrufen am Tag, und der Schlüssel verschwindet aus deinem Konto.</p>
-    <p><button type="button" class="knopf knopf--klein" data-zugang="trennen">Verbindung lösen</button></p>
+    <p class="zugang__klein">Die Verbindung gilt ${kontoTage} Tage ab dem letzten Besuch dieser Seite, derzeit bis zum ${esc(datum(k.bis))}. Meldest du dich ab, bleibt der Zugang in diesem Browser mit ${zahl(g.browser)} Aufrufen am Tag. Der Schlüssel bleibt in deinem Konto, bis du den Zugang löschst.</p>
+    <p><button type="button" class="knopf knopf--klein" data-zugang="trennen">Abmelden</button></p>
     ${status}
   </section>`;
   }
@@ -174,7 +174,7 @@ async function zeigen(feld) {
   kontoHub = info.konto ? info.hub : null;
   kontoTage = info.konto ? info.kontoTage : null;
   let key = store.get(MERK);
-  let k = null;          // the account, while a valid session is there: { name, ersetzt, bis }
+  let k = null;          // while a valid session is there: { ersetzt, bis }
   let stand = null;      // the key's state, as far as the account call already told it
   let hinweis = '';
   if (info.konto) {
@@ -183,7 +183,7 @@ async function zeigen(feld) {
     if (sitzung()) {
       // opening the page with a valid session also renews the ninety days
       const r = await verbinden(key);
-      if (r.ok) { key = r.key; store.set(MERK, key); stand = r; k = { name: r.name, ersetzt: r.ersetzt, bis: r.kontoBis }; }
+      if (r.ok) { key = r.key; store.set(MERK, key); stand = r; k = { ersetzt: r.ersetzt, bis: r.kontoBis }; }
       else {
         if (r.status === 401) sitzungVergessen();
         hinweis = kontoProblem(r);
@@ -230,9 +230,9 @@ export function zugangBereit(main) {
       return; // the page is being left
     }
     if (was === 'trennen') {
-      const r = await loesen(store.get(MERK));
-      if (r.ok) { nachricht = r.imKonto ? 'Die Verbindung ist gelöst. Der Schlüssel ist aus deinem Konto entfernt und der Zugang bleibt in diesem Browser.' : 'Die Verbindung ist gelöst. Deine Anmeldung war abgelaufen, darum liegt der Schlüssel noch in deinem Konto. Er verschwindet, wenn du dich anmeldest und die Verbindung noch einmal löst.'; await zeigen(feld); return; }
-      if (status) status.textContent = 'Das Lösen hat gerade nicht geklappt. Versuch es gleich noch einmal.';
+      const r = await abmelden(store.get(MERK));
+      if (r.ok) { nachricht = 'Du bist abgemeldet. Der Zugang bleibt in diesem Browser und zählt wieder wie ein Zugang ohne Konto.'; await zeigen(feld); return; }
+      if (status) status.textContent = 'Das Abmelden hat gerade nicht geklappt. Versuch es gleich noch einmal.';
     }
     if (was === 'loeschen') {
       const r = await frage('loeschen', { key: store.get(MERK), ...(sitzung() ? { session: sitzung() } : {}) }).catch(() => ({ ok: false }));
@@ -252,5 +252,5 @@ export async function datenschutzBereit(main) {
   feld.innerHTML = `
   <h2>Zugang für KI-Assistenten</h2>
   <p>Damit niemand den Zugang unter <code>${MCP}</code> mit Anfragen überflutet, zählt Fundus die Aufrufe je Tag: ohne eigenen Zugang zu einem Hashwert aus deiner IP-Adresse, dem Datum und einem geheimen Wert, der jeden Tag ein anderer ist und nach dem folgenden Tag gelöscht wird. Die IP-Adresse selbst und deine Suchbegriffe werden nicht gespeichert. Einen eigenen Zugang mit eigenem Kontingent erzeugst du freiwillig auf der Seite <a href="#/zugang">Dein Zugang</a>; dort steht auch, was dazu gespeichert wird. Dein Browser merkt sich den Schlüssel dann im lokalen Speicher (<code>${MERK}</code>). Du löschst ihn auf derselben Seite; der Knopf unten lässt ihn stehen.</p>${info.konto ? `
-  <p>Wenn du deinen Zugang mit deinem fynn.land-Konto verbindest, speichert Fundus dazu nur, dass er ein Konto-Zugang ist, und den Tag, bis zu dem das gilt (${info.kontoTage} Tage nach deinem letzten Besuch von <a href="#/zugang">Dein Zugang</a> mit gültiger Anmeldung). Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder deinen Namen noch deine E-Mail-Adresse noch die Kennung deines Kontos. Dein Browser merkt sich die Anmeldung im lokalen Speicher (<code>fundus.konto</code>), bis du die Verbindung auf derselben Seite löst.</p>` : ''}`;
+  <p>Wenn du deinen Zugang mit deinem fynn.land-Konto verbindest, speichert Fundus dazu nur, dass er ein Konto-Zugang ist, und den Tag, bis zu dem das gilt (${info.kontoTage} Tage nach deinem letzten Besuch von <a href="#/zugang">Dein Zugang</a> mit gültiger Anmeldung). Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder deinen Namen noch deine E-Mail-Adresse noch die Kennung deines Kontos. Dein Browser merkt sich die Anmeldung im lokalen Speicher (<code>fundus.konto</code>), bis du dich auf derselben Seite abmeldest; während der Anmeldung liegen dort kurz ihr Zustand und ihr Prüfwert (<code>fundus.anmeldung</code>, höchstens 15 Minuten).</p>` : ''}`;
 }

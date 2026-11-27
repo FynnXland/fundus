@@ -3,10 +3,10 @@
 // visitor to <hub>/konto/login with a state and the challenge, the account page sends them back to the site's address
 // with ?fl_code=…&state=…, and the Worker swaps the code against a session that holds for this site only.
 //
-// In this browser:
-//   sessionStorage "fundus.anmeldung"  state and verifier, only while the sign-in page is open (15 minutes at most)
-//   localStorage   "fundus.konto"      the session, from the exchange until "Verbindung lösen" or until it expires
-// Nothing is stored before the visitor presses "Mit Konto anmelden". The name the account shows is never kept.
+// In this browser (localStorage; both entries come into being only when the visitor presses "Mit Konto anmelden"):
+//   "fundus.anmeldung"  state, verifier and time, only while the sign-in page is open: 15 minutes at most, deleted on return
+//   "fundus.konto"      the session, from the exchange until "Abmelden" or "Zugang löschen" (or until it expires)
+// There is no silent sign-in (prompt=none): signing in is always a deliberate click. No account name is shown or kept.
 import { store } from './util.js';
 
 const SITZUNG = 'fundus.konto';
@@ -23,6 +23,7 @@ async function post(pfad, body) {
   return { ok: res.ok, status: res.status, ...daten };
 }
 
+const anmeldungLesen = () => { try { return JSON.parse(store.get(ANMELDUNG) || 'null'); } catch { return null; } };
 export const sitzung = () => store.get(SITZUNG);
 export const sitzungVergessen = () => store.remove(SITZUNG);
 
@@ -34,6 +35,9 @@ let rueckkehr = null;
  * The account page can only send the visitor to the site's root, so the route has to be restored here.
  */
 export function rueckkehrLesen() {
+  // a sign-in that was never finished leaves nothing behind for longer than its 15 minutes
+  const alt = anmeldungLesen();
+  if (alt && !(Date.now() - (alt.at || 0) <= MAX_ALTER)) store.remove(ANMELDUNG);
   const q = new URLSearchParams(location.search);
   if (!q.has('state') || !(q.has('fl_code') || q.has('fl_error'))) return false;
   rueckkehr = { code: q.get('fl_code'), fehler: q.get('fl_error'), state: q.get('state') };
@@ -46,7 +50,7 @@ export async function anmelden(hub) {
   const state = zufall(16);
   const verifier = zufall(48);
   const challenge = base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))));
-  try { sessionStorage.setItem(ANMELDUNG, JSON.stringify({ state, verifier, at: Date.now() })); } catch { return false; }
+  try { localStorage.setItem(ANMELDUNG, JSON.stringify({ state, verifier, at: Date.now() })); } catch { return false; }
   const url = new URL('/konto/login', hub);
   url.search = new URLSearchParams({ game: GAME, state, challenge, prompt: 'select' }).toString();
   location.assign(url.href);
@@ -61,8 +65,8 @@ export async function abschliessen() {
   if (!rueckkehr) return null;
   const { code, fehler, state } = rueckkehr;
   rueckkehr = null;
-  let vorher = null;
-  try { vorher = JSON.parse(sessionStorage.getItem(ANMELDUNG) || 'null'); sessionStorage.removeItem(ANMELDUNG); } catch { /* nothing */ }
+  const vorher = anmeldungLesen();
+  store.remove(ANMELDUNG);
   if (!vorher || vorher.state !== state || Date.now() - (vorher.at || 0) > MAX_ALTER) return { ok: false, grund: 'anderer-tab' };
   if (!code) return { ok: false, grund: fehler === 'cancelled' ? 'abgebrochen' : 'konto' };
   const r = await post('konto/tausch', { code, verifier: vorher.verifier }).catch(() => ({ ok: false, status: 0 }));
@@ -74,9 +78,9 @@ export async function abschliessen() {
 /** With a valid session: the key from the account (or this browser's key, or a new one) and where it stands. Renews the 90 days. */
 export const verbinden = (key) => post('konto/verbinden', { session: sitzung(), ...(key ? { key } : {}) }).catch(() => ({ ok: false, status: 0 }));
 
-/** Back to the browser tier; the key leaves the account and the session ends. The session is gone here in any case. */
-export async function loesen(key) {
-  const r = await post('konto/loesen', { session: sitzung(), ...(key ? { key } : {}) }).catch(() => ({ ok: false, status: 0 }));
+/** Signs out: back to the browser tier, the session ends. The key stays in the account. */
+export async function abmelden(key) {
+  const r = await post('konto/abmelden', { session: sitzung(), ...(key ? { key } : {}) }).catch(() => ({ ok: false, status: 0 }));
   if (r.ok) sitzungVergessen();
   return r;
 }

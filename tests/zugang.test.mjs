@@ -304,28 +304,23 @@ test('Konto: info nennt das Konto nur mit Schalter und Bindung, dazu die Adresse
   assert.equal((await lesen({ ...kontoEnv(), FYNNLAND_HUB: 'javascript:alert(1)' })).hub, 'https://fynn.land');
 });
 
-test('Konto: die Anmeldung abschließen tauscht den Code gegen eine Sitzung und nennt nur den Namen', async () => {
+test('Konto: die Anmeldung abschließen tauscht den Code gegen eine Sitzung, ein Name kommt nicht zurück', async () => {
   const env = kontoEnv();
   const r = await konto(env, 'tausch', { code: CODE_OK, verifier: VERIFIER_OK });
-  assert.deepEqual(await r.json(), { session: 'sitzung-neu-0123456789abcdefgh', name: 'Kontoname' });
+  assert.deepEqual(await r.json(), { session: 'sitzung-neu-0123456789abcdefgh' });
   assert.equal((await (await konto(env, 'tausch', { code: CODE_OK, verifier: 'zu-kurz' })).json()).fehler, 'code');
   const falsch = await konto(env, 'tausch', { code: 'ZZZZZZZZZZZZZZZZZZZZZZ', verifier: VERIFIER_OK });
   assert.deepEqual([falsch.status, (await falsch.json()).fehler], [400, 'code']);
   // from another origin nothing is passed on
   const fremd = new Request('https://fundus.fynn.land/api/zugang/konto/tausch', { method: 'POST', headers: { Origin: 'https://boese.example' }, body: '{}' });
   assert.equal((await api(fremd, env, TAG1)).status, 403);
-  // the provider's name is the fallback, and no name is no problem
-  env.ACCOUNTS.personen.set('acc-1', { name: '', providerName: 'Anbieter', publicId: 'X' });
-  assert.equal((await (await konto(env, 'tausch', { code: CODE_OK, verifier: VERIFIER_OK })).json()).name, 'Anbieter');
-  env.ACCOUNTS.personen.set('acc-1', { name: null, providerName: null });
-  assert.equal((await (await konto(env, 'tausch', { code: CODE_OK, verifier: VERIFIER_OK })).json()).name, null);
 });
 
 test('Konto ohne Datenstand: ein neuer Schlüssel entsteht, liegt im Konto und hat 500 Aufrufe', async () => {
   const env = kontoEnv();
   const r = await (await konto(env, 'verbinden', { session: SITZUNG_A })).json();
   assert.match(r.key, /^[A-Za-z0-9_-]{40}$/);
-  assert.deepEqual([r.stufe, r.grenze, r.kontoBis, r.name, r.ersetzt], ['konto', 500, tagBis(TAG1), 'Kontoname', false]);
+  assert.deepEqual([r.stufe, r.grenze, r.kontoBis, r.ersetzt, 'name' in r], ['konto', 500, tagBis(TAG1), false, false]);
   assert.deepEqual(env.ACCOUNTS.daten.get('acc-1'), { key: r.key }, 'der Schlüssel liegt als Datenstand im Konto');
   assert.equal((await pruefe(env, anfrage('198.51.100.9', r.key), 1, TAG1)).grenze, 500);
   // the same account on a second device brings the same key back
@@ -434,20 +429,22 @@ test(`Konto: nach ${KONTO_TAGE} Tagen ohne Besuch fällt der Zugang auf 300 zur�
   assert.equal((await pruefe(env, anfrage('198.51.100.9', r.key), 1, tage(61))).grenze, 5000);
 });
 
-test('Konto lösen: der Zugang fällt auf die Browser-Stufe, der Schlüssel verlässt das Konto, die Sitzung endet', async () => {
+test('Konto abmelden: der Zugang fällt auf die Browser-Stufe, die Sitzung endet, der Schlüssel bleibt im Konto', async () => {
   const env = kontoEnv();
   const r = await (await konto(env, 'verbinden', { session: SITZUNG_A })).json();
-  const weg = await (await konto(env, 'loesen', { session: SITZUNG_A, key: r.key })).json();
-  assert.deepEqual(weg, { ok: true, imKonto: true });
-  assert.equal(env.ACCOUNTS.daten.size, 0);
+  const weg = await (await konto(env, 'abmelden', { session: SITZUNG_A, key: r.key })).json();
+  assert.deepEqual(weg, { ok: true });
+  assert.deepEqual(env.ACCOUNTS.daten.get('acc-1'), { key: r.key }, 'abmelden lässt den Datenstand, die nächste Anmeldung findet den Schlüssel');
   assert.equal(env.ACCOUNTS.sitzungen.has(SITZUNG_A), false);
   assert.deepEqual(zeilen(env).map((z) => [z.stufe, z.konto_bis]), [['browser', null]]);
   assert.equal((await pruefe(env, anfrage('198.51.100.9', r.key), 1, TAG1)).grenze, 300);
-  // with a session that has ended the tier still falls back; only the account's own copy stays until the next sign-in
-  const r2 = await (await konto(env, 'verbinden', { session: SITZUNG_B })).json();
-  const spaet = await (await konto(env, 'loesen', { session: 'abgelaufen-0123456789abcdefghij', key: r2.key })).json();
-  assert.deepEqual(spaet, { ok: true, imKonto: false });
-  assert.equal(zeilen(env).find((z) => z.kennung === r2.kennung).stufe, 'browser');
+  // signing in again brings the same key back, on this or any other device
+  const wieder = await (await konto(env, 'verbinden', { session: SITZUNG_B })).json();
+  assert.deepEqual([wieder.key, wieder.stufe], [r.key, 'konto']);
+  // with a session that has ended the tier still falls back
+  const spaet = await (await konto(env, 'abmelden', { session: 'abgelaufen-0123456789abcdefghij', key: r.key })).json();
+  assert.deepEqual(spaet, { ok: true });
+  assert.equal(zeilen(env).find((z) => z.kennung === r.kennung).stufe, 'browser');
 });
 
 test('Zugang löschen mit Sitzung nimmt den Schlüssel auch aus dem Konto, sonst käme er von dort zurück', async () => {
@@ -463,6 +460,7 @@ test('Konto: Fundus speichert weder Kennung noch Namen noch Sitzung, und das Das
   const env = kontoEnv();
   const r = await (await konto(env, 'verbinden', { session: SITZUNG_A })).json();
   await pruefe(env, anfrage('198.51.100.9', r.key), 1, TAG1);
+  assert.ok(!JSON.stringify(r).includes('Kontoname') && !JSON.stringify(r).includes('Anbietername'), 'die Seite bekommt keinen Namen');
   const alles = JSON.stringify([zeilen(env), env.DB.roh.prepare('SELECT * FROM zaehler').all(), await admin.list(env, TAG1), await admin.counts(env, TAG1)]);
   for (const geheim of ['acc-1', 'Kontoname', 'Anbietername', 'AAAAA-BBBBB', SITZUNG_A, SITZUNG_B, 'sitzung-neu', r.key]) assert.ok(!alles.includes(geheim), `${geheim} liegt nicht in der Datenbank oder im Dashboard`);
   assert.ok(!JSON.stringify(r).includes('AAAAA-BBBBB') && !JSON.stringify(r).includes('acc-1'), 'auch die Antwort an die Seite nennt keine Kennung');
@@ -502,4 +500,15 @@ test('Konto: ein überlasteter Kontoserver heißt anders als „zu viele Zugäng
   env.ACCOUNTS.gameData = async () => ({ ok: false, status: 429, code: 'tooManyRequests' });
   const r = await konto(env, 'verbinden', { session: SITZUNG_A });
   assert.deepEqual([r.status, (await r.json()).fehler], [429, 'konto-zuviele']);
+});
+
+test('Konto: hat jemand auf der Kontoseite den Zugriff entzogen, schlägt „me“ fehl und der Zugang gilt als abgemeldet', async () => {
+  const env = kontoEnv();
+  const r = await (await konto(env, 'verbinden', { session: SITZUNG_A })).json();
+  env.ACCOUNTS.op = async (game, op) => (op === 'me' ? { ok: false, status: 401, code: 'accSessionExpired' } : { ok: true });
+  const abgemeldet = await konto(env, 'verbinden', { session: SITZUNG_A, key: r.key });
+  assert.deepEqual([abgemeldet.status, (await abgemeldet.json()).fehler], [401, 'sitzung']);
+  // the key keeps its row until the date runs out, and abmelden brings it back to the browser tier at once
+  assert.equal((await konto(env, 'abmelden', { session: SITZUNG_A, key: r.key })).status, 200);
+  assert.equal((await pruefe(env, anfrage('198.51.100.9', r.key), 1, TAG1)).grenze, 300);
 });

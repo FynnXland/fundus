@@ -255,7 +255,7 @@ auf jedem Gerät da, auf dem er sich anmeldet. Gebaut und getestet, aber **ausge
 | Teil | Wo |
 |---|---|
 | Schalter `KONTO`, Bindung `ACCOUNTS` (`fynnland-konto`, Entrypoint `Accounts`) | `wrangler.jsonc` |
-| Routen `POST /api/zugang/konto/tausch`, `/verbinden`, `/loesen`; `info` meldet `konto`, `hub`, `kontoTage` | `worker/zugang.mjs` |
+| Routen `POST /api/zugang/konto/tausch`, `/verbinden`, `/abmelden`; `info` meldet `konto`, `hub`, `kontoTage` | `worker/zugang.mjs` |
 | Stufe `konto` mit Ablauf (`konto_bis`), eine Funktion `wirkStufe` für Zähler, Seite und Dashboard | `worker/zugang.mjs` |
 | Neue Spalte, einmal auf der Live-Datenbank auszuführen | `worker/zugang-konto.sql` (`SCHEMA_KONTO` im Code) |
 | Anmeldung im Browser (PKCE), Sitzung, Rückkehr | `src/konto.js`, Aufruf in `src/main.js` |
@@ -273,13 +273,17 @@ löscht sie nach 6 Monaten ohne Nutzung). Mit der Sitzung liest er den Datenstan
   neuer, und der zählt gegen dieselben Grenzen wie auf der Seite (3 je Adresse, 200 insgesamt am Tag).
 - Erst wenn das Konto den Schlüssel angenommen hat, setzt Fundus die Zeile auf Stufe `konto` bis heute plus 90 Tage.
 - Jeder Besuch von `#/zugang` mit gültiger Sitzung wiederholt das und verlängert damit auf 90 Tage ab dem Besuch.
-- „Verbindung lösen“: Der Zugang fällt auf `browser` zurück, der Schlüssel wird aus dem Datenstand des Kontos gelöscht,
-  die Sitzung beendet. „Zugang löschen“ mit Sitzung nimmt den Schlüssel ebenfalls aus dem Konto, sonst käme er von dort zurück.
+- „Abmelden“ (Vorgabe des Hauptchats): `logout` an den Kontoserver, Sitzung im Browser gelöscht, der Zugang fällt auf `browser`
+  zurück, der Schlüssel im Browser bleibt, ebenso der Datenstand im Konto (die nächste Anmeldung findet ihn wieder).
+  „Zugang löschen“ mit Sitzung leert den Datenstand im Konto (`saveGameData` mit `null`), stuft auch den Schlüssel des Kontos
+  zurück und beendet die Sitzung; sonst käme der Schlüssel von dort zurück.
+- Keine stille Prüfung (`prompt=none`): Anmelden ist immer ein Klick. Hat jemand auf der Kontoseite „Zugriff entziehen“
+  gedrückt, schlägt `me` fehl, und der Zugang gilt hier als abgemeldet.
 - Nach Ablauf (`konto_bis` vorbei) zählt der Zugang wie `browser`: im Zähler, auf der Seite und im Dashboard. Der nächtliche
   Lauf setzt die Zeile dann zurück. Freigaben von Hand (`grenze`) bleiben, wie sie sind.
 
-Der Name des Kontos geht nur zur Seite (`name`, sonst `providerName`), nicht in die Datenbank, und nicht die Kennung
-(`publicId`).
+Was der Kontoserver in `exchange` und `me` antwortet (Name, Anbietername, `publicId`), verwirft der Worker. Die Seite zeigt
+keinen Namen. Ins Konto kommt per `saveGameData` nur `{ "key": … }`.
 
 ### Was gespeichert wird
 
@@ -287,10 +291,9 @@ Der Name des Kontos geht nur zur Seite (`name`, sonst `providerName`), nicht in 
 |---|---|---|---|
 | Stufe „Konto“ in der Datenbank von Fundus | in der Zeile des Zugangs: Stufe `konto` und das Datum `konto_bis`. Keine Kontokennung, kein Name, keine E-Mail-Adresse, keine Sitzung | 500 statt 300 Aufrufe, Verwaltung im Konto | 90 Tage ab dem letzten Besuch von `#/zugang` mit gültiger Sitzung, dann zählt der Zugang wieder wie `browser` |
 | Schlüssel im Konto | Datenstand des Spiels `fundus`: `{ "key": "<Schlüssel>" }`, beim Kontoserver (fynn.land, Cloudflare D1) | Zugang auf jedem Gerät | bis zum Lösen der Verbindung, zum Löschen des Zugangs oder des Kontos |
-| Sitzung im Browser | `localStorage` `fundus.konto`: Sitzungsschlüssel, nur für Fundus gültig | angemeldet bleiben | bis „Verbindung lösen“ oder „Zugang löschen“, serverseitig 6 Monate ohne Nutzung |
-| Anmeldung im Browser | `sessionStorage` `fundus.anmeldung`: Zustand und Prüfwert der Anmeldung (PKCE) | Anmeldung abschließen | bis zur Rückkehr von der Anmeldeseite, höchstens 15 Minuten; geht beim Schließen des Tabs weg |
-| Name des Kontos | kommt vom Kontoserver, wird auf der Seite angezeigt | Anzeige „Angemeldet als …“ | nicht gespeichert, nur im Arbeitsspeicher der geöffneten Seite |
-| Durchlauf beim Anmelden und bei jedem Besuch | Der Worker bekommt vom Kontoserver Name, Anbietername und öffentliche Kontokennung (`publicId`). Er reicht den Namen (sonst den Anbieternamen) an die Seite weiter und verwirft die Kennung. Gespeichert wird davon nichts | Anzeige des Namens | nur für die Dauer der Anfrage |
+| Sitzung im Browser | `localStorage` `fundus.konto`: Sitzungsschlüssel, nur für Fundus gültig | angemeldet bleiben | bis „Abmelden“ oder „Zugang löschen“, serverseitig 6 Monate ohne Nutzung |
+| Anmeldung im Browser | `localStorage` `fundus.anmeldung`: Zustand, Prüfwert (PKCE) und Zeitpunkt der Anmeldung; entsteht erst beim Klick auf „Mit Konto anmelden“ | Anmeldung abschließen | nach der Rückkehr gelöscht, höchstens 15 Minuten gültig (ein Rest wird beim nächsten Laden der Seite entfernt) |
+| Durchlauf beim Anmelden und bei jedem Besuch | Der Worker bekommt vom Kontoserver Name, Anbietername und öffentliche Kontokennung (`publicId`). Er verwirft alle drei, die Seite bekommt keinen Namen. Gespeichert wird davon nichts | keiner (`me` hält das Konto in Benutzung und zeigt, ob die Sitzung noch gilt) | nur für die Dauer der Anfrage |
 
 Dazu fließen beim Anmelden und bei jedem Besuch folgende Angaben an den Kontoserver (Dienstbindung innerhalb von
 Cloudflare): Spiel `fundus`, Herkunft der Seite, IP-Adresse (nur für dessen Grenzen; er speichert sie nicht) und die
@@ -314,7 +317,7 @@ In dieser Reihenfolge:
 3. **Datenschutztexte:** Absatz in der Datenschutzerklärung von fynn.land und der Kontoserver-Erklärung (Tabelle oben).
    Die Datenschutzseite von Fundus und die Karte auf `#/zugang` haben schon einen Absatz, der nur bei `KONTO: "1"` erscheint.
 4. **Schalter:** `KONTO` auf `"1"`, veröffentlichen, pushen. Dann mit einem echten Konto anmelden, verbinden, auf einem
-   zweiten Gerät anmelden, lösen.
+   zweiten Gerät anmelden, abmelden, Zugang löschen (der Datenstand im Konto ist danach leer).
 
 Nur über die Tests gezeigt (kein Kontoserver zum Anbinden): der Ablauf mit nachgebautem `ACCOUNTS`. Gegen den echten
 Kontoserver ist nur geprüft, dass `fynn.land/konto/login?game=fundus&…` mit „Dieses Spiel ist hier nicht eingetragen“
@@ -327,8 +330,8 @@ Rückkehr, Verbinden, Lösen).
   Schlüssel liegt lesbar im Datenstand und steht im Datenexport des Kontos. Reicht das, oder ein eigener Wortlaut?
 - `ops`: `gameData` und `saveGameData` prüft der Kontoserver nach `saves`, nicht nach `ops` (`games.mjs`); die Liste oben
   enthält `gamedata` und `savegame` trotzdem, wie beim Studienverlaufsplan. Ohne Liste wären alle Ops offen.
-- Nach „Verbindung lösen“ auf einem Gerät melden sich andere Geräte beim nächsten Besuch von `#/zugang` mit ihrer
-  Sitzung wieder an und legen einen Schlüssel neu ab (ihren eigenen oder einen neuen). Gewollt, oder soll das Lösen alle
-  Sitzungen des Kontos für Fundus beenden? Dafür fehlt dem Spiel eine Methode am Kontoserver.
+- Nach „Abmelden“ auf einem Gerät behalten andere Geräte mit gültiger Sitzung die Stufe `konto` und stufen den Zugang
+  beim nächsten Besuch von `#/zugang` wieder hoch (es ist derselbe Schlüssel). Gewollt? Alle Sitzungen des Kontos für Fundus
+  zu beenden ginge nur mit einer neuen Methode am Kontoserver.
 - Steht es im Text des Kontoservers, dass ein Spiel Daten im Konto ablegt, die der Betreiber des Spiels in seiner
   Datenbank nicht kennt (nur Stufe und Ablauf)?
