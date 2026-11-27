@@ -304,7 +304,7 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   Anmeldeseite, Einzelheiten in `docs/MCP-ZUGANG-ENTWURF.md` (letzter Abschnitt). Offen ist der Durchlauf mit einem
   echten Konto: anmelden, verbinden, zweites Gerät, abmelden, Zugang löschen.
 
-## 27.11.2026 spät: Skills und 3D-Modelle aus den Projekten umsortiert (lokal, nicht live)
+## 27.11.2026 spät: Skills und 3D-Modelle aus den Projekten umsortiert (live)
 
 - **GitHub-Projekte wechseln die Art beim Bau** (`projektArt` in `crawler/lib/projekte.mjs`, aufgerufen in
   `crawler/publish.mjs` vor der Unterkategorie; der gespeicherte Katalog bleibt `projekt`).
