@@ -8,7 +8,7 @@
 // with no or a non-English description. The lists were checked on random samples per folder; a generic word
 // ("network", "learning", "library for") costs more wrong hits than it finds, so they are left out on purpose.
 export const PROJEKT = [
-  ['KI-Agenten & Skills', {
+  ['KI-Agenten & MCP', {
     t: 'claude-code mcp mcp-server ai-agents ai-agent agent-skills claude-skills codex cursor agentic-ai coding-agent model-context-protocol skills agents agent multi-agent openclaw deepseek-harness ai-coding function-calling claude anthropic mcp-servers mcp-client agentic agentic-workflow agent-framework autonomous-agents ai-agents-framework llm-agent llm-agents copilot github-copilot ai-assistant coding-assistant claude-ai cursor-ai windsurf opencode gemini-cli codex-cli ai-tools agent-skill claude-code-skills claude-code-plugin claude-code-plugins vibe-coding ai-coding-assistant autogpt crewai langgraph multi-agent-systems agentic-rag agent-memory subagents claude-desktop agents-sdk tool-calling',
     w: 'mcp server*|model context protocol|claude code|ai coding agent*|ai coding|ai agent*|coding agent*|agent skill*|ai skill*|skill manager|skills for|agent framework*|agent harness|openclaw|codex|agentic|multi-agent|autonomous agent*|llm agent*|claude skill*|cursor rules|copilot|mcp',
   }],
@@ -128,6 +128,65 @@ const SPRACHE = {
   GLSL: '3D, Grafik & Bildbearbeitung', HLSL: '3D, Grafik & Bildbearbeitung', ShaderLab: '3D, Grafik & Bildbearbeitung', 'Jupyter Notebook': 'KI & Machine Learning', Assembly: 'Betriebssysteme & System',
 };
 const ALLGEMEIN = /(?:^|[^a-z0-9])(?:librar(?:y|ies)|framework|toolkit|sdk|module|package|plugin|wrapper|bindings?|utilit(?:y|ies)|tools?|helpers?|client|implementation|app|application|extension|component)s?(?![a-z0-9])/i;
+
+// Repositories that are not software projects but belong to another kind: an AI skill (or a collection of them) goes
+// to "Claude-Skills", a repository of 3D models or printable parts to "3D-Modelle". Measured on 315,573 projects
+// (27.11.2026). The kind is changed when the site is built (crawler/publish.mjs), the stored catalogue keeps "projekt".
+//
+// Skill: the repository talks about AI agents (description, name or topics) AND its name says skill ("comfy-skills",
+// "steve-jobs-skill", "zhangxuefeng.skill") or its description does ("A Claude skill for …", "Agent Skills for NVIDIA
+// products"). Topics alone do not count: "agent-skills" and "skills" sit on agent platforms, CLIs and résumé templates.
+// What the description calls the repository first decides: "registry of browser-automation skills", "a tool to convert
+// Claude Code skills", "an AI skill runtime" and "Google Health CLI … includes AI agent skills" stay projects.
+const KI = /(?:^|[^a-z0-9])(?:ai|agents?|agentic|claude|codex|cursor|copilot|gemini|llms?|mcp|openclaw|opencode|deepseek|chatgpt|gpt|antigravity)(?![a-z0-9])/i;
+const KI_TOPIC = /^(?:claude|agent|ai-|codex|mcp|llm|cursor|openclaw|gemini|copilot)/;
+const SKILL_NAME = /(?:^|[-_.\s])skills?(?:$|[-_.\s])|\.skill$/i;
+const SKILL_TEXT = /\b(?:agent|claude(?:[ -]code)?|codex|cursor|ai|gemini|copilot|llm|openclaw)[ -]skills?\b|\bskills? (?:for|of) (?:claude|codex|ai|agents?|llms?|coding agents?)\b|\bskill\.md\b|\bskills? (?:collection|library|pack)\b|\bcollection of (?:[\w-]+ ){0,3}skills\b/i;
+const SKILL_WORT = /\bskills?\b|\.skill\b/i;
+// what a repository is when it is not a skill: the first of these before any "skill" makes it a project, and so does
+// one right after it ("skill registry", "skills CLI")
+// ("your AI agents/bots", "apps for any agent": a word after for/your/with names who uses it, not what it is)
+const WERKZEUG = /\b(?:registry|runtime|platform|tool|toolkit|cli|command-line|framework|service|server|app|application|manager|installer|hub|converter|dashboard|extension|ide|sdk|engine|workbench|editor|proxy|gateway|orchestrator)s?\b/gi;
+const NUTZER = /\b(?:your|for|in|into|any|other|with|of|to|and|via|from)\s+(?:[\w./-]+\s+)?$/i;
+function ersterWerkzeug(text) {
+  for (const m of text.matchAll(WERKZEUG)) if (!NUTZER.test(text.slice(Math.max(0, m.index - 40), m.index))) return m.index;
+  return -1;
+}
+const SKILL_WERKZEUG = /\bskills? (?:registry|runtime|platform|manager|installer|hub|converter|cli|store|engine|router|loader|server|sdk|framework|tool|search|finder|browser|directory|index)\b/i;
+
+export function istSkillRepo({ title = '', description = '', tags = [] }) {
+  const text = description ?? '';
+  const topics = tags.map((t) => t.toLowerCase());
+  if (!(KI.test(text) || KI.test(title) || topics.some((t) => KI_TOPIC.test(t)))) return false;
+  const name = title.replace(/([a-z])([A-Z])/g, '$1-$2');
+  if (!SKILL_NAME.test(name) && !SKILL_TEXT.test(text)) return false;
+  if (SKILL_WERKZEUG.test(text)) return false;
+  const skill = text.search(SKILL_WORT), werkzeug = ersterWerkzeug(text);
+  return !(werkzeug >= 0 && (skill < 0 || werkzeug < skill));
+}
+
+// 3D: only under a media licence (CC or public domain), the same rule as the GitHub adapter applies to asset
+// repositories (crawler/sources/github.mjs, MEDIENARTEN): MIT or GPL on a folder of models says nothing reliable about
+// the models. The description must say the repository is models or printable parts; a keyboard or a robot whose
+// description does not mention them stays a project, and lists, datasets, papers, libraries and printers stay too.
+const MODELL_TEXT = /\b3d[- ]?(?:print(?:ed|able)?|models?)\b|\bprintable\b|\bstl files?\b|\b(?<!electrical )cad files?\b|\bblender rig\b|\breverse[- ]engineered cad\b|\bopenscad models?\b/i;
+const MODELL_TOPIC = new Set(['stl', 'stl-files', 'stl-models', '3d-models', '3d-model', '3d-assets']);
+const KEIN_MODELL = /\b(?:awesome|curated|list of|resources|dataset|benchmark|papers?|specifications?|standard|documentation|docs|tutorials?|book|guide|library|lib|engine|renderer|reconstruction|estimation|detection|generation|generator|3d printers?|slicer|firmware for)\b/i;
+
+export function ist3dRepo({ title = '', description = '', tags = [], license }) {
+  if (!['cc', 'gemeinfrei'].includes(license?.family)) return false;
+  const text = `${title.replace(/[-_]+/g, ' ')} · ${description ?? ''}`;
+  if (KEIN_MODELL.test(text)) return false;
+  return MODELL_TEXT.test(text) || tags.some((t) => MODELL_TOPIC.has(t.toLowerCase()));
+}
+
+/** The kind a GitHub project really belongs to ('skill' or '3d'), or null when it stays a project. */
+export function projektArt(item) {
+  if (item.kind !== 'projekt' || item.source?.id !== 'github') return null;
+  if (istSkillRepo(item)) return 'skill';
+  if (ist3dRepo(item)) return '3d';
+  return null;
+}
 
 export function projektOrdner(titel, beschreibung, tags, sprache) {
   const stimmen = new Map();

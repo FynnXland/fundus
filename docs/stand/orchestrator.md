@@ -303,3 +303,25 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - **Stufe 2 des MCP-Zugangs ist eingeschaltet** (`KONTO: "1"`, 27.11.2026 abends, mit Fynns Ja). Geprüft bis zur
   Anmeldeseite, Einzelheiten in `docs/MCP-ZUGANG-ENTWURF.md` (letzter Abschnitt). Offen ist der Durchlauf mit einem
   echten Konto: anmelden, verbinden, zweites Gerät, abmelden, Zugang löschen.
+
+## 27.11.2026 spät: Skills und 3D-Modelle aus den Projekten umsortiert (lokal, nicht live)
+
+- **GitHub-Projekte wechseln die Art beim Bau** (`projektArt` in `crawler/lib/projekte.mjs`, aufgerufen in
+  `crawler/publish.mjs` vor der Unterkategorie; der gespeicherte Katalog bleibt `projekt`).
+  - Skill: KI-Bezug und der Name sagt Skill (`comfy-skills`, `…-skill`, `….skill`) oder die Beschreibung („A Claude
+    skill for …“, „Agent Skills for …“). Topics allein zählen nicht. Was die Beschreibung zuerst nennt, entscheidet:
+    Registries, Runtimes, CLIs und Konverter rund um Skills bleiben Projekte. Stichprobe 50 Treffer: 1 bis 2 Grenzfälle.
+  - 3D: nur unter CC oder gemeinfrei (wie `MEDIENARTEN` im GitHub-Adapter) und nur, wenn die Beschreibung Modelle,
+    druckbare Teile, STL- oder CAD-Dateien nennt; Listen, Datensätze, Bibliotheken, Drucker und Elektronik-CAD nicht.
+- Ergebnis im Bau: Projekte 315.632 → 313.594, Claude-Skills 2.167 → 4.188, 3D-Modelle 7.839 → 7.856; Gesamtzahl
+  unverändert 567.702.
+- **Skill-Ordner neu** (`unterSkill` in `taxonomy.mjs`): ganze Wörter, die Namen der Agenten und das Wort „Skill“
+  werden vorher entfernt, das erste Fachwort entscheidet. Vorher landeten 1.934 von 2.341 Skills in „Entwicklung“
+  („code“ in „Claude Code“). Neu: Skill-Sammlungen (830, nur umgezogene Repositories mit vielen Skills), Dokumente &
+  Präsentationen, Marketing & Vertrieb, Sicherheit. Sonstiges: 409.
+- Der Projektordner „KI-Agenten & Skills“ heißt jetzt „KI-Agenten & MCP“ (9.082).
+- Sterne eines umgezogenen Repositories heißen nicht mehr „der Sammlung“ (`src/karte.js`, `src/main.js`).
+- Gemessen, nicht umgesetzt: 312 Projekte mit Code-Lizenz nennen 3D-Modelle oder STL-Dateien in der Beschreibung;
+  ein guter Teil davon sind Werkzeuge (Viewer, Generatoren), die echten Modell-Repositories darunter bleiben wegen der
+  Medienlizenz-Regel Projekte. Ob sich die Regel ändert, entscheidet Fynn.
+- Offen: 27 umgezogene Sammlungen (etwa `anthropics/skills`) stehen neben der Gruppe ihrer einzeln gelesenen Skills.

@@ -614,7 +614,7 @@ function karte(o, mitVorschau) {
       ${flaeche}
       <span class="karte__titel">${esc(o.titel)}</span>
       <span class="karte__meta"><span class="mono">${esc(o.lizenz)}</span> · ${esc(o.quellname)}</span>
-      ${o.bewertung ? sterneHtml(o.bewertung) : o.beliebtheit ? beliebtheitHtml({ ...o.beliebtheit, quelle: o.quellname, sammlung: o.art === 'skill' }) : ''}
+      ${o.bewertung ? sterneHtml(o.bewertung) : o.beliebtheit ? beliebtheitHtml({ ...o.beliebtheit, quelle: o.quellname, sammlung: o.art === 'skill' && Boolean(o.sammlung) }) : ''}
     </a>${hoeren}
   </li>`;
 }

@@ -74,14 +74,14 @@ const p = (title, description, tags = [], sprache) => unterkategorie({ kind: 'pr
 
 test('Projekte: GitHub-Themen entscheiden, die meisten Treffer gewinnen', () => {
   assert.equal(p('godot-xterm', 'Terminal emulator for the Godot game engine.', ['godot', 'godot-engine', 'terminal']), 'Spiele & Spieleentwicklung');
-  assert.equal(p('obsidian-mcp-server', 'Read and edit Obsidian notes', ['ai-agents', 'mcp', 'obsidian']), 'KI-Agenten & Skills');
+  assert.equal(p('obsidian-mcp-server', 'Read and edit Obsidian notes', ['ai-agents', 'mcp', 'obsidian']), 'KI-Agenten & MCP');
   assert.equal(p('basement-grotesque', 'The basement grotesque typeface.', ['font', 'typeface']), 'Schriften & Icons');
   assert.equal(p('vulkano', 'Safe and rich Rust wrapper around the Vulkan API', ['rust', 'vulkan']), '3D, Grafik & Bildbearbeitung');
 });
 
 test('Projekte ohne Themen: das erste Fachwort der Beschreibung, dann der Name, dann die Sprache', () => {
   assert.equal(p('MobileIE', '[ICCV2025] Implementation of "MobileIE"'), 'KI & Machine Learning');
-  assert.equal(p('skillfish', 'The skill manager for AI coding agents.'), 'KI-Agenten & Skills');
+  assert.equal(p('skillfish', 'The skill manager for AI coding agents.'), 'KI-Agenten & MCP');
   assert.equal(p('x', 'PoC for CVE-2024-1234'), 'Sicherheit & Hacking');
   assert.equal(p('DeepSeek-V3', ''), 'KI & Machine Learning');
   assert.equal(p('juliex', '', [], 'Solidity'), 'Blockchain & Finanzen');

@@ -139,13 +139,17 @@ export const UNTER = {
   ],
   // projekt: crawler/lib/projekte.mjs (topics first, see there)
   projekt: [],
+  // skill: whole words on a text without the names of the agents (see SKILL_RAUSCHEN below). With word starts and
+  // the names left in, "code" in "Claude Code" put 1,934 of 2,341 skills into Entwicklung (27.11.2026).
   skill: [
-    R('Entwicklung', 'code', 'coding', 'git', 'test', 'debug', 'refactor', 'review', 'api', 'typescript', 'python', 'frontend', 'backend', 'devops'),
-    R('Dokumente', 'pdf', 'docx', 'xlsx', 'pptx', 'document', 'spreadsheet', 'slides', 'markdown'),
-    R('Design & Medien', 'design', 'art', 'image', 'video', 'audio', 'brand', 'canvas', 'ui', 'ux'),
-    R('Recherche & Schreiben', 'research', 'paper', 'write', 'writing', 'content', 'blog', 'seo', 'academic'),
-    R('Daten & Analyse', 'data', 'analytics', 'sql', 'dashboard', 'chart'),
-    R('Arbeitsweise', 'plan', 'planning', 'workflow', 'memory', 'agent', 'productivity', 'project'),
+    W('Dokumente & Präsentationen', 'pdf', 'docx', 'word document', 'xlsx', 'excel', 'pptx', 'powerpoint', 'ppt', 'slide', 'slide deck', 'presentation', 'keynote', 'document', 'spreadsheet', 'invoice', 'resume', 'cv', 'report'),
+    W('Design & Medien', 'design', 'designer', 'ui', 'ux', 'figma', 'image', 'images', 'photo', 'video', 'audio', 'music', 'podcast', 'brand', 'branding', 'logo', 'canvas', 'illustration', 'diagram', 'mermaid', 'excalidraw', 'animation', 'motion graphics', 'motion', 'gsap', 'lottie', 'svg', 'css', 'tailwind', 'html', 'frontend', 'front-end', 'web design', 'landing page', '3d', 'blender', 'remotion', 'art', 'carousel', 'infographic', 'thumbnail', 'comic', 'storyboard'),
+    W('Marketing & Vertrieb', 'marketing', 'seo', 'geo', 'ads', 'advertising', 'sales', 'gtm', 'go-to-market', 'growth', 'ecommerce', 'e-commerce', 'amazon', 'shopify', 'social media', 'tiktok', 'instagram', 'linkedin', 'twitter', 'youtube', 'xiaohongshu', 'copywriting', 'newsletter', 'lead', 'crm', 'startup', 'founder', 'pricing', 'product manager', 'product management', 'pm'),
+    W('Recherche & Schreiben', 'research', 'paper', 'academic', 'thesis', 'citation', 'literature', 'scientific', 'science', 'writing', 'writer', 'essay', 'blog', 'article', 'journalism', 'story', 'storytelling', 'novel', 'fiction', 'translation', 'translate', 'humanizer', 'proofread*', 'editing', 'content', 'summar*', 'wiki', 'learning', 'teach*', 'tutor', 'education', 'study', 'exam'),
+    W('Daten & Analyse', 'data', 'dataset', 'analytics', 'analysis', 'analyst', 'sql', 'database', 'dashboard', 'chart', 'visualization', 'visualisation', 'statistic*', 'finance', 'financial', 'trading', 'stock', 'quant', 'quantitative', 'defi', 'crypto', 'accounting', 'spreadsheet analysis', 'bioinformatics', 'genomic*', 'machine learning', 'ml', 'pytorch', 'fine-tuning', 'quantization', 'inference', 'model training', 'vector database'),
+    W('Sicherheit', 'security', 'pentest', 'pentesting', 'penetration test*', 'recon', 'vulnerabilit*', 'threat', 'xss', 'sqli', 'malware', 'reverse engineering', 'ctf', 'osint', 'compliance', 'audit', 'injection', 'exploit*', 'hardening', 'red team'),
+    W('Entwicklung', 'code', 'coding', 'programming', 'developer', 'development', 'software', 'git', 'github', 'pull request', 'commit', 'testing', 'unit test*', 'tdd', 'debug*', 'refactor*', 'code review', 'api', 'sdk', 'cli', 'typescript', 'javascript', 'python', 'rust', 'golang', 'go', 'java', 'kotlin', 'swift', 'c#', '.net', 'dotnet', 'php', 'ruby', 'elixir', 'react', 'next.js', 'nextjs', 'vue', 'angular', 'svelte', 'node', 'backend', 'back-end', 'devops', 'docker', 'kubernetes', 'terraform', 'aws', 'azure', 'gcp', 'cloud', 'deploy*', 'infrastructure', 'mobile', 'ios', 'android', 'flutter', 'web app', 'architecture', 'spec', 'robotics', 'ros', 'embedded', 'firmware', 'gpu', 'mcp server', 'game', 'gamedev', 'godot', 'gdscript', 'unity', 'unreal'),
+    W('Arbeitsweise', 'plan', 'planning', 'planner', 'workflow', 'memory', 'productivity', 'project management', 'task', 'todo', 'notes', 'obsidian', 'notion', 'meeting', 'email', 'calendar', 'prompt', 'prompts', 'prompt engineering', 'context engineering', 'decision', 'thinking', 'brainstorm*', 'mental model', 'career', 'job', 'coach', 'coaching', 'personal', 'assistant', 'automation', 'session', 'handoff', 'subagent', 'orchestrat*'),
   ],
   // Rules match word starts only, so short words that open longer ones ("sea" in "seamless", "car" in
   // "carbon", "cat" in "cathedral") are left out or written with a trailing space.
@@ -225,6 +229,33 @@ function unterBild(item) {
   return SONSTIGES;
 }
 
+// Skills: the names of the agents and the word "skill" say nothing about the subject ("A Claude Code skill for
+// journalism"), so they are taken out before the rules run; the topics claude-code, skill and agent-skills likewise.
+const SKILL_RAUSCHEN = /\b(?:claude[ -]?code|claude[ -]?cowork|claude|anthropic|codex(?: cli)?|cursor|copilot|gemini(?: cli)?|openclaw|opencode|antigravity|windsurf|kiro|qwen|kimi|deepseek|chatgpt|gpt|hermes|goose|(?:ai |coding |llm )?agents?|agentic|ai|llms?|assistants? (?:like|such as)|skills?|skill\.md|plugins?|mcp(?! server))\b|\.skill\b/gi;
+const SKILL_TOPIC_RAUSCHEN = /skill|^claude|^agent|^codex|^ai-|^llm|^mcp$|^openclaw|^cursor/;
+export const SKILL_SAMMLUNG = 'Skill-Sammlungen';
+// a repository that is a whole set of skills (crawler/lib/projekte.mjs, projektArt): "NVIDIA/skills", "38 agent skills
+// from shipping three live products", "A curated collection of Agent Skills". Single skills read from a SKILL.md carry
+// their collection in item.collection and never land here.
+const SAMMLUNG_NAME = /(?:^|[-_.])skills(?:$|[-_.])|skill[-_]?(?:pack|suite|set|library)s?$/i;
+const SAMMLUNG_TEXT = /\b(?:collection|curated|awesome|library|set|pack|suite|marketplace|list) of\b|\bskills? (?:collection|library|pack|suite|set|marketplace)\b|\b\d+\+? (?:[\w-]+ ){0,3}skills\b|\bawesome\b/i;
+
+function unterSkill(item) {
+  const ohne = (s) => (s ?? '').replace(SKILL_RAUSCHEN, ' ');
+  if (!item.collection && item.source?.id === 'github' && (SAMMLUNG_NAME.test(item.title ?? '') || SAMMLUNG_TEXT.test(item.description ?? ''))) return SKILL_SAMMLUNG;
+  const titel = ohne((item.title ?? '').replace(/[-_]+/g, ' '));
+  const tags = (item.tags ?? []).filter((t) => !SKILL_TOPIC_RAUSCHEN.test(t.toLowerCase())).map((t) => t.replace(/-/g, ' '));
+  const rest = [ohne(item.description?.slice(0, 200)), ...tags].filter(Boolean).join(' · ');
+  // the subject word that comes first wins, as for projects (crawler/lib/projekte.mjs); the title before the description.
+  // Verbs that every skill does ("write", "create", "build") are not in the lists for that reason.
+  for (const text of [titel, rest]) {
+    let wahl = null, wo = Infinity;
+    for (const r of UNTER.skill) { const m = r.re.exec(text); if (m && m.index < wo) { wahl = r; wo = m.index; } }
+    if (wahl) return wahl.label;
+  }
+  return SONSTIGES;
+}
+
 // Icon styles that the icon adapters set in meta.stil; they decide before any word rule.
 const ICON_STILE = new Set(['Emoji', '3D', 'Farbig', 'Illustrationen', 'Pixel', 'Spiele']);
 
@@ -238,6 +269,7 @@ export function unterkategorie(item) {
     for (const r of regeln) if (item.meta?.kategorie && r.re.test(item.meta.kategorie)) return r.label;
   }
   if (item.kind === 'bild') return unterBild(item);
+  if (item.kind === 'skill') return unterSkill(item);
   const rest = [...(item.tags ?? []), item.meta?.kategorie, item.meta?.art, item.description?.slice(0, 160)].filter(Boolean).join(' · ');
   for (const text of [item.title ?? '', rest]) {
     for (const r of regeln) if (r.re.test(text)) return r.label;

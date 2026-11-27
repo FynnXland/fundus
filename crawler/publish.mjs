@@ -16,6 +16,7 @@ import { createHash } from 'node:crypto';
 import { validateItem, KINDS } from './lib/schema.mjs';
 import { dedupe, inhaltsDubletten } from './lib/dedupe.mjs';
 import { unterkategorie } from './lib/taxonomy.mjs';
+import { projektArt } from './lib/projekte.mjs';
 import { ladeKatalog } from './lib/store.mjs';
 import { SOURCES } from './sources/index.mjs';
 import { baueAusgabe } from './lib/ausgabe.mjs';
@@ -195,6 +196,8 @@ async function main() {
   for (const it of items) {
     // Commons categories carry photographer, date and heritage-register lists; those are not topics
     if (it.source.id === 'wikimedia') it.tags = it.tags.filter((t) => !/user:|taken on|taken with|images of|photographs of|monuments in|heritage|(19|20)\d\d|january|february|march|april|may |june|july|august|september|october|november|december|wikidata|location|by country/i.test(t));
+    // GitHub repositories that are skills or 3D models move to that kind (crawler/lib/projekte.mjs)
+    it.kind = projektArt(it) ?? it.kind;
     it.unter = unterkategorie(it);
     const v = vorschau[it.id];
     if (v?.pfad) it.vorschau = { pfad: v.pfad, b: v.b, h: v.h };
