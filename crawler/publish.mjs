@@ -49,6 +49,19 @@ export function publishable(katalog, status, gesperrt = {}, rechte = { titel: {}
   return { items: out, skipped };
 }
 
+/** "Jupyter Notebook" -> "jupyter-notebook"; the MCP core (mcp/src/kern.mjs) folds a language filter the same way. */
+export const sprachTag = (s) => String(s ?? '').trim().toLowerCase().replace(/\s+/g, '-');
+/**
+ * The tags of a row and of the search index: the first eight, and behind them the programming language of a
+ * repository ("rust", "c++", "jupyter-notebook"). So a language is searchable and the MCP search can filter by it,
+ * without pushing a topic out of the eight.
+ */
+export function zeilenTags(it) {
+  const tags = it.tags.slice(0, 8);
+  const sprache = sprachTag(it.meta?.sprache);
+  return sprache && !tags.some((t) => t.toLowerCase() === sprache) ? [...tags, sprache] : tags;
+}
+
 const lizenzgruppe = (l) => (!l.attribution ? 'frei' : l.shareAlike ? 'gleich' : 'nennung');
 export const formate = (it) => [...new Set(it.downloads.flatMap((d) => (d.paket ? d.paket.files.map((f) => f.path.split('.').pop()) : [d.format])).filter((f) => f && f.length <= 5).map((f) => f.toLowerCase()).map((f) => ({ jpeg: 'jpg', tiff: 'tif', 'svg+xml': 'svg' })[f] ?? f))];
 
@@ -89,7 +102,7 @@ export function zeile(it, v = it.vorschau) {
     it.source.id,
     it.license.name,
     formate(it).join(' '),
-    it.tags.slice(0, 8).join(' '),
+    zeilenTags(it).join(' '),
     v?.pfad ?? '',
     v?.b ?? 0,
     v?.h ?? 0,
@@ -129,7 +142,7 @@ export const ARTNAMEN = {
 /** What the search index knows of an entry, by weight class (crawler/lib/suchindex.mjs). */
 export const suchfelder = (it) => [
   [it.title, 0],
-  [it.tags.slice(0, 8).join(' '), 1],
+  [zeilenTags(it).join(' '), 1],
   [it.unter, 1],
   [it.creator.name, 2],
   [it.source.name, 2],

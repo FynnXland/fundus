@@ -269,14 +269,15 @@ async function verbinde(serverOpts, s = stub()) {
 }
 
 describe('MCP-Werkzeuge', () => {
-  test('lokal: fünf Werkzeuge mit Download, entfernt: Links statt Download', mitSdk, async () => {
+  test('lokal: sieben Werkzeuge mit Download, entfernt: Links statt Download', mitSdk, async () => {
     const lokal = await verbinde({ herunterladen: async () => '' });
-    assert.deepEqual((await lokal.client.listTools()).tools.map((t) => t.name), ['fundus_catalog', 'fundus_search', 'fundus_preview', 'fundus_details', 'fundus_download']);
+    assert.deepEqual((await lokal.client.listTools()).tools.map((t) => t.name), ['fundus_catalog', 'fundus_search', 'fundus_preview', 'fundus_details', 'fundus_similar', 'fundus_attribution', 'fundus_download']);
     const fern = await verbinde({});
     const tools = (await fern.client.listTools()).tools;
-    assert.deepEqual(tools.map((t) => t.name), ['fundus_catalog', 'fundus_search', 'fundus_preview', 'fundus_details', 'fundus_download_links']);
+    assert.deepEqual(tools.map((t) => t.name), ['fundus_catalog', 'fundus_search', 'fundus_preview', 'fundus_details', 'fundus_similar', 'fundus_attribution', 'fundus_download_links']);
     assert.ok(tools.every((t) => !t.outputSchema), 'no outputSchema: text only, no doubled tokens');
-    assert.ok(JSON.stringify(tools).length < 6500, 'tool list stays small');
+    // every session reads this list: 6,500 characters with five tools, raised for sort, filters and two more tools
+    assert.ok(JSON.stringify(tools).length < 8500, `tool list stays small (${JSON.stringify(tools).length})`);
   });
 
   test('Suche antwortet knapp als Tabelle mit Cursor', mitSdk, async () => {
@@ -374,7 +375,7 @@ describe('HTTP-Zugang', () => {
     const post = (body) => http(new Request(`${SITE}/mcp`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': '2025-06-18' }, body: JSON.stringify(body) }));
     const init = await lies(await post({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'alt', version: '1' } } }));
     assert.equal(init[0].result.serverInfo.name, 'fundus');
-    assert.match(init[0].result.instructions, /contact sheet/);
+    assert.match(init[0].result.instructions, /fundus_preview for up to 6 ids/);
     const liste = await lies(await post({ jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} }));
     assert.ok(liste[0].result.tools.some((t) => t.name === 'fundus_download_links'));
     const ruf = await post({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'fundus_search', arguments: { query: 'prism' } } });
@@ -421,7 +422,7 @@ test('stdio: alter Handshake über echte Pipes, stdout nur Protokoll, ohne Netz'
     assert.equal((await warte(1))?.result?.protocolVersion, '2025-06-18');
     senden({ jsonrpc: '2.0', method: 'notifications/initialized' });
     senden({ jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} });
-    assert.deepEqual((await warte(2)).result.tools.map((t) => t.name), ['fundus_catalog', 'fundus_search', 'fundus_preview', 'fundus_details', 'fundus_download']);
+    assert.deepEqual((await warte(2)).result.tools.map((t) => t.name), ['fundus_catalog', 'fundus_search', 'fundus_preview', 'fundus_details', 'fundus_similar', 'fundus_attribution', 'fundus_download']);
     senden({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'fundus_catalog', arguments: {} } });
     const r = await warte(3);
     assert.equal(r.result.isError, true);
@@ -546,4 +547,41 @@ test('Suche: beliebte Einträge steigen, ein Beschreibungstreffer überholt kein
   assert.deepEqual(ids.slice(0, 2), ['gross', 'klein']);
   // description only: 0.5 + 0.5, even at the very top of popularity it stays behind the title match
   assert.equal(ids[2], 'text');
+});
+
+test('Suche: Sprache, Mindestbeliebtheit und Sortierung nach Beliebtheit; ähnliche Einträge', async () => {
+  const { baueAusgabe } = await import('../crawler/lib/ausgabe.mjs');
+  const { erstelleKern } = await import('../mcp/src/kern.mjs');
+  const { sprachTag } = await import('../crawler/publish.mjs');
+  const eintrag = (id, titel, tags, sterne, sprache) => ({ id, sig: `PRJ·GH·${id.padStart(5, '0')}`, kind: 'projekt', unter: 'Werkzeuge', title: titel, tags: [sprachTag(sprache), ...tags], description: '', rang: sterne, license: { name: 'MIT' }, popularity: { value: sterne, label: 'GitHub-Sterne' }, firstSeen: sterne > 500 ? '2026-11-27' : '2026-10-01' });
+  const items = [
+    eintrag('a', 'pdf tool', ['pdf', 'parser'], 100, 'Rust'),
+    eintrag('b', 'pdf reader', ['pdf', 'viewer'], 5000, 'Python'),
+    eintrag('c', 'pdf kit', ['pdf', 'parser'], 900, 'Jupyter Notebook'),
+    eintrag('d', 'image kit', ['image'], 20000, 'Rust'),
+  ];
+  const felder = ['id', 'sig', 'unter', 'titel', 'tags', 'neu', 'pop', 'rang', 'serie'];
+  const shard = Object.fromEntries(items.map((it) => [it.id, { ...it, indexTeil: 0, source: { id: 'github', name: 'GitHub', url: 'https://github.com/x/y' } }]));
+  const { dateien, index } = baueAusgabe(items, {
+    arten: ['projekt'], felder, lizenzgruppe: () => 'nennung',
+    zeile: (it) => [it.id, it.sig, it.unter, it.title, it.tags.join(' '), it.firstSeen, [it.popularity.value, it.popularity.label], it.rang, null],
+    suchfelder: (it) => [[it.title, 0], [it.tags.join(' '), 1]],
+  });
+  dateien.set('stand.json', { crawledAt: 'x', total: items.length, perKind: { projekt: items.length }, perUnter: { projekt: { Werkzeuge: items.length } }, sources: [], index: { ...index, karten: 1 } });
+  const holen = async (url) => {
+    const pfad = new URL(url).pathname.replace(/^\/data\//, '');
+    const d = pfad.startsWith('karten/') ? shard : dateien.get(pfad);
+    return d === undefined ? new Response('', { status: 404 }) : new Response(JSON.stringify(d));
+  };
+  const kern = erstelleKern({ daten: 'http://x/data', fetch: holen });
+  const ids = async (o) => (await kern.suchen({ art: 'projekt', ...o })).treffer.map((r) => r.id);
+  assert.deepEqual(await ids({ q: 'pdf', sprache: 'rust' }), ['a']);
+  assert.deepEqual(await ids({ q: 'pdf', sprache: 'Jupyter Notebook' }), ['c'], 'Leerzeichen im Namen der Sprache');
+  assert.deepEqual(await ids({ q: 'pdf', minBeliebt: 800 }), ['b', 'c']);
+  assert.deepEqual(await ids({ q: 'pdf', seit: '2026-11-01' }), ['b', 'c']);
+  assert.deepEqual(await ids({ sortierung: 'popular' }), ['d', 'b', 'c', 'a'], 'ohne Suchwort: die beliebtesten der Art');
+  assert.deepEqual(await ids({ q: 'pdf', sortierung: 'popular' }), ['b', 'c', 'a']);
+  await assert.rejects(() => kern.suchen({ sortierung: 'popular' }), /needs a kind/);
+  // c shares two tags with a; d and b share one each, the more popular of them first
+  assert.deepEqual((await kern.aehnliche('a')).map((r) => r.id), ['c', 'd', 'b']);
 });

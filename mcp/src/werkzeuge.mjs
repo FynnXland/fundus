@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { FundusFehler, LIZENZGRUPPEN, VERSION, groesse, namensnennung, dateienVon, ohneTracking } from './kern.mjs';
 import { kontaktbogen, base64 } from './kontaktbogen.mjs';
 
-const ANLEITUNG = `Fundus is a catalogue of free assets (pictures, 3D models, materials, HDRIs, icons, music, sounds, fonts, scripts, projects, Claude skills, videos). Files stay at their original source; Fundus lists them with license and attribution.
-Cheap workflow: fundus_search (compact rows, paged by cursor) -> fundus_preview with several ids as one contact sheet (look before downloading, especially 3D) -> fundus_details for license, attribution and download options -> download. Subfolder names, kinds and data are partly German; pass them as shown. Always keep the attribution text with files that require it.`;
+const anleitung = (bogen) => `Fundus is a catalogue of free assets (pictures, 3D models, materials, HDRIs, icons, music, sounds, fonts, scripts, projects, Claude skills, videos). Files stay at their original source; Fundus lists them with license and attribution.
+Cheap workflow: fundus_catalog once for kinds and subfolders -> fundus_search (compact rows, paged by cursor; narrow with kind, subfolder, language, license_group, min_popularity; sort "popular" for the best known) -> fundus_preview ${bogen ? 'with several ids as one contact sheet' : 'for up to 6 ids'} (look before downloading, especially 3D) -> fundus_details for license, attribution, download options and, for code, links to the README and file list -> download. fundus_similar finds alternatives to an entry, fundus_attribution writes the credits for everything you used. Subfolder names, kinds and data are partly German; pass them as shown. Always keep the attribution text with files that require it.`;
 
 const zeichen = (s, n) => {
   const t = String(s ?? '').replace(/[\t\r\n]+/g, ' ').trim();
@@ -63,6 +63,7 @@ function suchkopf(e, { q, art, limit }) {
   else if (e.gesamt != null) teile.push(`${e.gesamt} matches${was}, ${zeige}.`);
   else teile.push(`${e.treffer.length} matches${was} on this page (total not counted with these filters).`);
   if (e.treffer.some((r) => r.serie && r.hier)) teile.push('A row marked [group …] is one example for a group of related entries (series, set, one designer); pass group to list them.');
+  if (e.beliebt) teile.push('Sorted by popularity (stars, downloads, ratings), most popular first.');
   if (e.teilweise) teile.push(`Stopped after ${e.abrufe} index files to stay cheap; continue with cursor "${e.weiter}" or narrow the search (kind, query).`);
   else if (e.weiter) teile.push(`More: cursor "${e.weiter}".`);
   if (!e.treffer.length && !e.weiter && limit) teile.push('Try another word (synonym, English or German), fewer filters or fundus_catalog for valid filter values.');
@@ -80,7 +81,13 @@ export function detailtext(it, { mitUrls = true } = {}) {
     `Attribution: ${namensnennung(it)}`,
     `Source page: ${ohneTracking(it.source.url)} (${it.source.name})`,
   ];
+  zeilen.push(`Use: commercial use and adaptation are allowed (Fundus lists no NC or ND licenses)${l.attribution ? '; name creator and license' : ''}${l.shareAlike ? '; pass adaptations on under the same license (share-alike or copyleft)' : ''}. The license text decides.`);
   if (it.description) zeilen.push(`Description: ${zeichen(it.description, 300)}`);
+  const fakten = [it.popularity ? `${it.popularity.value} ${it.popularity.label}` : '', it.meta?.sprache ? `language ${it.meta.sprache}` : '', it.meta?.zuletzt ? `last change at the source ${it.meta.zuletzt}` : ''].filter(Boolean);
+  if (fakten.length) zeilen.push(`Facts: ${fakten.join(' · ')}`);
+  // Fundus relays no files: for code the reader gets the addresses and fetches them itself
+  const repo = it.source.id === 'github' ? it.meta?.repository ?? it.meta?.sammlung : null;
+  if (repo) zeilen.push(`Read the source yourself: README https://raw.githubusercontent.com/${repo}/HEAD/README.md (other file name: https://api.github.com/repos/${repo}/readme) · file list https://api.github.com/repos/${repo}/git/trees/HEAD?recursive=1 · a file https://raw.githubusercontent.com/${repo}/HEAD/<path>`);
   if (it.collection?.name) zeilen.push(`Collection: ${it.collection.name}`);
   if (['projekt', 'skript', 'skill'].includes(it.kind)) zeilen.push('Note: third-party code. Fundus does not check security, privacy compliance or whether the license claim is right; review it before use.');
   if (it.serie?.id) zeilen.push(`Group: ${it.serie.name} (${it.serie.anzahl} entries), list them with fundus_search group "${it.serie.id}"`);
@@ -126,7 +133,7 @@ const NUR_LESEN = { readOnlyHint: true, destructiveHint: false, idempotentHint: 
  * quellbild: async (url) -> { bytes, mime } | null, fetches a thumbnail at the source (local server only).
  */
 export function baueServer({ kern, codec = null, herunterladen = null, quellbild = null, name = 'fundus' }) {
-  const server = new McpServer({ name, version: VERSION }, { instructions: ANLEITUNG });
+  const server = new McpServer({ name, version: VERSION }, { instructions: anleitung(Boolean(codec)) });
 
   server.registerTool(
     'fundus_catalog',
@@ -145,7 +152,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     'fundus_search',
     {
       title: 'Fundus: search assets',
-      description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Related entries (a numbered series, an icon set, one designer at game-icons) come as one example row marked [group id: size]; pass group to list the members. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
+      description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first and well-known entries (stars, downloads) are lifted. A column popularity shows stars, downloads or rating where an entry has them. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Related entries (a numbered series, an icon set, one designer at game-icons) come as one example row marked [group id: size]; pass group to list the members. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
       inputSchema: z.object({
         query: z.string().optional().describe('search words, e.g. "wooden chair"; English and German titles exist'),
         kind: z.string().optional().describe('bild, grafik, 3d, textur, hdri, icon, musik, sound, schrift, skript, projekt, skill, video'),
@@ -156,6 +163,10 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
         format: z.string().optional().describe('file format, e.g. glb, gltf, blend, fbx, stl, png, svg, mp3, wav, ogg, woff2, exr, hdr'),
         source: z.string().optional().describe('source id or name, e.g. polyhaven, ambientcg, wikimedia'),
         has_preview: z.boolean().optional().describe('only entries with an own thumbnail (fundus_preview works for them)'),
+        language: z.string().optional().describe('programming language of a repository, e.g. "Rust", "Python", "C++", "TypeScript" (projekt, skript)'),
+        min_popularity: z.number().int().min(1).optional().describe('only entries with at least this many stars or downloads (column popularity)'),
+        since: z.string().optional().describe('only entries added to the catalogue on or after this date, YYYY-MM-DD'),
+        sort: z.enum(['relevance', 'popular']).optional().describe('relevance (default: word match, lifted by popularity) or popular (most stars/downloads first; without query it needs kind and lists the best known of the kind or subfolder)'),
         limit: z.number().int().min(1).max(50).optional().describe('rows per page, default 10'),
         group: z.string().optional().describe('group id from a [group …] mark, e.g. "3d.4f2a9c1e": lists the members of that group'),
         cursor: z.string().optional().describe('from the previous answer'),
@@ -164,7 +175,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     },
     async (a) => {
       try {
-        const e = await kern.suchen({ q: a.query, art: a.kind, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, gruppe: a.group, limit: a.limit ?? 10, cursor: a.cursor });
+        const e = await kern.suchen({ q: a.query, art: a.kind, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, gruppe: a.group, limit: a.limit ?? 10, cursor: a.cursor, sortierung: a.sort, minBeliebt: a.min_popularity, seit: a.since, sprache: a.language });
         const kopf = suchkopf(e, { q: a.query, art: a.kind, limit: a.limit ?? 10 });
         return text(e.treffer.length ? `${kopf}\n${suchzeilen(e.treffer, { rueckfall: e.rueckfall })}` : kopf);
       } catch (err) { return fehler(err); }
@@ -250,6 +261,53 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
         for (const id of [...new Set(ids)]) {
           try { teile.push(detailtext(await kern.eintrag(id))); } catch (err) { if (err instanceof FundusFehler) teile.push(err.message); else throw err; }
         }
+        return text(teile.join('\n\n'));
+      } catch (err) { return fehler(err); }
+    },
+  );
+
+  server.registerTool(
+    'fundus_similar',
+    {
+      title: 'Fundus: similar entries',
+      description: 'Alternatives to one entry: entries of the same kind and subfolder that share the most tags, the better known first. Same compact rows as fundus_search. Use it when a hit is close but not right, or to offer a choice.',
+      inputSchema: z.object({
+        id: z.string().describe('entry id from fundus_search'),
+        limit: z.number().int().min(1).max(20).optional().describe('rows, default 8'),
+      }),
+      annotations: NUR_LESEN,
+    },
+    async ({ id, limit }) => {
+      try {
+        const rows = await kern.aehnliche(id, limit ?? 8);
+        return text(rows.length ? `${rows.length} entries similar to ${id}:\n${suchzeilen(rows)}` : `No similar entries found for ${id}; try fundus_search with its tags.`);
+      } catch (err) { return fehler(err); }
+    },
+  );
+
+  server.registerTool(
+    'fundus_attribution',
+    {
+      title: 'Fundus: credits for a list of entries',
+      description: 'The ready-made attribution line for each of up to 10 entries, as one block to paste into credits, a README or a video description. Says for each whether the license requires it. Use it at the end, for everything that went into the work.',
+      inputSchema: z.object({ ids: z.array(z.string()).min(1).max(10).describe('ids of the entries that were used') }),
+      annotations: NUR_LESEN,
+    },
+    async ({ ids }) => {
+      try {
+        const pflicht = [];
+        const frei = [];
+        const fehlend = [];
+        for (const id of [...new Set(ids)]) {
+          try {
+            const it = await kern.eintrag(id);
+            (it.license.attribution ? pflicht : frei).push(namensnennung(it));
+          } catch (err) { if (err instanceof FundusFehler) fehlend.push(err.message); else throw err; }
+        }
+        const teile = [];
+        if (pflicht.length) teile.push(`Attribution required by the license (${pflicht.length}):\n${pflicht.join('\n')}`);
+        if (frei.length) teile.push(`No attribution required, naming the source is still good practice (${frei.length}):\n${frei.join('\n')}`);
+        if (fehlend.length) teile.push(fehlend.join('\n'));
         return text(teile.join('\n\n'));
       } catch (err) { return fehler(err); }
     },

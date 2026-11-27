@@ -209,25 +209,59 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
    * match is in the description (0.5 a word) still cannot pass one with the word in its title (3). Entries of equal
    * value keep a fixed pseudo-random order, so a cursor stays valid.
    */
-  async function gereiht(treffer) {
+  async function gereiht(treffer, nurBeliebtheit = false) {
     const arten = new Set();
     for (const [r] of treffer) arten.add(blockVon(r).art);
+    const plaetze = await plaetzeFuer([...arten]);
+    if (!plaetze.size) return rangfolge(treffer);
+    const platzVon = (r) => plaetze.get(blockVon(r).art)?.get(r);
+    if (nurBeliebtheit) {
+      // sort "popular": the place among the most popular decides, the word score only among entries without a place
+      const mit = treffer.map(([r, p]) => [r, p, platzVon(r) ?? Infinity]);
+      const ohne = rangfolge(mit.filter((e) => e[2] === Infinity));
+      return mit.filter((e) => e[2] !== Infinity).sort((x, y) => x[2] - y[2] || y[1] - x[1]).map((e) => e[0]).concat(ohne);
+    }
+    const wert = ([r, p]) => {
+      const platz = platzVon(r);
+      return platz === undefined ? p : p * (1 + BONUS * Math.max(0, 1 - Math.log1p(platz) / Math.log1p(BONUS_BIS)));
+    };
+    return rangfolge(treffer.map((e) => [e[0], wert(e)]));
+  }
+
+  /** art -> Map ref -> place among the most popular rows of that kind (index/<art>/beste.json), only kinds that have one. */
+  async function plaetzeFuer(artNamen) {
     const plaetze = new Map();
-    await Promise.all([...arten].map(async (name) => {
-      if (!k.arten.get(name).beste) return;
+    await Promise.all(artNamen.map(async (name) => {
+      if (!k.arten.get(name)?.beste) return;
       let m = beste.get(name);
       if (!m) {
         const l = await holeJson(`index/${name}/beste.json`, { fehlend: [] });
         m = beste.set(name, new Map((Array.isArray(l) ? l : []).map((r, i) => [r, i])));
       }
-      plaetze.set(name, m);
+      if (m.size) plaetze.set(name, m);
     }));
-    if (!plaetze.size) return rangfolge(treffer);
-    const wert = ([r, p]) => {
-      const platz = plaetze.get(blockVon(r).art)?.get(r);
-      return platz === undefined ? p : p * (1 + BONUS * Math.max(0, 1 - Math.log1p(platz) / Math.log1p(BONUS_BIS)));
-    };
-    return rangfolge(treffer.map((e) => [e[0], wert(e)]));
+    return plaetze;
+  }
+
+  /**
+   * Entries like this one: same kind and subfolder, most shared tags first, then the more popular. Reads the shard
+   * of the entry and its index part (neighbours there share subfolder and tags), nothing else.
+   */
+  async function aehnliche(id, n = 8) {
+    const it = await eintrag(id);
+    const t = k.arten.get(it.kind)?.teile[it.indexTeil];
+    if (!t) return [];
+    const rows = await ladeTeil(t, { n: 0 });
+    const ich = rows.find((r) => r.id === id);
+    const unter = ich?.unter ?? it.unter;
+    const tags = new Set(String(ich?.tags ?? (it.tags ?? []).join(' ')).split(' ').filter(Boolean));
+    return rows
+      .filter((r) => r.id !== id && r.unter === unter)
+      .map((r) => ({ r, p: String(r.tags).split(' ').filter((x) => tags.has(x)).length }))
+      .filter((e) => e.p > 0)
+      .sort((x, y) => y.p - x.p || (y.r.rang ?? 0) - (x.r.rang ?? 0) || (x.r.id < y.r.id ? -1 : 1))
+      .slice(0, Math.max(1, Math.min(20, Math.floor(n))))
+      .map((e) => e.r);
   }
 
   async function ladeKachel(s) {
@@ -272,8 +306,13 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
    * the others count in gefaltet but not towards limit. The cursor stays a position, so a later page can show the
    * same group again.
    */
-  async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, gruppe, zusammenfassen = true, limit = 10, cursor } = {}) {
+  async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, gruppe, zusammenfassen = true, limit = 10, cursor, sortierung, minBeliebt, seit, sprache } = {}) {
     await stand();
+    if (sortierung && !['relevance', 'popular'].includes(sortierung)) throw new FundusFehler('sort must be "relevance" or "popular"');
+    if (seit && !/^\d{4}-\d{2}-\d{2}$/.test(seit)) throw new FundusFehler('since must be a date like 2026-11-01');
+    const beliebt = sortierung === 'popular';
+    // the language tag as crawler/publish.mjs writes it: lowercase, spaces as hyphens
+    const spracheN = sprache ? String(sprache).trim().toLowerCase().replace(/\s+/g, '-') : null;
     const grp = gruppe ? await gruppeVon(gruppe) : null;
     if (grp && artName && artName !== grp.art) throw new FundusFehler(`group ${grp.id} belongs to kind ${grp.art}, not ${artName}`);
     const a = art(grp ? grp.art : artName);
@@ -301,8 +340,11 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       (!qid || r.quelle === qid) &&
       (!mitVorschau || Boolean(r.vorschau)) &&
       tagWoerter.every((ws) => { const t = woerter(`${r.tags} ${r.unter}`); return ws.every((w) => t.some((x) => x.startsWith(w))); }) &&
+      (!spracheN || r.tags.split(' ').includes(spracheN)) &&
+      (!minBeliebt || (r.pop?.[0] ?? 0) >= minBeliebt) &&
+      (!seit || (r.neu ?? '') >= seit) &&
       (!grp || r.serie === grp.id);
-    const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length || grp);
+    const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length || grp || spracheN || minBeliebt || seit);
 
     // the sequence of refs to walk
     let refs = null; // ranked hits (search) or null (listing over blocks)
@@ -311,12 +353,19 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     let voll = null;
     let fehlt = null; // ref -> missing words, for the fallback rows
     const deckt = (t) => ui < 0 || (t.von <= ui && ui <= t.bis);
-    if (q && woerter(q).length) {
+    // A language is a tag in the search index: its words narrow the hits there, before any row is loaded. They are
+    // not query words (a hit must have them, and they never count as "missing"). Only names of three letters and
+    // more ("rust", "typescript"): "c", "go" or "c++" would match every word start with those letters, so they
+    // stay a row filter.
+    const sprachWoerter = spracheN && /^[a-z0-9-]{3,}$/.test(spracheN) ? spracheN.replace(/-/g, ' ') : null;
+    const suchtext = q && woerter(q).length ? q : null;
+    if (suchtext || sprachWoerter) {
       const geladen = new Map();
-      await Promise.all(kachelnFuerAnfrage(q, k.schluessel).map(async (s) => geladen.set(s, await ladeKachel(s))));
-      const { ws, karten } = kartenFuer(q, geladen, k.schluessel);
-      const imBereich = (r) => (!a || (r >= a.start && r < a.ende)) && (ui < 0 || deckt(blockVon(r)));
-      refs = await gereiht([...undVerknuepft(karten)].filter(([r]) => imBereich(r)));
+      await Promise.all(kachelnFuerAnfrage(`${suchtext ?? ''} ${sprachWoerter ?? ''}`, k.schluessel).map(async (s) => geladen.set(s, await ladeKachel(s))));
+      const sprachKarten = sprachWoerter ? kartenFuer(sprachWoerter, geladen, k.schluessel).karten : [];
+      const { ws, karten } = suchtext ? kartenFuer(suchtext, geladen, k.schluessel) : { ws: [], karten: sprachKarten };
+      const imBereich = (r) => (!a || (r >= a.start && r < a.ende)) && (ui < 0 || deckt(blockVon(r))) && sprachKarten.every((m) => m.has(r));
+      refs = await gereiht([...undVerknuepft(karten)].filter(([r]) => imBereich(r)), beliebt);
       voll = refs.length;
       // Row filters (licence, format, …) can drop every full hit, which only the walk below sees: with them the
       // partial hits always follow the full ones and show up only once those are used up.
@@ -326,6 +375,12 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
         refs = refs.concat(teil.map(([r]) => r));
       }
       if (!zeilenfilter && ui < 0) gesamt = refs.length;
+    } else if (beliebt && !grp) {
+      // "the most popular of a kind or subfolder": the refs of beste.json in their order, no word needed
+      if (!a) throw new FundusFehler('sort "popular" without a query needs a kind');
+      const m = (await plaetzeFuer([a.art])).get(a.art);
+      if (!m) throw new FundusFehler(`Kind "${a.art}" has no popularity data (stars, downloads, ratings), so sort "popular" does not apply to it.`);
+      refs = [...m.keys()].filter((r) => ui < 0 || deckt(blockVon(r)));
     } else if (grp) {
       // the parts that hold the members; the group size is exact unless other filters apply
       bloecke = grp.teile.map((n) => a.teile[n]).filter((t) => t && deckt(t));
@@ -412,6 +467,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       ab,
       bis: ab ? pos : null, // last match position shown or folded on this page
       teilweise,
+      beliebt,
       abrufe: zaehler.n,
       voll,
       rueckfall,
@@ -458,7 +514,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     return (await stand()).stand;
   }
 
-  return { stand, info, suchen, eintrag, zeileFuer, vorschauBild, vorschauUrl: async (id) => `${vbasis}/${await vorschauPfad(id)}`, LIZENZGRUPPEN };
+  return { stand, info, suchen, eintrag, aehnliche, zeileFuer, vorschauBild, vorschauUrl: async (id) => `${vbasis}/${await vorschauPfad(id)}`, LIZENZGRUPPEN };
 }
 
 /* ---------------- Helpers for the answers ---------------- */

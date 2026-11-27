@@ -1,6 +1,6 @@
 # Was eine KI über den Fundus-MCP tun kann
 
-Stand 27.11.2026, gelesen aus `mcp/src/werkzeuge.mjs` und gegen den Live-Server geprüft.
+Stand 27.11.2026 nachmittags, gelesen aus `mcp/src/werkzeuge.mjs` und gegen den Live-Server geprüft.
 
 Ein MCP-Server bietet einer KI eine feste Liste von **Werkzeugen** an (englisch „tools“). Jedes Werkzeug hat einen
 Namen, eine Beschreibung und benannte Angaben, die die KI mitschicken darf. Die KI kann nichts anderes tun als diese
@@ -12,7 +12,7 @@ Fundus hat zwei Server mit fast derselben Liste:
 |---|---|---|
 | Adresse | `https://fundus.fynn.land/mcp` | `npx -y fundus-mcp` auf dem eigenen Rechner (noch nicht auf npm veröffentlicht) |
 | Anmeldung | keine | keine |
-| Werkzeuge | 5 | 5, statt der Download-Links das Herunterladen in einen Ordner |
+| Werkzeuge | 7 | 7, statt der Download-Links das Herunterladen in einen Ordner |
 | Schreibt etwas | nein, nur lesen | ja, Dateien in einen Ordner auf dem Rechner |
 
 ## Die Werkzeuge
@@ -44,6 +44,10 @@ Formate, Quelle, Urheber, ob es ein Vorschaubild gibt, und seit heute Sterne, Do
 | `format` | nein | Dateiformat, etwa glb, png, mp3 |
 | `source` | nein | Quelle, etwa polyhaven |
 | `has_preview` | nein | nur Einträge mit eigenem Vorschaubild |
+| `language` | nein | Programmiersprache eines Repositorys, etwa Rust, Python, C++ |
+| `min_popularity` | nein | nur Einträge mit mindestens so vielen Sternen oder Downloads |
+| `since` | nein | nur Einträge, die seit diesem Tag im Katalog sind (JJJJ-MM-TT) |
+| `sort` | nein | `relevance` (sonst) oder `popular`: die beliebtesten zuerst; ohne Suchwort braucht das eine Art |
 | `group` | nein | Kennung einer Gruppe: listet deren Mitglieder (Serien, Icon-Sets) |
 | `limit` | nein | Zeilen je Seite, 1 bis 50, sonst 10 |
 | `cursor` | nein | Marke für die nächste Seite, kommt aus der vorigen Antwort |
@@ -77,9 +81,32 @@ Die KI bekommt die Bilder selbst zu sehen und kann beurteilen, ob etwas passt. 3
 | `ids` | ja | 1 bis 5 Kennungen |
 
 Liefert je Eintrag: Urheber, Lizenz mit Link, fertigen Text für die Namensnennung, Seite bei der Quelle, Beschreibung
-und die Download-Möglichkeiten mit Format, Größe und Link.
+und die Download-Möglichkeiten mit Format, Größe und Link. Dazu:
 
-### 5a. `fundus_download_links`: Links zu den Dateien (nur online)
+- **Nutzung in einem Satz:** ob Namensnennung nötig ist und ob Bearbeitungen unter derselben Lizenz bleiben müssen.
+- **Fakten:** Sterne oder Downloads, Programmiersprache, letzte Änderung bei der Quelle.
+- **Quelltext selbst lesen (GitHub-Einträge):** die Adressen von README, Dateiliste und einzelnen Dateien. Fundus
+  reicht keine Dateien durch; die KI ruft sie mit ihrem eigenen Web-Zugriff ab.
+
+### 5. `fundus_similar`: ähnliche Einträge
+
+| Angabe | Pflicht | Bedeutung |
+|---|---|---|
+| `id` | ja | eine Kennung |
+| `limit` | nein | Zeilen, 1 bis 20, sonst 8 |
+
+Alternativen zu einem Treffer: gleiche Art und gleicher Unterordner, die meisten gemeinsamen Schlagworte zuerst,
+dann die bekannteren. Dieselbe Tabelle wie bei der Suche.
+
+### 6. `fundus_attribution`: Quellenblock für eine Liste
+
+| Angabe | Pflicht | Bedeutung |
+|---|---|---|
+| `ids` | ja | 1 bis 10 Kennungen der verwendeten Einträge |
+
+Die fertige Namensnennung je Eintrag als ein Block, getrennt nach „Lizenz verlangt es“ und „nicht nötig, aber guter Stil“.
+
+### 7a. `fundus_download_links`: Links zu den Dateien (nur online)
 
 | Angabe | Pflicht | Bedeutung |
 |---|---|---|
@@ -89,7 +116,7 @@ und die Download-Möglichkeiten mit Format, Größe und Link.
 Liefert die direkten Adressen der Dateien bei der Quelle samt Namensnennung. Pakete (etwa ein Modell mit Texturen)
 kommen als Liste aller Dateien mit ihrem Platz im Ordner. Fundus selbst liefert keine Datei aus.
 
-### 5b. `fundus_download`: in einen Ordner laden (nur lokal)
+### 7b. `fundus_download`: in einen Ordner laden (nur lokal)
 
 | Angabe | Pflicht | Bedeutung |
 |---|---|---|
@@ -107,8 +134,8 @@ Namensnennung. Das ist das einzige Werkzeug, das etwas schreibt, und der einzige
 - Nichts im Katalog ändern, ergänzen oder melden.
 - Nichts speichern: keine Merkliste, keine Sammlungen, kein Verlauf. Der Online-Server kennt keine Person.
 - Dateien über Fundus beziehen. Sie kommen immer von der Quelle.
-- Die Einträge nach Datum, nach Sternen ab einer Schwelle oder nach Programmiersprache filtern.
-- Den Inhalt eines Skills oder eines Repositorys lesen. Sie sieht Titel, Beschreibung, Schlagworte und Links.
+- Den Inhalt eines Skills oder eines Repositorys über Fundus lesen. Sie bekommt die Adressen und liest dort selbst.
+- Nach dem Datum der letzten Änderung sortieren („neueste zuerst“).
 
 ## Schutz und Grenzen
 
@@ -117,25 +144,15 @@ Namensnennung. Das ist das einzige Werkzeug, das etwas schreibt, und der einzige
 - Kein Protokoll: Der Server hält nicht fest, wer was gefragt hat. So steht es auch auf der Datenschutzseite.
 - Ein Tagesdeckel fehlt.
 
-## Kleine Unstimmigkeiten, die noch zu beheben sind
-
-- Die Anleitung des Servers empfiehlt der KI den Bogen mit mehreren Bildern. Online gibt es ihn nicht.
-- Die Beschreibung von `fundus_search` nennt die Beliebtheit noch nicht.
-- Ohne Suchwort kommt die Reihenfolge des Index, nicht die beliebtesten Einträge zuerst.
-
 ## Was fehlen könnte
 
 Ideen, nichts davon ist gebaut. Sortiert nach meinem Eindruck vom Nutzen.
 
 | Idee | Was die KI damit könnte | Aufwand |
 |---|---|---|
-| Sortieren und Schwellen in der Suche | „die beliebtesten“, „neueste zuerst“, „ab 1.000 Sternen“ | klein |
-| Filter nach Programmiersprache | „Rust-Bibliotheken für PDF“; die Sprache steht im vollen Eintrag, in der Suchzeile fehlt sie noch | mittel |
-| Ähnliche Einträge | zu einem Treffer Alternativen holen, wie das Detailblatt der Seite | klein |
-| Namensnennung für eine Liste | für alle verwendeten Einträge einen fertigen Quellenblock | klein |
+| Neueste zuerst | nach der letzten Änderung bei der Quelle sortieren; das Datum steht noch nicht in der Suchzeile | mittel |
 | Zufällige Auswahl | Anregungen holen, ohne Suchwort | klein |
-| Lizenz erklären | „darf ich das in einem verkauften Spiel nutzen?“ je Lizenz in einem Satz | klein |
-| Neu im Katalog | was seit einem Datum dazukam | mittel |
+| Vorschau für Code im lokalen Server | README direkt vom eigenen Rechner holen und als Text zurückgeben | mittel |
 | Eintrag melden | einen toten Link oder ein Rechteproblem melden; schreibt und braucht Schutz vor Missbrauch | mittel |
 | Skill-Text lesen | den Inhalt einer `SKILL.md` ansehen, bevor sie empfohlen wird; der Text liegt bei GitHub | mittel |
 | Sammlungen im Konto | Ordner anlegen und füllen, die im fynn.land-Konto liegen | groß, braucht Anmeldung und neue Datenschutztexte |
