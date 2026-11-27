@@ -16,6 +16,9 @@ import { ausKiNetz } from './schutz.mjs';
  * no ceiling. Keys with a grant are outside both caps. neueSchluessel = new keys per address and day,
  * neueSchluesselGesamt = new keys per day for everybody together.
  */
+// The keys of GRENZEN and the names in counts().arten (anonym, ki, ohne, schluessel, neu, neuJeAdresse, zugaenge) are
+// read by the admin dashboard (fynnland-admin, tab "Fundus") and named in the privacy text on fynn.land: do not
+// rename them or change a number without telling the fynn.land chat first.
 export const GRENZEN = { anonym: 150, ki: 4000, browser: 300, konto: 500, gesamtOhne: 10000, gesamtSchluessel: 10000, neueSchluessel: 3, neueSchluesselGesamt: 200 };
 export const SEITE = 'https://fundus.fynn.land/#/zugang';
 const KONTAKT = 'Discord https://discord.gg/JTHPxAxFpE or https://fynn.land/impressum.html';
