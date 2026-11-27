@@ -11,7 +11,8 @@ const main = document.getElementById('inhalt');
 const fenster = document.getElementById('infofenster');
 const suchfeld = document.getElementById('suchfeld');
 const themaknopf = document.getElementById('themaknopf');
-const vorschauschalter = document.getElementById('vorschauschalter');
+// the switch sits in the filter row of the catalogue, which is drawn again on every visit: look it up when needed
+const vorschauschalter = () => document.getElementById('vorschauschalter');
 
 const zustand = {
   katalog: null,
@@ -38,7 +39,7 @@ function kopfZustand() {
   const dunkel = aktuellesThema() === 'dark';
   themaknopf.setAttribute('aria-pressed', String(dunkel));
   themaknopf.setAttribute('aria-label', dunkel ? 'Helles Farbschema einschalten' : 'Dunkles Farbschema einschalten');
-  vorschauschalter.setAttribute('aria-checked', String(vorschau.an()));
+  vorschauschalter()?.setAttribute('aria-checked', String(vorschau.an()));
 }
 themaknopf.addEventListener('click', () => {
   const neu = aktuellesThema() === 'dark' ? 'light' : 'dark';
@@ -51,9 +52,10 @@ const vorschaufrage = document.getElementById('vorschaufrage');
 document.getElementById('vf-drittland').innerHTML = DRITTLAND_HINWEIS;
 vorschaufrage.addEventListener('close', () => {
   if (vorschaufrage.returnValue === 'an') vorschau.setzen(true);
-  vorschauschalter.focus();
+  vorschauschalter()?.focus();
 });
-vorschauschalter.addEventListener('click', () => {
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#vorschauschalter')) return;
   if (vorschau.an()) vorschau.setzen(false);
   else {
     vorschaufrage.returnValue = '';
@@ -95,6 +97,8 @@ function lesen() {
 async function route() {
   const { teile, params } = lesen();
   const [erste, zweite] = teile;
+  // the access button in the header shows where you are
+  document.getElementById('zugangknopf')?.[erste === 'zugang' ? 'setAttribute' : 'removeAttribute']('aria-current', 'page');
 
   if (!erste || erste === 'karte') {
     if (!erste) {
@@ -320,6 +324,13 @@ function katalogBauen() {
           </div>
         </div>
         <button type="button" class="knopf" id="zufallknopf">Zufälliges Objekt</button>
+      </div>
+      <div class="filter__unter">
+        <button type="button" class="schalter" id="vorschauschalter" role="switch" aria-checked="${vorschau.an()}" aria-describedby="vorschau-erkl">
+          <span class="schalter__bahn" aria-hidden="true"><span class="schalter__knopf"></span></span>
+          <span class="schalter__text">Vorschauen von Quellen</span>
+        </button>
+        <span class="unsichtbar" id="vorschau-erkl">Lädt kleine Bilder für Objekte ohne eigenes Vorschaubild, große Bilder, Hörproben und 3D-Ansichten direkt von den Quellen, nach und nach beim Scrollen. Die Quellen erfahren dabei deine IP-Adresse, manche sitzen außerhalb der EU.</span>
       </div>
       <div class="ablage" id="ablage" aria-busy="false"></div>
       <p class="stand" id="stand"></p>
