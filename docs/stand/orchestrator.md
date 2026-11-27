@@ -223,3 +223,16 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - Bekannter Fehler, nicht behoben: Schriftmuster für `githubschriften` nehmen den Repository-Namen als Familiennamen.
   214 von 305 scheitern („nicht erkannt“ oder „ohne darstellbare Buchstaben“), und einzelne gelungene zeigen eine
   Ersatzschrift. Der Familienname müsste aus der Schriftdatei gelesen werden.
+- **Bilder einsortiert** (`unterBild` in `taxonomy.mjs`): Sonstiges von 47.567 auf 9.452. Neue Ordner für Museums- und
+  Medizinbestände (Handschriften & Buchseiten, Medizin & Anatomie, Porträts & Menschen, Skulptur & Objekte, Historische
+  Fotografie, Wissenschaft & Mikroskopie, Karten, für Cleveland Textilien, Keramik & Glas, Metallarbeiten, Schmuck &
+  Münzen, Waffen & Rüstungen). Cleveland: Objekttyp in `tags[0]` entscheidet vor dem Titel, bei Bildern danach.
+  Wellcomes `meta.art` zählt für Bilder nicht. Schwächster Ordner: Medizin & Anatomie (5 von 50 Proben falsch, vor
+  allem über `hospital`). Rest in Sonstiges: Wellcome 5.856 (3.340 ohne Schlagworte), Commons 3.481.
+- „Alle Objekte“: Der Knopf heißt „Mehr aus allen Ordnern anzeigen“; große Ordner sind dort nur mit ihrem Kopf dabei,
+  am Ende steht ein Hinweis.
+- **Vor 03:17 UTC pushen oder den Workflow ausschalten:** `katalog.yml` läuft mit `FUNDUS_DEPLOY=1` vom gepushten
+  Stand. Ohne Push kehrt der alte Seitencode zurück, und `vorschau:r2` löscht im Bucket jedes Vorschaubild, das das
+  gepushte Register nicht nennt.
+- Offen: Sterne zählen nur auf der Seite. Der MCP-Server liefert ohne Suchwort die Indexreihenfolge und zeigt keine
+  Sterne; eine Suche bricht Gleichstände zufällig.

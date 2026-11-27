@@ -511,6 +511,10 @@ function artWurzel() {
  */
 function endeHtml(geladen, gesamt) {
   const art = artWurzel();
+  // "Alle Objekte": the big folders are here with their best rows only, so the mixed list ends early
+  if (!art && /^alle(\+g)?$/.test(brauche()) && [...zustand.katalog.arten.keys()].some((a) => nurKoepfe(zustand.katalog, a))) {
+    return `<p class="mehr mehr--ende">Hier enden die ersten ${zahl(geladen)} von ${zahl(gesamt)} Objekten. Große Ordner zeigen hier nur ihre besten Einträge, alle weiteren findest du in den Ordnern und über die Suche.</p>`;
+  }
   if (!art) return '';
   if (hatKopf2(zustand.katalog, art)) return `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">${mehrText(SEITENGROESSE)}</button></div>`;
   if (nurKoepfe(zustand.katalog, art)) return `<p class="mehr mehr--ende">Hier enden die ersten ${zahl(geladen)} von ${zahl(gesamt)} Objekten. Alle weiteren findest du in den Unterordnern und über die Suche.</p>`;
@@ -556,7 +560,7 @@ function mehrZeigen({ fokus = false } = {}) {
   if (rest > 0) ablage.querySelector('#mehrknopf').textContent = mehrText(rest);
   else {
     ablage.querySelector('.mehr')?.remove();
-    ablage.insertAdjacentHTML('beforeend', endeHtml(...(zustand.ende ?? [0, 0])));
+    ablage.insertAdjacentHTML('beforeend', zustand.schluss?.() ?? '');
   }
   if (fokus) letzte?.nextElementSibling?.querySelector('.karte__link, .liste__name a')?.focus();
   // observing again reports at once when the button is still near the view (tall screens, short rows)
@@ -709,12 +713,14 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
     return;
   }
   const mitVorschau = vorschau.an();
-  let mehr = '';
-  if (karten.length > zeigen.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">${mehrText(karten.length - zeigen.length)}</button></div>`;
-  // the first screen is a sample; everything else loads on request
-  else if (auswahl && k.stand.total > liste.length) mehr = `<div class="mehr"><button class="knopf" type="button" id="allesknopf">Alle ${zahl(k.stand.total)} Objekte laden</button></div>`;
-  else mehr = endeHtml(liste.length, gesamt);
-  zustand.ende = [liste.length, gesamt];
+  // what stands below the last entry (mehrZeigen asks again once the list has been scrolled to its end):
+  // the first screen is a sample, everything else loads on request; a big folder ends with a pointer
+  zustand.schluss = () => (auswahl && k.stand.total > liste.length
+    ? '<div class="mehr"><button class="knopf" type="button" id="allesknopf">Mehr aus allen Ordnern anzeigen</button></div>'
+    : endeHtml(liste.length, gesamt));
+  const mehr = karten.length > zeigen.length
+    ? `<div class="mehr"><button class="knopf" type="button" id="mehrknopf">${mehrText(karten.length - zeigen.length)}</button></div>`
+    : zustand.schluss();
   if (zustand.ansicht === 'liste') {
     ablage.innerHTML = `<div class="liste-rahmen"><table class="liste"><thead><tr><th scope="col">Name</th><th scope="col">Art</th><th scope="col">Lizenz</th><th scope="col">Quelle</th><th scope="col">Formate</th></tr></thead><tbody>${zeigen.map((c) => (c.gruppe ? gruppenzeile(c) : listenzeile(c.o))).join('')}</tbody></table></div>${mehr}`;
   } else {
