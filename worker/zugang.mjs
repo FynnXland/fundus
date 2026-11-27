@@ -186,8 +186,16 @@ export async function api(request, env, jetzt = Date.now()) {
       const r = await zaehle(env.DB, tag, wer, 1).first();
       if (r.n > GRENZEN.neueSchluessel) return json({ fehler: 'zuviele' }, 429);
       if ((await zaehle(env.DB, tag, 'neu', 1).first()).n > GRENZEN.neueSchluesselGesamt) return json({ fehler: 'zuviele-heute' }, 429);
-      const key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(30)))).replace(/\+/g, '-').replace(/\//g, '_');
-      const hash = await sha256(key);
+      // The short name is what a grant, a block or a reset goes by, so it must name one key only: with eight hex
+      // digits two keys meet once there are some tens of thousands. A new key whose name is taken is thrown again.
+      let key;
+      let hash;
+      for (let versuch = 0; ; versuch++) {
+        key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(30)))).replace(/\+/g, '-').replace(/\//g, '_');
+        hash = await sha256(key);
+        if (!(await env.DB.prepare('SELECT 1 AS da FROM zugang WHERE kennung = ?1').bind(kennungVon(hash)).first())) break;
+        if (versuch >= 5) return json({ fehler: 'speicher' }, 503);
+      }
       await env.DB.prepare("INSERT INTO zugang (hash, kennung, stufe, erzeugt) VALUES (?1, ?2, 'browser', ?3)").bind(hash, kennungVon(hash), tag).run();
       return json({ key, ...(await standVon(env, hash, jetzt)) });
     }
