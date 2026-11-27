@@ -38,7 +38,7 @@ const gespeichert = (konto) => `
   <details class="zk zk--ruhig">
     <summary>Was dabei gespeichert wird</summary>
     <p>Fundus speichert von deinem Zugang nur einen Hashwert des Schlüssels, den Tag der Erzeugung, den Tag der letzten Nutzung und die Zahl der Aufrufe der letzten Tage. Was dein Assistent sucht, wird nicht festgehalten. Der Schlüssel selbst liegt nur in diesem Browser (<code>${MERK}</code>), und erst, wenn du auf „Zugang erzeugen“ klickst. Löschst du den Zugang, sind Hashwert und Zahlen weg. Alles Weitere steht in der <a href="${esc(BETREIBER.datenschutz)}" rel="noopener" target="_blank">Datenschutzerklärung</a>.</p>${konto ? `
-    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis du dich abmeldest. Nur während der Anmeldung liegen ihr Zustand und ihr Prüfwert dort (<code>fundus.anmeldung</code>, höchstens 15 Minuten). Löschst du den Zugang, verschwindet der Schlüssel auch aus deinem Konto.</p>` : ''}
+    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis du dich abmeldest. Nur während der Anmeldung liegen ihr Zustand und ihr Prüfwert dort (<code>fundus.anmeldung</code>, höchstens 15 Minuten). Löschst du den Zugang, während du angemeldet bist, verschwindet der Schlüssel auch aus deinem Konto. Löschst du ihn ohne Anmeldung, bleibt der Schlüssel dort liegen, und Fundus legt den Zugang bei deiner nächsten Anmeldung wieder an.</p>` : ''}
   </details>`;
 
 const mehr = (kennung) => `
@@ -61,7 +61,7 @@ function kontoKarte(g, k, s) {
     ${meldung}
     <p>Dein Zugang ist mit deinem fynn.land-Konto verbunden: ${zahl(g.konto)} Aufrufe am Tag, und er ist auf jedem Gerät da, auf dem du dich anmeldest.</p>
     ${k.ersetzt ? '<p class="zugang__klein">Der Zugang, den dieser Browser vorher hatte, bleibt bestehen, wird hier aber nicht mehr angezeigt. Ab jetzt gilt der aus deinem Konto.</p>' : ''}
-    <p class="zugang__klein">Die Verbindung gilt ${kontoTage} Tage ab dem letzten Besuch dieser Seite, derzeit bis zum ${esc(datum(k.bis))}. Meldest du dich ab, bleibt der Zugang in diesem Browser mit ${zahl(g.browser)} Aufrufen am Tag. Der Schlüssel bleibt in deinem Konto, bis du den Zugang löschst.</p>
+    <p class="zugang__klein">Die Verbindung gilt ${kontoTage} Tage ab dem letzten Besuch dieser Seite, derzeit bis zum ${esc(datum(k.bis))}. Meldest du dich ab, bleibt der Zugang in diesem Browser mit ${zahl(g.browser)} Aufrufen am Tag. Der Schlüssel bleibt in deinem Konto, bis du den Zugang angemeldet löschst.</p>
     <p><button type="button" class="knopf knopf--klein" data-zugang="trennen">Abmelden</button></p>
     ${status}
   </section>`;
