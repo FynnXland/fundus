@@ -241,6 +241,5 @@ Nachtrag am selben Tag, nach einer Gegenprüfung:
   P90 43 ms, P99 64 ms, einzelne Spitzen bis 300 ms, keine Überschreitung der CPU-Grenze. Der Median über alle
   Anfragen samt Vorschaubildern liegt bei 0,9 ms. Mit 45 ms je MCP-Aufruf gerechnet: 10.000 Aufrufe am Tag sind
   13,5 Millionen ms im Monat (45 % des Enthaltenen), die rechnerisch möglichen 20.000 ohne Freigabe 27 Millionen (90 %).
-- Offen: Der Token „fundus-deploy (GitHub Actions)“ hat kein D1-Recht. Die Änderung (Account, D1, Edit) war im
-  Dashboard ausgefüllt, das Speichern muss Fynn selbst auslösen. Ohne das Recht scheitert der nächtliche Lauf beim
-  Veröffentlichen, vor dem Daten-Commit.
+- Der Token „fundus-deploy (GitHub Actions)“ hat seit 27.11.2026, 13:09 UTC, zusätzlich das Recht Account, D1, Edit
+  (von Fynn im Dashboard gespeichert). Ob der nächtliche Lauf damit durchläuft, zeigt erst die Nacht auf den 28.11.
