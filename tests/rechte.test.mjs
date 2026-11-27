@@ -56,3 +56,39 @@ test('Rechte: Ein-Wort-Titel werden nie ausgeblendet, nur zum Ansehen gelistet',
   assert.equal(einstufen(181, 2, 1), 'verdacht'); // Hush (Kevin MacLeod, eigenes Stück)
   assert.equal(einstufen(324, 3, 3), 'fremd'); // Jingle Bell Rock
 });
+
+test('Rechteprüfung: mehrere Titel in einer Suche, eine zu große Suche wird geteilt', async () => {
+  const { faktenFuer } = await import('../crawler/rechtecheck.mjs');
+  const w = (title, aufnahmen, autoren = []) => ({
+    id: `${title}/${aufnahmen}`,
+    title,
+    relations: [...autoren.map((name) => ({ type: 'writer', artist: { id: name, name } })), { type: 'publishing', artist: { id: 'v', name: 'Verlag' } }, ...Array.from({ length: aufnahmen }, () => ({ type: 'performance', recording: { id: 'r' } }))],
+  });
+  const index = [w('Jingle Bell Rock', 1), w('Jingle Bell Rock', 30, ['Joe Beal', 'Jim Boothe']), ...Array.from({ length: 150 }, (_, i) => w(i < 120 ? 'Love' : `Love ${i}`, 1))];
+  const anfragen = [];
+  const suchen = async (titel) => {
+    anfragen.push(titel);
+    const alle = index.filter((x) => titel.some((t) => x.title.toLowerCase().includes(t)));
+    return { count: alle.length, works: alle.slice(0, 100) };
+  };
+  const ablage = await faktenFuer(['jingle bell rock', 'ein titel den es nicht gibt', 'love', 'noch einer'], new Map(), suchen);
+  assert.equal(anfragen.length, 5); // alle vier, dann zwei Hälften, dann die zweite Hälfte einzeln
+  const jbr = ablage.get('jingle bell rock');
+  assert.equal(jbr.gleichnamig, 2);
+  assert.equal(jbr.werke[0].aufnahmen, 30); // das mit den meisten Aufnahmen zuerst
+  assert.deepEqual(jbr.werke[0].autoren.map((a) => a.name), ['Joe Beal', 'Jim Boothe']); // der Verlag ist kein Urheber
+  assert.deepEqual(ablage.get('ein titel den es nicht gibt'), { gleichnamig: 0, werke: [] });
+  assert.equal(ablage.get('love').gleichnamig, 150); // alle gelieferten heißen so: die Zahl der Suche gilt
+  assert.equal(ablage.get('noch einer').gleichnamig, 0);
+});
+
+test('Rechteprüfung: Bündel halten Titelzahl und Adresslänge ein, kurze Titel in kleinen Bündeln', async () => {
+  const { buendeln } = await import('../crawler/rechtecheck.mjs');
+  const lang = Array.from({ length: 45 }, (_, i) => `ein langer titel nummer ${i}`);
+  const kurz = Array.from({ length: 9 }, (_, i) => `wort${i}`);
+  const b = buendeln([...lang, ...kurz]);
+  assert.deepEqual(b.map((x) => x.length).sort((x, y) => y - x), [20, 20, 5, 4, 4, 1]);
+  assert.equal(b.flat().length, 54);
+  const kyrillisch = Array.from({ length: 30 }, (_, i) => `эй ухнем фёдор шаляпин песня волжских бурлаков ${i}`);
+  for (const x of buendeln(kyrillisch)) assert.ok(encodeURIComponent(x.join(' ')).length < 3000);
+});
