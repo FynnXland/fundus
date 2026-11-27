@@ -100,7 +100,7 @@ export function reihumNachSammlung(skills) {
   const reihen = [...gruppen.values()]
     .map((l) => l.sort((a, b) => a.id.localeCompare(b.id)))
     .sort((a, b) => b[0].rang - a[0].rang || a[0].id.localeCompare(b[0].id));
-  const oben = Math.max(...skills.map((it) => it.rang));
+  const oben = skills.reduce((m, it) => Math.max(m, it.rang), -Infinity);
   let i = 0;
   for (let stufe = 0; reihen.some((l) => l.length > stufe); stufe++) {
     for (const l of reihen) if (l[stufe]) l[stufe].rang = Math.max(10000, oben - i++);
@@ -140,8 +140,10 @@ export function rangwerte(items) {
   const alle = [];
   for (const [k, l] of zaehlungen) {
     const q = k.split('|')[0];
-    nachQuelle.set(q, [...(nachQuelle.get(q) ?? []), ...l]);
-    alle.push(...l);
+    // plain loops: push(...l) breaks the call stack once a source has a few hundred thousand entries (GitHub)
+    if (!nachQuelle.has(q)) nachQuelle.set(q, []);
+    const ziel = nachQuelle.get(q);
+    for (const x of l) { ziel.push(x); alle.push(x); }
   }
   const bezug = new Map();
   const pQuelle = new Map();

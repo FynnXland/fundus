@@ -133,7 +133,7 @@ export function baueKacheln(eintraege, budget = 64 * 1024) {
     let rest = summe;
     const bleibt = [...eigene];
     for (const [c, g] of [...gruppen].sort((a, b) => b[1].g - a[1].g)) {
-      if (rest > budget) { teile(praefix + c, g.w); rest -= g.g; } else bleibt.push(...g.w);
+      if (rest > budget) { teile(praefix + c, g.w); rest -= g.g; } else for (const w of g.w) bleibt.push(w);
     }
     ausgeben(praefix, bleibt);
   };

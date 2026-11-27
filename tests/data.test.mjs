@@ -18,7 +18,7 @@ test('Katalogdaten sind gültig', { skip: !existsSync(ordner) && 'data/katalog/ 
     if (e.length) fehler.push(`${it.id}: ${e.join(', ')}`);
     if (ids.has(it.id)) fehler.push(`doppelte id ${it.id}`);
     ids.add(it.id);
-    if (/NC|ND/.test(it.license.id)) fehler.push(`${it.id}: Lizenz ${it.license.id}`);
+    if (/(^|-)N[CD](-|$)/.test(it.license.id)) fehler.push(`${it.id}: Lizenz ${it.license.id}`);
   }
   assert.deepEqual(fehler.slice(0, 20), []);
 });
