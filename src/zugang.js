@@ -38,7 +38,7 @@ const gespeichert = (konto) => `
   <details class="zk zk--ruhig">
     <summary>Was dabei gespeichert wird</summary>
     <p>Fundus speichert von deinem Zugang nur einen Hashwert des Schlüssels, den Tag der Erzeugung, den Tag der letzten Nutzung und die Zahl der Aufrufe der letzten Tage. Was dein Assistent sucht, wird nicht festgehalten. Der Schlüssel selbst liegt nur in diesem Browser (<code>${MERK}</code>), und erst, wenn du auf „Zugang erzeugen“ klickst. Löschst du den Zugang, sind Hashwert und Zahlen weg. Alles Weitere steht in der <a href="${esc(BETREIBER.datenschutz)}" rel="noopener" target="_blank">Datenschutzerklärung</a>.</p>${konto ? `
-    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus erfährt und speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis zu „Verbindung lösen“. Den Namen siehst du nur hier, gespeichert wird er nicht.</p>` : ''}
+    <p>Verbindest du den Zugang mit deinem fynn.land-Konto, kommt bei Fundus nur dazu, dass er ein Konto-Zugang ist, und der Tag, bis zu dem das gilt: ${kontoTage} Tage nach deinem letzten Besuch dieser Seite mit gültiger Anmeldung. Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder Namen noch E-Mail-Adresse noch die Kennung deines Kontos. In diesem Browser merkt sich die Seite die Anmeldung (<code>fundus.konto</code>) bis zu „Verbindung lösen“. Den Namen siehst du nur hier, gespeichert wird er nicht.</p>` : ''}
   </details>`;
 
 const mehr = (kennung) => `
@@ -150,6 +150,7 @@ function mitZugang(key, s, konto) {
 
 /** What the visitor is told when a sign-in or a call to the account did not work. */
 function kontoProblem(r) {
+  if (r.fehler === 'konto-zuviele') return 'Das Konto bekommt gerade zu viele Anfragen. Versuch es gleich noch einmal.';
   if (r.status === 429) return zuVieleText(r);
   if (r.fehler === 'sitzung') return 'Deine Anmeldung ist abgelaufen. Melde dich neu an, damit dein Zugang mit Konto weiter gilt.';
   return 'Das Konto ist gerade nicht erreichbar. Dein Zugang gilt weiter wie bisher.';
@@ -251,5 +252,5 @@ export async function datenschutzBereit(main) {
   feld.innerHTML = `
   <h2>Zugang für KI-Assistenten</h2>
   <p>Damit niemand den Zugang unter <code>${MCP}</code> mit Anfragen überflutet, zählt Fundus die Aufrufe je Tag: ohne eigenen Zugang zu einem Hashwert aus deiner IP-Adresse, dem Datum und einem geheimen Wert, der jeden Tag ein anderer ist und nach dem folgenden Tag gelöscht wird. Die IP-Adresse selbst und deine Suchbegriffe werden nicht gespeichert. Einen eigenen Zugang mit eigenem Kontingent erzeugst du freiwillig auf der Seite <a href="#/zugang">Dein Zugang</a>; dort steht auch, was dazu gespeichert wird. Dein Browser merkt sich den Schlüssel dann im lokalen Speicher (<code>${MERK}</code>). Du löschst ihn auf derselben Seite; der Knopf unten lässt ihn stehen.</p>${info.konto ? `
-  <p>Wenn du deinen Zugang mit deinem fynn.land-Konto verbindest, speichert Fundus dazu nur, dass er ein Konto-Zugang ist, und den Tag, bis zu dem das gilt (${info.kontoTage} Tage nach deinem letzten Besuch von <a href="#/zugang">Dein Zugang</a> mit gültiger Anmeldung). Der Schlüssel liegt dann in deinem Konto. Fundus erfährt und speichert weder deinen Namen noch deine E-Mail-Adresse noch die Kennung deines Kontos. Dein Browser merkt sich die Anmeldung im lokalen Speicher (<code>fundus.konto</code>), bis du die Verbindung auf derselben Seite löst.</p>` : ''}`;
+  <p>Wenn du deinen Zugang mit deinem fynn.land-Konto verbindest, speichert Fundus dazu nur, dass er ein Konto-Zugang ist, und den Tag, bis zu dem das gilt (${info.kontoTage} Tage nach deinem letzten Besuch von <a href="#/zugang">Dein Zugang</a> mit gültiger Anmeldung). Der Schlüssel liegt dann in deinem Konto. Fundus speichert weder deinen Namen noch deine E-Mail-Adresse noch die Kennung deines Kontos. Dein Browser merkt sich die Anmeldung im lokalen Speicher (<code>fundus.konto</code>), bis du die Verbindung auf derselben Seite löst.</p>` : ''}`;
 }

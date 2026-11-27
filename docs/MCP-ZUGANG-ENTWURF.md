@@ -214,8 +214,8 @@ Einschalten, in dieser Reihenfolge:
 3. `ZUGANG` auf `"1"`, einen Link zu `#/zugang` in den KI-Bereich der Startseite, veröffentlichen, pushen.
 4. Am ersten Tag `counts()` und die Rechenzeit im Cloudflare-Dashboard ansehen und die Zahlen in `GRENZEN` nachziehen.
 
-Nicht gebaut: Schlüssel am Konto (Stufe 2, braucht den Eintrag `fundus` in `ACCOUNT_GAMES` des Kontoservers) und der
-Verlauf. Zu prüfen: ob der API-Token des nächtlichen GitHub-Laufs einen Worker mit D1-Bindung veröffentlichen darf.
+Nicht gebaut: der Verlauf. Der Schlüssel am Konto (Stufe 2) ist seit dem 27.11.2026 gebaut, siehe den Abschnitt
+„Stufe 2“ unten. Zu prüfen: ob der API-Token des nächtlichen GitHub-Laufs einen Worker mit D1-Bindung veröffentlichen darf.
 
 Nachtrag am selben Tag, nach einer Gegenprüfung:
 
@@ -290,6 +290,7 @@ Der Name des Kontos geht nur zur Seite (`name`, sonst `providerName`), nicht in 
 | Sitzung im Browser | `localStorage` `fundus.konto`: Sitzungsschlüssel, nur für Fundus gültig | angemeldet bleiben | bis „Verbindung lösen“ oder „Zugang löschen“, serverseitig 6 Monate ohne Nutzung |
 | Anmeldung im Browser | `sessionStorage` `fundus.anmeldung`: Zustand und Prüfwert der Anmeldung (PKCE) | Anmeldung abschließen | bis zur Rückkehr von der Anmeldeseite, höchstens 15 Minuten; geht beim Schließen des Tabs weg |
 | Name des Kontos | kommt vom Kontoserver, wird auf der Seite angezeigt | Anzeige „Angemeldet als …“ | nicht gespeichert, nur im Arbeitsspeicher der geöffneten Seite |
+| Durchlauf beim Anmelden und bei jedem Besuch | Der Worker bekommt vom Kontoserver Name, Anbietername und öffentliche Kontokennung (`publicId`). Er reicht den Namen (sonst den Anbieternamen) an die Seite weiter und verwirft die Kennung. Gespeichert wird davon nichts | Anzeige des Namens | nur für die Dauer der Anfrage |
 
 Dazu fließen beim Anmelden und bei jedem Besuch folgende Angaben an den Kontoserver (Dienstbindung innerhalb von
 Cloudflare): Spiel `fundus`, Herkunft der Seite, IP-Adresse (nur für dessen Grenzen; er speichert sie nicht) und die

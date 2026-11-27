@@ -468,3 +468,38 @@ test('Konto: Fundus speichert weder Kennung noch Namen noch Sitzung, und das Das
   assert.ok(!JSON.stringify(r).includes('AAAAA-BBBBB') && !JSON.stringify(r).includes('acc-1'), 'auch die Antwort an die Seite nennt keine Kennung');
   assert.ok(env.ACCOUNTS.aufrufe.length > 0);
 });
+
+test('Konto: ein gelöschter Schlüssel, der im Konto bleibt, bringt nicht jedes Mal ein frisches Tageskontingent', async () => {
+  const env = kontoEnv();
+  const vorher = GRENZEN.neueSchluessel;
+  GRENZEN.neueSchluessel = 2;
+  try {
+    const r = await (await konto(env, 'verbinden', { session: SITZUNG_A })).json(); // new key: counts 1
+    await pruefe(env, anfrage('198.51.100.9', r.key), 400, TAG1);
+    // "delete" by key alone wipes the row and its day counter but cannot reach the account
+    await api(seite('loeschen', '203.0.113.7', { key: r.key }), env, TAG1);
+    const wieder = await konto(env, 'verbinden', { session: SITZUNG_A }); // comes back: counts 2
+    assert.equal((await wieder.json()).heute, 0);
+    await api(seite('loeschen', '203.0.113.7', { key: r.key }), env, TAG1);
+    const dritte = await konto(env, 'verbinden', { session: SITZUNG_A }); // over the limit
+    assert.deepEqual([dritte.status, (await dritte.json()).fehler], [429, 'zuviele']);
+    assert.equal(zeilen(env).length, 0, 'nichts angelegt');
+  } finally { GRENZEN.neueSchluessel = vorher; }
+});
+
+test('Zugang löschen mit Sitzung: auch der Schlüssel des Kontos fällt auf die Browser-Stufe, es bleiben keine zwei Konto-Zugänge', async () => {
+  const env = kontoEnv();
+  const imKonto = await (await konto(env, 'verbinden', { session: SITZUNG_A })).json();
+  const anderer = await (await api(seite('neu', '203.0.113.7'), env, TAG1)).json();
+  await api(seite('loeschen', '203.0.113.7', { key: anderer.key, session: SITZUNG_A }), env, TAG1);
+  assert.equal(env.ACCOUNTS.daten.size, 0);
+  assert.deepEqual(zeilen(env).map((z) => [z.kennung, z.stufe, z.konto_bis]), [[imKonto.kennung, 'browser', null]]);
+  assert.equal((await pruefe(env, anfrage('198.51.100.9', imKonto.key), 1, TAG1)).grenze, 300);
+});
+
+test('Konto: ein überlasteter Kontoserver heißt anders als „zu viele Zugänge“', async () => {
+  const env = kontoEnv();
+  env.ACCOUNTS.gameData = async () => ({ ok: false, status: 429, code: 'tooManyRequests' });
+  const r = await konto(env, 'verbinden', { session: SITZUNG_A });
+  assert.deepEqual([r.status, (await r.json()).fehler], [429, 'konto-zuviele']);
+});

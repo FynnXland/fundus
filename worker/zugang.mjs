@@ -232,7 +232,7 @@ export async function api(request, env, jetzt = Date.now()) {
       ]);
       // A key that hangs on an account must not come back from there: the page names its session, and the key leaves
       // the account's data too (best effort; the key is gone from Fundus either way).
-      if (kontoAn(env) && SITZUNG.test(eingabe.session)) await kontoTrennen(env, eingabe.session, kontoMeta(request));
+      if (kontoAn(env) && SITZUNG.test(eingabe.session)) await vomKontoLoesen(env, eingabe.session, key, kontoMeta(request));
       return json({ ok: true });
     }
     return json({ fehler: 'pfad' }, 404);
@@ -248,17 +248,27 @@ export async function api(request, env, jetzt = Date.now()) {
  * digits two keys meet once there are some tens of thousands. A new key whose name is taken is thrown again.
  */
 async function neuerSchluessel(env, request, jetzt) {
-  const tag = heute(jetzt);
-  const wer = `neu:${(await ipKennung(env, request.headers.get('CF-Connecting-IP'), tag)).slice(3)}`;
-  const r = await zaehle(env.DB, tag, wer, 1).first();
-  if (r.n > GRENZEN.neueSchluessel) return { antwort: json({ fehler: 'zuviele' }, 429) };
-  if ((await zaehle(env.DB, tag, 'neu', 1).first()).n > GRENZEN.neueSchluesselGesamt) return { antwort: json({ fehler: 'zuviele-heute' }, 429) };
+  const zuviel = await neuZaehlen(env, request, jetzt);
+  if (zuviel) return { antwort: zuviel };
   for (let versuch = 0; versuch <= 5; versuch++) {
     const key = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(30)))).replace(/\+/g, '-').replace(/\//g, '_');
     const hash = await sha256(key);
     if (!(await env.DB.prepare('SELECT 1 AS da FROM zugang WHERE kennung = ?1').bind(kennungVon(hash)).first())) return { key, hash };
   }
   return { antwort: json({ fehler: 'speicher' }, 503) };
+}
+
+/**
+ * Counts one new key against the limits per address and per day; the refusal, or null. Also for a key that comes back from
+ * an account after its row was deleted: deleting a key wipes its day counter, so a way back that cost nothing would hand
+ * out a fresh daily allowance for every round.
+ */
+async function neuZaehlen(env, request, jetzt) {
+  const tag = heute(jetzt);
+  const wer = `neu:${(await ipKennung(env, request.headers.get('CF-Connecting-IP'), tag)).slice(3)}`;
+  if ((await zaehle(env.DB, tag, wer, 1).first()).n > GRENZEN.neueSchluessel) return json({ fehler: 'zuviele' }, 429);
+  if ((await zaehle(env.DB, tag, 'neu', 1).first()).n > GRENZEN.neueSchluesselGesamt) return json({ fehler: 'zuviele-heute' }, 429);
+  return null;
 }
 
 const tagNach = (n, jetzt) => heute(jetzt + n * 864e5);
@@ -281,6 +291,7 @@ async function anlegen(env, hash, stufe, tag, bis = null) {
 // number of keys to the higher allowance.
 
 export const HUB = 'https://fynn.land';
+// the account server's own rule is "a string of 20 to 100 characters"; its tokens are 43 characters of base64url
 const SITZUNG = /^[A-Za-z0-9._~-]{20,100}$/;
 const CODE = /^[A-Za-z0-9_-]{22}$/;
 const VERIFIER = /^[A-Za-z0-9._~-]{43,128}$/;
@@ -299,7 +310,7 @@ async function beimKonto(fn) {
 /** The page's answer to a refused call: a dead session, a busy server, "Fundus is not registered there yet", the rest. */
 function kontoFehler(r) {
   if (r.status === 401) return json({ fehler: 'sitzung' }, 401);
-  if (r.status === 429) return json({ fehler: 'zuviele' }, 429);
+  if (r.status === 429) return json({ fehler: 'konto-zuviele' }, 429);
   if (r.status === 403 || r.status === 404) return json({ fehler: 'nicht-bereit' }, 503);
   return json({ fehler: 'konto' }, 502);
 }
@@ -315,8 +326,17 @@ const schluesselImKonto = (daten) => (typeof daten?.key === 'string' && SCHLUESS
 
 const zeile = (env, hash) => env.DB.prepare(`SELECT kennung, stufe, grenze, gesperrt${kontoSpalte(env)} FROM zugang WHERE hash = ?1`).bind(hash).first();
 
-/** Ends a session and clears the key from the account's data. Best effort; true when the data was cleared. */
-async function kontoTrennen(env, session, meta) {
+/**
+ * Takes an account link apart: the key the account holds and the one the browser names go back to the browser tier (a
+ * holder may delete their key, so downgrading it needs no proof from the account), the key leaves the account's data and
+ * the session ends. True when the account's data was cleared; false when the session had ended already.
+ */
+async function vomKontoLoesen(env, session, browserKey, meta) {
+  const d = await beimKonto(() => env.ACCOUNTS.gameData(GAME, session, meta));
+  const hashes = new Set();
+  for (const k of [d.ok ? schluesselImKonto(d.data) : null, browserKey]) if (k) hashes.add(await sha256(k));
+  for (const h of hashes) await env.DB.prepare("UPDATE zugang SET stufe = 'browser', konto_bis = NULL WHERE hash = ?1 AND stufe = 'konto'").bind(h).run();
+  if (!d.ok) return false;
   const weg = await beimKonto(() => env.ACCOUNTS.saveGameData(GAME, session, null, meta));
   await beimKonto(() => env.ACCOUNTS.op(GAME, 'logout', { session }, meta));
   return weg.ok === true;
@@ -365,21 +385,17 @@ async function kontoApi(was, request, env, eingabe, jetzt) {
       const s = await beimKonto(() => env.ACCOUNTS.saveGameData(GAME, eingabe.session, { key }, meta));
       if (!s.ok) return kontoFehler(s);
     }
-    if (!z) await anlegen(env, hash, 'konto', tag, bis);
-    else if (z.stufe !== 'konto' || z.konto_bis !== bis) await env.DB.prepare("UPDATE zugang SET stufe = 'konto', konto_bis = ?1 WHERE hash = ?2").bind(bis, hash).run();
+    if (!z) {
+      // a new row: a key the account kept after its row was deleted counts like a new key (a fresh key was counted above)
+      if (!neu) { const zuviel = await neuZaehlen(env, request, jetzt); if (zuviel) return zuviel; }
+      await anlegen(env, hash, 'konto', tag, bis);
+    } else if (z.stufe !== 'konto' || z.konto_bis !== bis) await env.DB.prepare("UPDATE zugang SET stufe = 'konto', konto_bis = ?1 WHERE hash = ?2").bind(bis, hash).run();
     const me = await beimKonto(() => env.ACCOUNTS.op(GAME, 'me', { session: eingabe.session }, meta));
     return json({ key, name: me.ok ? nameVon(me.account) : null, ersetzt: Boolean(browserKey && browserKey !== key), ...(await standVon(env, hash, jetzt)) });
   }
 
   if (was === 'loesen') {
-    // Back to the browser tier for the key the account holds and the one this browser holds (a holder may already
-    // delete their key, so downgrading it needs no proof from the account). Then the key leaves the account.
-    const d = await beimKonto(() => env.ACCOUNTS.gameData(GAME, eingabe.session, meta));
-    const hashes = new Set();
-    for (const k of [d.ok ? schluesselImKonto(d.data) : null, browserKey]) if (k) hashes.add(await sha256(k));
-    for (const h of hashes) await env.DB.prepare("UPDATE zugang SET stufe = 'browser', konto_bis = NULL WHERE hash = ?1 AND stufe = 'konto'").bind(h).run();
-    const imKonto = d.ok ? await kontoTrennen(env, eingabe.session, meta) : false;
-    return json({ ok: true, imKonto });
+    return json({ ok: true, imKonto: await vomKontoLoesen(env, eingabe.session, browserKey, meta) });
   }
   return json({ fehler: 'pfad' }, 404);
 }
