@@ -96,3 +96,8 @@ test('Projekte: allgemeine Wörter kapern keinen Ordner', () => {
   assert.notEqual(p('MVPAndroidBootstrap', 'Clean MVP bootstrap architecture'), 'Web-Frontend');
   assert.notEqual(p('java-notes', 'moved to https://github.com/someone/snote'), 'DevOps & Cloud');
 });
+
+test('Projekte: bei gleich vielen Themen je Ordner entscheidet die Beschreibung', () => {
+  // scrcpy: android (Mobile), ffmpeg (Audio, Video), sdl2 (Spiele)
+  assert.equal(p('scrcpy', 'Display and control your Android device', ['android', 'c', 'ffmpeg', 'mirroring', 'sdl2']), 'Mobile Apps');
+});

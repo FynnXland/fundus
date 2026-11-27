@@ -132,17 +132,27 @@ const ALLGEMEIN = /(?:^|[^a-z0-9])(?:librar(?:y|ies)|framework|toolkit|sdk|modul
 export function projektOrdner(titel, beschreibung, tags, sprache) {
   const stimmen = new Map();
   for (const t of tags ?? []) { const r = TOPIC.get(t.toLowerCase()); if (r) stimmen.set(r, (stimmen.get(r) ?? 0) + 1); }
-  if (stimmen.size) return [...stimmen].sort((a, b) => b[1] - a[1] || a[0].i - b[0].i)[0][0].label;
   // the name as written ("DeepSeek V3") and split at capitals ("Mobile App Kit"): either can carry the word
   const glatt = (titel ?? '').replace(/[-_.]+/g, ' ');
   const name = `${glatt} · ${glatt.replace(/([a-z])([A-Z])/g, '$1 $2')}`;
   // the word that comes first in the sentence is usually what the project is; the folder order breaks ties
-  for (const text of [beschreibung ?? '', name]) {
-    if (!text) continue;
-    let wahl = null, wo = Infinity;
-    for (const r of REGELN) { const m = r.re.exec(text); if (m && m.index < wo) { wahl = r; wo = m.index; } }
-    if (wahl) return wahl.label;
+  const nachText = (regeln) => {
+    for (const text of [beschreibung ?? '', name]) {
+      if (!text) continue;
+      let wahl = null, wo = Infinity;
+      for (const r of regeln) { const m = r.re.exec(text); if (m && m.index < wo) { wahl = r; wo = m.index; } }
+      if (wahl) return wahl;
+    }
+    return null;
+  };
+  if (stimmen.size) {
+    const meiste = Math.max(...stimmen.values());
+    const vorn = [...stimmen].filter(([, n]) => n === meiste).map(([r]) => r).sort((a, b) => a.i - b.i);
+    // several folders with the same number of topics (scrcpy: android, ffmpeg, sdl2): the description picks among them
+    return (vorn.length > 1 ? nachText(vorn) ?? vorn[0] : vorn[0]).label;
   }
+  const wahl = nachText(REGELN);
+  if (wahl) return wahl.label;
   if (SPRACHE[sprache]) return SPRACHE[sprache];
   if (ALLGEMEIN.test(`${beschreibung ?? ''} ${name}`)) return 'Bibliotheken & Werkzeuge';
   return null;
