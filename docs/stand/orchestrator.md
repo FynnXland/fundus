@@ -195,3 +195,31 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
 - `docs/KI-ANBINDUNG.md` und `mcp/src/stdio.mjs` zeigen auf die echte Adresse.
 - Offen: fynn.land-Eintrag `status: "soon"` auf live stellen (fynn.land-Chat), Seite „KI anschließen“ in `src/`,
   `fundus-mcp` auf npm (Entscheidung Fynn), CPU-Zeit im Gratis-Tarif beobachten.
+
+## 27.11.2026 vormittags: Aufhol-Lauf live, Einordnung der Projekte, große Ordner
+
+- Katalog: 567.713 Einträge (GitHub 317.898, Commons Audio 65.923, Wellcome 54.822, Cleveland 41.856, Internet Archive
+  26.978). Runde 1 und 2 der Vorschaubilder sind live (126.249), Runde 3 lief am Vormittag.
+- **Vorschaubilder schneller** (`crawler/thumbs.mjs`, `poolNachHost`): Die Warteschlange lief in Katalogreihenfolge,
+  also immer nur ein Host, und dessen Mindestabstand bestimmte das Tempo (3,9 Bilder/s). Jetzt nimmt jeder der 16
+  Arbeiter das nächste Bild des Hosts, der zuerst frei ist. Gemessen: Wellcome 8,2/s (125 ms, vorher 27.005 Abrufe ohne
+  429), Internet Archive 4,1/s (250 ms, bewusst gelassen), beide gleichzeitig. `UV_THREADPOOL_SIZE=16` setzen.
+  Ein laufender thumbs-Lauf darf nur direkt nach einem Speichern des Registers beendet werden; `vorschau-r2.mjs
+  abgleich` löscht im Bucket, was das Register nicht nennt.
+- **Projekte einsortiert** (`crawler/lib/projekte.mjs`, eingebunden in `taxonomy.mjs`): 26 Unterordner statt drei.
+  Reihenfolge der Belege: GitHub-Themen stimmen ab (bei Gleichstand entscheidet die Beschreibung), dann das erste
+  Fachwort der Beschreibung, dann der Name, dann eine fachgebundene Sprache, dann „Bibliotheken & Werkzeuge“.
+  Sonstiges: 41.990 von 315.632 (vorher 299.250). Der Rest hat meist weder Themen noch eine englische Beschreibung;
+  mehr ginge nur mit dem README. Die Art (`kind`) bleibt `projekt`, die Lizenzregel für Medienarten ist unberührt.
+- **Sterne exakt**: `empfohlen` (in `ausgabe.mjs` und `src/katalog.js`) nimmt bei gleichem Rang die Zahl selbst. Der
+  Rang deckelt beim 99. Perzentil, die rund 3.000 meistbesternten Projekte standen deshalb gemischt.
+- **Große Ordner**: Arten mit mehr als 20.000 Zeilen (`GROSS`) luden im Hintergrund jeden Teil (Projekte 634 Dateien,
+  94 MB). Sie bekommen `index/<art>/kopf2.json` (Plätze 241 bis 2.400) und laden von selbst nie alles; nach dem zweiten
+  Kopf verweist ein Satz auf Unterordner und Suche. Filter, die jede Zeile brauchen (Lizenz, Format, Quelle, andere
+  Sortierung), laden weiterhin alles. `stand.index.arten[].kopf2` markiert solche Arten.
+- **Liste lädt beim Scrollen nach** (`src/main.js`, `mehrZeigen`): angehängt, nicht neu gebaut; der Knopf bleibt.
+- Gemessen, nicht umgesetzt: Unter den GitHub-Projekten sind nach Themen 441 Schrift-Repositories (176 mit OFL),
+  2.255 Skill-Repositories, aber nur 23 mit 3D-Themen und CC-Lizenz. GitHub ist keine 3D-Quelle.
+- Bekannter Fehler, nicht behoben: Schriftmuster für `githubschriften` nehmen den Repository-Namen als Familiennamen.
+  214 von 305 scheitern („nicht erkannt“ oder „ohne darstellbare Buchstaben“), und einzelne gelungene zeigen eine
+  Ersatzschrift. Der Familienname müsste aus der Schriftdatei gelesen werden.
