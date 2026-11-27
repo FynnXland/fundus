@@ -21,6 +21,7 @@ const zustand = {
   // folders show a group of entries that belong together as one card; "einzeln" shows every entry
   gruppiert: store.get('fundus.gruppen') !== 'einzeln',
   sichtbar: SEITENGROESSE,
+  autoSeiten: 0, // pages added by scrolling since the last press of "Weitere anzeigen"
   katalogHash: '#/',
   gerendert: null,
   wurzelAlle: false, // "Alle Objekte" shows a sample until the visitor asks for everything
@@ -358,7 +359,7 @@ function katalogBauen() {
   ablage.addEventListener('click', (e) => {
     const knopf = e.target.closest('[data-hoerprobe]');
     if (knopf) hoerprobe(knopf, knopf.dataset.hoerprobe);
-    if (e.target.closest('#mehrknopf')) mehrZeigen({ fokus: true });
+    if (e.target.closest('#mehrknopf')) { zustand.autoSeiten = 0; mehrZeigen({ fokus: true }); }
     if (e.target.closest('#allesknopf')) {
       // keep what is already on screen and add the next page once everything is loaded
       const n = zustand.sichtbar + SEITENGROESSE;
@@ -499,7 +500,11 @@ function bilderBeobachten(wurzel) {
  */
 const unten = 'IntersectionObserver' in window
   ? new IntersectionObserver((eintraege) => {
-    if (eintraege.some((e) => e.isIntersecting)) mehrZeigen();
+    // after AUTO_SEITEN pages the list waits for the button: the footer with Impressum and Datenschutz must stay
+    // within reach, and a folder of 40,000 entries would otherwise never end
+    if (!eintraege.some((e) => e.isIntersecting) || zustand.autoSeiten >= AUTO_SEITEN) return;
+    zustand.autoSeiten++;
+    mehrZeigen();
   }, { rootMargin: '0px 0px 100% 0px' })
   : null;
 
@@ -525,6 +530,7 @@ function endeHtml(geladen, gesamt) {
   return '';
 }
 
+const AUTO_SEITEN = 4;
 const mehrText = (rest) => `Weitere ${zahl(Math.min(SEITENGROESSE, rest))} anzeigen`;
 
 function endeBeobachten() {
@@ -700,7 +706,7 @@ function trefferZeigen({ behalteAnzahl = false, fokusAb } = {}) {
   const gruppiert = zustand.gruppiert && !f.q && !f.serie && !auswahl;
   main.querySelector('#gruppenwahl').hidden = Boolean(f.q || f.serie || auswahl);
   const karten = gruppiert ? zusammenfassen(k, liste, f) : liste.map((o) => ({ o }));
-  if (!behalteAnzahl) zustand.sichtbar = SEITENGROESSE;
+  if (!behalteAnzahl) { zustand.sichtbar = SEITENGROESSE; zustand.autoSeiten = 0; }
   zustand.karten = karten;
   unten?.disconnect();
   const zeigen = karten.slice(0, zustand.sichtbar);

@@ -203,6 +203,11 @@ h1, h2, h3, h4 { margin: 0; line-height: 1.15; text-wrap: balance; }
 }
 .suche input:focus ~ .suche__taste { visibility: hidden; }
 .kopf__rechts { display: flex; align-items: center; gap: 12px; }
+/* back to the main site; the footer has the same link, and that one is all a narrow screen shows */
+.heimlink { display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 12px 0 8px; border-radius: var(--r-knopf); font-size: 14px; font-weight: 550; color: var(--bleistift); text-decoration: none; transition: background-color 150ms ease-out, transform 120ms ease-out; }
+.heimlink:active { transform: scale(0.97); }
+@media (hover: hover) { .heimlink:hover { background: var(--flaeche); color: var(--tinte); } }
+@media (max-width: 920px) { .heimlink { display: none; } }
 .schalter { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 4px; border: 0; background: none; cursor: pointer; font-size: 14px; border-radius: 12px; }
 .schalter__bahn {
   width: 40px;
