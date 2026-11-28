@@ -365,7 +365,8 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length || grp || spracheN || minBeliebt || seit || grenzen.length);
     const IDX = { minB: [0, 1], maxB: [0, -1], minT: [1, 1], maxT: [1, -1], minH: [2, 1], maxH: [2, -1] };
     const groessePasst = (m) => Boolean(m) && grenzen.every(([k2, v]) => { const [i, richtung] = IDX[k2] ?? [0, 0]; return richtung > 0 ? m[i] >= v : richtung < 0 ? m[i] <= v : true; });
-    const masse3d = grenzen.length || a?.art === '3d' || grp?.art === '3d' ? await groessenFuer('3d') : null;
+    // loaded up front for 3D searches, otherwise when the first 3D row turns up (one small file, kept in memory)
+    let masse3d = grenzen.length || a?.art === '3d' || grp?.art === '3d' ? await groessenFuer('3d') : undefined;
 
     // the sequence of refs to walk
     let refs = null; // ranked hits (search) or null (listing over blocks)
@@ -471,6 +472,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       const fehlend = fehlt?.get(refs[pos]);
       pos++;
       if (!r0 || !passt(r0)) continue;
+      if (r0.art === '3d' && masse3d === undefined) masse3d = await groessenFuer('3d');
       const masse = r0.art === '3d' ? masse3d?.get(ref) : undefined;
       if (grenzen.length && !groessePasst(masse)) continue;
       const r = masse ? { ...r0, masse } : r0;

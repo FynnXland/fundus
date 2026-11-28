@@ -289,7 +289,8 @@ describe('MCP-Werkzeuge', () => {
     const t = textVon(await ruf('fundus_search', { query: 'chair', limit: 2 }));
     const zeilen = t.split('\n');
     assert.match(zeilen[0], /^4 matches for "chair", showing 1-2\. More: cursor "2"\.$/);
-    assert.equal(zeilen[1], 'id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview');
+    // the chairs are 3D models with a known size, so the size column shows up even without kind
+    assert.equal(zeilen[1], 'id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview\tsize m (w×d×h)');
     assert.equal(zeilen.length, 4);
     assert.ok(t.length < 600);
     const weiter = textVon(await ruf('fundus_search', { query: 'chair', limit: 2, cursor: '2' }));
@@ -299,7 +300,7 @@ describe('MCP-Werkzeuge', () => {
     // fallback: the header says so, the last column names the missing words
     const teil = textVon(await ruf('fundus_search', { query: 'painted chair', limit: 3 })).split('\n');
     assert.match(teil[0], /^1 match for all words of "painted chair", then 3 matching only some words \(column "missing"\), showing 1-3\. More: cursor "3"\.$/);
-    assert.ok(teil[1].endsWith('\tpreview\tmissing'));
+    assert.ok(teil[1].endsWith('\tpreview\tsize m (w×d×h)\tmissing'));
     assert.ok(teil[2].endsWith('\t-'));
     assert.ok(teil[3].endsWith('\tpainted'));
     assert.match(textVon(await ruf('fundus_search', { query: 'chair xyzzy', limit: 2 })), /^No entry matches all words of "chair xyzzy"\. Showing 4 entries matching some words/);
@@ -649,6 +650,12 @@ describe('Rückmeldung 28.11.2026: deutsche Wörter, Formatfamilie, Größe', ()
     assert.deepEqual(groessenGrenzen('d < 0.6'), { maxT: 0.6 });
     assert.throws(() => groessenGrenzen('volume<=2'), /unknown measure/);
     assert.throws(() => groessenGrenzen('klein'), /height<=0.8/);
+  });
+
+  test('auch ohne kind bekommen 3D-Zeilen ihre Größe', async () => {
+    const { kern } = neuerKern();
+    const e = await kern.suchen({ q: 'gallinera' });
+    assert.deepEqual(e.treffer.find((r) => r.id === 'polyhaven:gallinera_chair').masse, [0.47, 0.53, 0.83]);
   });
 
   test('Suchzeilen bekommen eine Größenspalte, sobald eine Zeile eine Größe hat', async () => {
