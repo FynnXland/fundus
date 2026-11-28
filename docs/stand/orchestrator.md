@@ -325,3 +325,16 @@ Auskunft, keine Freigabe: gebaut oder deployt wird erst nach Fynns ausdrücklich
   ein guter Teil davon sind Werkzeuge (Viewer, Generatoren), die echten Modell-Repositories darunter bleiben wegen der
   Medienlizenz-Regel Projekte. Ob sich die Regel ändert, entscheidet Fynn.
 - Offen: 27 umgezogene Sammlungen (etwa `anthropics/skills`) stehen neben der Gruppe ihrer einzeln gelesenen Skills.
+
+## 28.11.2026: erster vollständiger GitHub-Lauf
+
+- Lauf 46160358869 (von Hand gestartet, 79 Minuten) ist durchgelaufen: Crawl 16 min, Rechteprüfung 4 min, Maße
+  0 min (nichts Neues bei Fuel und Khronos), Vorschaubilder 35 min, Links 15 min, Tests, R2, Bau und Deploy, Daten-Commit
+  `b31e8a0` von fundus-bot. Live danach: 587.777 Einträge (vorher 567.703), 3D 10.845, davon 2.945 mit Maßen;
+  Vorschaubilder im Register 184.908 (vorher 180.707); Rechteprüfung 28 ausgeblendet, 131 Musiktitel ungeprüft.
+- Davor zwei Fehlschläge: Linkprüfung ohne Zeitgrenze (jetzt `--max-minuten 15`, Lauf darf 150 Minuten) und
+  `node --test tests/` unter Node 22 (jetzt `node --test "tests/*.test.mjs"`). Geplante Läufe (03:17 UTC) hat GitHub
+  bisher keinen gestartet; ob der nächste von selbst kommt, zeigt die Nacht zum 29.11.
+- Offen: Die Linkprüfung schafft in 15 Minuten nur 463 Einträge (Abstände je Host, mehrere Adressen je Eintrag). Bei
+  588.000 Einträgen kommt die Rotation so praktisch nie herum; sie braucht entweder mehr Gleichzeitigkeit für Hosts
+  ohne Abstand oder eine Auswahl (nur Quell- und Downloadadresse, nicht jede Vorschau).
