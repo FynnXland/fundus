@@ -32,7 +32,15 @@ let kontoHub = null;
 let kontoTage = null;
 let nachricht = '';
 
-const adressfeld = (adresse, haupt = true) => `<div class="ki__adresse"><code class="ki__url">${esc(adresse)}</code><button type="button" class="knopf${haupt ? ' knopf--haupt' : ''}" data-zugang="kopieren" data-text="${esc(adresse)}">Kopieren</button></div>`;
+// Key and identifier stay hidden until the eye is pressed: on a stream or a shared screen anyone could copy them.
+// "Kopieren" copies the real value either way. Not remembered: every visit starts hidden.
+const PUNKTE = '••••••••••••';
+const AUGE = '<svg class="auge__auf" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M1.8 10S5 4.2 10 4.2 18.2 10 18.2 10 15 15.8 10 15.8 1.8 10 1.8 10Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><svg class="auge__zu" viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M1.8 10S5 4.2 10 4.2 18.2 10 18.2 10 15 15.8 10 15.8 1.8 10 1.8 10Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><circle cx="10" cy="10" r="2.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 3.5l13 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const geheim = (wert) => `<span class="geheim" data-geheim="${esc(wert)}">${PUNKTE}</span>`;
+const augenknopf = (was) => `<button type="button" class="rundknopf auge" data-zugang="auge" aria-pressed="false" aria-label="${esc(was)} anzeigen" data-was="${esc(was)}">${AUGE}</button>`;
+
+/** The address field; with key, the key part is hidden behind the eye. */
+const adressfeld = (adresse, haupt = true, key = null) => `<div class="ki__adresse"${key ? ' data-geheimfeld' : ''}><code class="ki__url">${key ? `${esc(adresse.slice(0, -key.length))}${geheim(key)}` : esc(adresse)}</code>${key ? augenknopf('Schlüssel') : ''}<button type="button" class="knopf${haupt ? ' knopf--haupt' : ''}" data-zugang="kopieren" data-text="${esc(adresse)}">Kopieren</button></div>`;
 
 const gespeichert = (konto) => `
   <details class="zk zk--ruhig">
@@ -45,7 +53,7 @@ const mehr = (kennung) => `
   <section class="zk">
     <h2>Mehr für ein Projekt</h2>
     <p>Reicht das Kontingent nicht, schreib mir kurz, was du baust${kennung ? ', und nenn diese Kennung' : ''}. Dann schalte ich dir mehr frei.</p>
-    ${kennung ? `<p class="zugang__kennung"><span>Kennung</span><code>${esc(kennung)}</code></p>` : ''}
+    ${kennung ? `<p class="zugang__kennung" data-geheimfeld><span>Kennung</span><code>${geheim(kennung)}</code>${augenknopf('Kennung')}</p>` : ''}
     <p class="zugang__wege"><a class="knopf" href="${DISCORD}" rel="noopener" target="_blank">Discord</a><a class="knopf" href="${IMPRESSUM}" rel="noopener" target="_blank">Kontakt im Impressum</a></p>
   </section>`;
 
@@ -134,8 +142,8 @@ function mitZugang(key, s, konto) {
     <section class="zk">
       <h2>Deine Adresse</h2>
       <p>Trag sie statt der allgemeinen Adresse in deinen KI-Assistenten ein.</p>
-      ${adressfeld(adresse)}
-      <p class="zugang__klein">Behandle sie wie ein Passwort: Wer sie kennt, verbraucht dein Kontingent.</p>
+      ${adressfeld(adresse, true, key)}
+      <p class="zugang__klein">Behandle sie wie ein Passwort: Wer sie kennt, verbraucht dein Kontingent. Der Schlüssel ist verborgen, bis du auf das Auge tippst; „Kopieren“ kopiert ihn trotzdem.</p>
     </section>
   </div>
   <section class="zk">
@@ -214,6 +222,13 @@ export function zugangBereit(main) {
     if (!knopf) return;
     const was = knopf.dataset.zugang;
     const status = feld.querySelector(was === 'anmelden' || was === 'trennen' ? '#konto-status' : '#zugang-status');
+    if (was === 'auge') {
+      const offen = knopf.getAttribute('aria-pressed') !== 'true';
+      for (const s of knopf.closest('[data-geheimfeld]').querySelectorAll('.geheim')) s.textContent = offen ? s.dataset.geheim : PUNKTE;
+      knopf.setAttribute('aria-pressed', String(offen));
+      knopf.setAttribute('aria-label', `${knopf.dataset.was} ${offen ? 'verbergen' : 'anzeigen'}`);
+      return;
+    }
     if (was === 'kopieren') {
       try { await navigator.clipboard.writeText(knopf.dataset.text); knopf.textContent = 'Kopiert'; } catch { getSelection().selectAllChildren(knopf.parentElement.querySelector('code')); knopf.textContent = 'Markiert'; }
       setTimeout(() => { knopf.textContent = 'Kopieren'; }, 1800);

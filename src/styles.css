@@ -590,6 +590,13 @@ a.rundknopf[aria-current='page'] { background: var(--akzent-ton); color: var(--a
 .zugang__woche .ist-heute .zugang__tag, .zugang__woche .ist-heute .zugang__n { color: var(--tinte); font-weight: 600; }
 .zugang__kennung { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--bleistift); }
 .zugang__kennung code { font-size: 15px; color: var(--tinte); }
+/* hidden key and identifier (src/zugang.js): dots until the eye is pressed */
+.geheim { letter-spacing: 0.08em; }
+.auge { color: var(--bleistift); }
+.auge .auge__zu, .auge[aria-pressed="true"] .auge__auf { display: none; }
+.auge[aria-pressed="true"] .auge__zu { display: block; }
+.ki__adresse .auge { align-self: center; }
+.zugang__kennung .auge { width: 36px; height: 36px; }
 .zugang__wege { display: flex; flex-wrap: wrap; gap: 10px; }
 .zugang__wege .knopf { text-decoration: none; }
 .zugang__ende { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 4px 2px 0; font-size: 14px; color: var(--bleistift); }
