@@ -13,7 +13,9 @@ permissions:
 jobs:
   katalog:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    # 28.11.2026: two runs hit 90 minutes (thumbnails without a cap, then the link check); every slow step has its own
+    # cap now and build plus deploy take about 10 minutes, so 150 leaves room. Public repository: the minutes are free.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,7 +50,7 @@ jobs:
       # capped, so links, tests and deploy still fit in the job; a large backlog is worked off over several nights
       - run: npm run vorschau -- --max-minuten 35
       # rotating: the entries checked longest ago; the whole catalogue comes round every few nights
-      - run: node crawler/check-links.mjs --max 5000
+      - run: node crawler/check-links.mjs --max 5000 --max-minuten 15
         env:
           FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
       - run: npm --prefix mcp ci

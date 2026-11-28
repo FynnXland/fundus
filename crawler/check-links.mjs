@@ -5,6 +5,8 @@
 //   node crawler/check-links.mjs                 check everything
 //   node crawler/check-links.mjs --max 4000      the 4000 entries that were checked longest ago (nightly rotation)
 //   node crawler/check-links.mjs --sample 50     random sample (quick run)
+//   node crawler/check-links.mjs --max 5000 --max-minuten 15   stop taking new entries after 15 minutes (CI); the
+//                                               rest keeps its old status and comes first next run
 //   node crawler/check-links.mjs --quelle polyhaven
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -135,7 +137,10 @@ async function main() {
   setHostGap('live.staticflickr.com', 1500);
   let done = 0;
   const ergebnisse = new Map();
+  const ende = arg('--max-minuten') ? Date.now() + Number(arg('--max-minuten')) * 60000 : Infinity;
+  let ausgelassen = 0;
   await pool(items, 8, async (item) => {
+    if (Date.now() > ende) { ausgelassen++; return; }
     const results = [];
     for (const u of urlsOf(item)) results.push({ ...u, ...(await probe(u.url, { datei: u.role !== 'quelle' })) });
     ergebnisse.set(item.id, results);
@@ -152,7 +157,8 @@ async function main() {
 
   await writeFile('data/linkstatus.json', JSON.stringify(status, null, 1));
 
-  const checked = items.map((it) => ({ it, s: status[it.id] }));
+  if (ausgelassen) console.log(`Zeitgrenze erreicht: ${ausgelassen} Einträge bleiben für den nächsten Lauf.`);
+  const checked = items.filter((it) => ergebnisse.has(it.id)).map((it) => ({ it, s: status[it.id] }));
   const failing = checked.filter((c) => !c.s.ok);
   const broken = checked.filter((c) => c.s.broken);
   const date = new Date().toISOString().slice(0, 10);
