@@ -15,19 +15,19 @@
    "fehler": "cirrussearch-too-busy-error"
   },
   "timelapse": {
-   "offset": 400,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:32:11.390Z"
+   "zuletzt": "2026-11-28T15:36:33.385Z"
   },
   "slow motion": {
-   "offset": 400,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:32:14.158Z"
+   "zuletzt": "2026-11-28T15:36:36.658Z"
   },
   "waterfall": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:03.325Z"
+   "zuletzt": "2026-11-28T15:36:39.374Z"
   },
   "ocean waves": {
    "offset": 300,
@@ -35,44 +35,44 @@
    "zuletzt": "2026-11-26T21:31:05.888Z"
   },
   "river": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:08.922Z"
+   "zuletzt": "2026-11-28T15:36:42.350Z"
   },
   "forest": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:11.977Z"
+   "zuletzt": "2026-11-28T15:36:45.493Z"
   },
   "clouds": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:15.134Z"
+   "zuletzt": "2026-11-28T15:36:48.261Z"
   },
   "sunset": {
-   "offset": 350,
-   "fertig": false,
-   "zuletzt": "2026-11-26T21:31:18.000Z"
+   "offset": 400,
+   "fertig": true,
+   "zuletzt": "2026-11-28T15:33:46.270Z"
   },
   "snow": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:20.109Z"
+   "zuletzt": "2026-11-28T15:36:51.678Z"
   },
   "thunderstorm": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:23.071Z"
+   "zuletzt": "2026-11-28T15:36:54.789Z"
   },
   "volcano": {
-   "offset": 350,
-   "fertig": false,
-   "zuletzt": "2026-11-26T21:31:25.912Z"
+   "offset": 450,
+   "fertig": true,
+   "zuletzt": "2026-11-28T15:34:56.209Z"
   },
   "aurora": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:29.124Z"
+   "zuletzt": "2026-11-28T15:36:58.767Z"
   },
   "fireworks": {
    "offset": 300,
@@ -80,9 +80,9 @@
    "zuletzt": "2026-11-26T21:31:31.762Z"
   },
   "fire": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:35.087Z"
+   "zuletzt": "2026-11-28T15:37:01.421Z"
   },
   "city traffic": {
    "offset": 150,
@@ -90,54 +90,54 @@
    "zuletzt": "2026-11-26T21:27:38.777Z"
   },
   "night city": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:37.959Z"
+   "zuletzt": "2026-11-28T15:37:04.412Z"
   },
   "train": {
-   "offset": 350,
+   "offset": 600,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:41.099Z"
+   "zuletzt": "2026-11-28T15:37:07.396Z"
   },
   "aircraft": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:43.977Z"
+   "zuletzt": "2026-11-28T15:36:10.431Z"
   },
   "birds": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:47.307Z"
+   "zuletzt": "2026-11-28T15:36:13.503Z"
   },
   "wildlife": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:49.862Z"
+   "zuletzt": "2026-11-28T15:36:16.301Z"
   },
   "insects": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:52.932Z"
+   "zuletzt": "2026-11-28T15:36:18.395Z"
   },
   "underwater": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:56.025Z"
+   "zuletzt": "2026-11-28T15:36:21.337Z"
   },
   "space": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:31:59.214Z"
+   "zuletzt": "2026-11-28T15:36:24.405Z"
   },
   "rocket launch": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:32:02.227Z"
+   "zuletzt": "2026-11-28T15:36:27.428Z"
   },
   "microscopy": {
-   "offset": 350,
+   "offset": 550,
    "fertig": false,
-   "zuletzt": "2026-11-26T21:32:05.111Z"
+   "zuletzt": "2026-11-28T15:36:30.201Z"
   },
   "3d animation": {
    "offset": 300,

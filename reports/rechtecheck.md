@@ -1,11 +1,11 @@
 # Rechteprüfung Musik
 
-Stand 2026-11-27. 52435 Musikeinträge, davon 193 noch nicht geprüft.
+Stand 2026-11-28. 52618 Musikeinträge, davon 131 noch nicht geprüft.
 Eine CC-Lizenz bei Jamendo, im Internet Archive oder auf Commons ist eine Angabe des Hochladers. Diese Prüfung findet
 nur den offensichtlichen Fall: Der Titel ist ein bekanntes, noch geschütztes Lied (Urheber leben oder sind vor weniger
 als 70 Jahren gestorben), hochgeladen von jemandem, der nicht zu den Urhebern gehört. Grundlage ist MusicBrainz.
 
-## Ausgeblendet (26)
+## Ausgeblendet (28)
 
 Bekannte Lieder mit vielen Aufnahmen. Sie erscheinen nicht im Katalog. Ist ein Eintrag doch in Ordnung, die ID in
 `crawler/config.json` unter `"rechte": { "freigegeben": [] }` eintragen.
@@ -38,8 +38,10 @@ Bekannte Lieder mit vielen Aufnahmen. Sie erscheinen nicht im Katalog. Ist ein E
 | Ain't That A Kick In The Head | Kyle Dearn | [Internet Archive](https://archive.org/details/BFTG_250) | „Ain’t That a Kick in the Head“ von Jimmy Van Heusen, Sammy Cahn, 59 Aufnahmen bei MusicBrainz | `internetarchive:BFTG_250` |
 | Surf City (Battletoads Cover) | DEgITx | [Jamendo](https://www.jamendo.com/track/1494492) | „Surf City“ von Brian Wilson, Jan Berry, 274 Aufnahmen bei MusicBrainz | `openverse:audio/17828f08-1fa8-4b8d-ba16-6ce27bea2f8a` |
 | Jingle bell rock | MonacoLorenzo | [Jamendo](https://www.jamendo.com/track/1170300) | „Jingle Bell Rock“ von Joe Beal, Jim Boothe, 324 Aufnahmen bei MusicBrainz | `openverse:audio/22a0cd91-ad66-4c36-ac70-c6d7a3b5c47d` |
+| TRANS EUROPE EXPRESS | PATROUX | [Jamendo](https://www.jamendo.com/track/800960) | „Trans‐Europe Express“ von Ralf Hütter, Emil Schult, 122 Aufnahmen bei MusicBrainz | `openverse:audio/6d99f435-c874-42d0-b3c9-a062b300d8d1` |
+| You Rock My World | White Noise | [Jamendo](https://www.jamendo.com/track/961583) | „You Rock My World“ von Fred Jerkins, Rodney Jerkins, Michael Jackson, LaShawn Daniels, Nora Payne, 33 Aufnahmen bei MusicBrainz | `openverse:audio/c03bae4b-ba69-4c60-8b48-0c15d16fe8be` |
 
-## Zum Ansehen (459)
+## Zum Ansehen (462)
 
 Geschütztes Werk mit wenigen Aufnahmen oder ein Hinweis auf ein Cover. Sie bleiben im Katalog. Wer einen Treffer
 bestätigt, trägt die ID mit Grund in `data/gesperrt.json` ein.
@@ -499,9 +501,12 @@ bestätigt, trägt die ID mit Grund in `data/gesperrt.json` ein.
 | Lost Songs | Warfare | [Internet Archive](https://archive.org/details/WarfareLostSongs) | „Lost Songs“ von Jamie Miller, Autry Fulbright, Jason Reece, Conrad Keely, 3 Aufnahmen bei MusicBrainz | `internetarchive:WarfareLostSongs` |
 | Winter_Kills | B.L.Underwood | [Internet Archive](https://archive.org/details/Winter_Kills) | „Winter Kills“ von Alison Moyet, 17 Aufnahmen bei MusicBrainz | `internetarchive:Winter_Kills` |
 | Game of Life - Hip Hop Mix | Hasenchat | [Jamendo](https://www.jamendo.com/track/995510) | „Game of Life“ von Mats Haugen, Michael Eriksen, 4 Aufnahmen bei MusicBrainz | `openverse:audio/0513dd78-107a-4e16-9a97-92ad7d14d6a2` |
+| Hard rock | Sátrapa | [Jamendo](https://www.jamendo.com/track/1331955) | „Hard Rock“ von Jean-Luc de Meyer, Richard Jonckheere, Daniel Bressanutti, Patrick Codenys, 3 Aufnahmen bei MusicBrainz | `openverse:audio/0b3cc182-c0bf-4890-b58f-dd9549a87e8a` |
 | Rock | Michael Moore | [Jamendo](https://www.jamendo.com/track/40206) | „Rock“ von Domingo S. Ortiz, John Bell, Dave Schools, Todd Nance, Michael Houser, 22 Aufnahmen bei MusicBrainz | `openverse:audio/5de25dd1-47ec-4180-8814-d0cc3f77a9b4` |
 | rock | Blackpaper | [Jamendo](https://www.jamendo.com/track/160919) | „Rock“ von Domingo S. Ortiz, John Bell, Dave Schools, Todd Nance, Michael Houser, 22 Aufnahmen bei MusicBrainz | `openverse:audio/7eabb2cc-2957-47e0-9fed-593933741fb7` |
 | La La La song (Electronic beat time and dream sequence) | Lorenzo's Music | [Jamendo](https://www.jamendo.com/track/1574895) | „La La La Song“ von Vanessa Paradis, Gerry DeVeaux, 3 Aufnahmen bei MusicBrainz | `openverse:audio/864be72b-5e87-49c9-9d75-81ac02a3aed9` |
 | Rock | txm | [Jamendo](https://www.jamendo.com/track/185858) | „Rock“ von Domingo S. Ortiz, John Bell, Dave Schools, Todd Nance, Michael Houser, 22 Aufnahmen bei MusicBrainz | `openverse:audio/8af397e2-43ba-4506-9749-2849afe9c0e2` |
 | Rock | sergei | [Jamendo](https://www.jamendo.com/track/1039162) | „Rock“ von Domingo S. Ortiz, John Bell, Dave Schools, Todd Nance, Michael Houser, 22 Aufnahmen bei MusicBrainz | `openverse:audio/94a06228-0465-4d60-b4b4-ada5c86e1d19` |
+| Space Rock | StatueOfDiveo | [Jamendo](https://www.jamendo.com/track/1130371) | „Space Rock“ von Rivers Cuomo, 3 Aufnahmen bei MusicBrainz | `openverse:audio/b3a90f6d-434c-4a6c-98e0-5940e5de9024` |
+| Rock and roll boy | SOB Pariassound | [Jamendo](https://www.jamendo.com/track/429907) | „Rock and Roll Boy“ von Jonathan Coulton, 3 Aufnahmen bei MusicBrainz | `openverse:audio/be1c1854-f1a8-472d-818e-802a36947ac2` |
 | hard rock | Theo Dege | [Jamendo](https://www.jamendo.com/track/315800) | „Hard Rock“ von Jean-Luc de Meyer, Richard Jonckheere, Daniel Bressanutti, Patrick Codenys, 3 Aufnahmen bei MusicBrainz | `openverse:audio/fc5e135d-5792-43e4-bead-6fd94ae7e0bc` |

@@ -4,35 +4,35 @@
   "exzellent": {
    "quelle": "kategorie:Category:Featured_pictures_on_Wikimedia_Commons",
    "weiter": {
-    "gcmcontinue": "20250619223621|134429378",
+    "gcmcontinue": "20250618235713|81891774",
     "continue": "gcmcontinue||"
    },
-   "seiten": 95,
+   "seiten": 175,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-26T21:38:59.620Z"
+   "zuletzt": "2026-11-28T15:44:00.096Z"
   },
   "wertvoll": {
    "quelle": "kategorie:Category:Valued_images_sorted_by_promotion_date",
    "weiter": {
-    "gcmcontinue": "20250707001907|163814376",
+    "gcmcontinue": "20250619235126|137300908",
     "continue": "gcmcontinue||"
    },
-   "seiten": 95,
+   "seiten": 175,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-26T21:39:01.840Z"
+   "zuletzt": "2026-11-28T15:44:01.106Z"
   },
   "qualitaet": {
    "quelle": "kategorie:Category:Quality_images",
    "weiter": {
-    "gcmcontinue": "20261025053003|198721336",
+    "gcmcontinue": "20261003051516|200694090",
     "continue": "gcmcontinue||"
    },
-   "seiten": 95,
+   "seiten": 174,
    "fertig": false,
    "runde": 1,
-   "zuletzt": "2026-11-26T21:39:04.465Z"
+   "zuletzt": "2026-11-28T15:43:59.024Z"
   },
   "clipart": {
    "quelle": "kategorie:Category:PD_OpenClipart",
@@ -72,14 +72,12 @@
   },
   "3d": {
    "quelle": "suche:filetype:3d -intitle:Noto",
-   "weiter": {
-    "gsroffset": 4750,
-    "continue": "gsroffset||"
-   },
-   "seiten": 95,
-   "fertig": false,
+   "weiter": null,
+   "seiten": 156,
+   "fertig": true,
    "runde": 1,
-   "zuletzt": "2026-11-26T21:39:05.665Z"
+   "zuletzt": "2026-11-28T15:42:39.869Z",
+   "fertigAm": "2026-11-28"
   }
  }
 }
