@@ -79,6 +79,10 @@ Eine KI hat mit Fundus einen Raum eingerichtet (3D-Möbel, Gemälde) und aufgesc
 
 Offen, nach Nutzen geordnet:
 
+- **Maße aus den Modelldateien** (28.11., `crawler/masse.mjs`, Register `data/masse.json`): Khronos (113, aus dem
+  JSON-Teil der glTF-Datei, 93 plausibel; über 10 m sind Testszenen) und Fuel (2.642, aus `model.sdf` und nur den
+  Mesh-Dateien, Meter, Z oben). Auf der Karte „… m (B × T × H, aus der Datei gemessen)“, im MCP als grob gekennzeichnet.
+  Nachts misst der Lauf neue Modelle nach (8 Minuten). Commons-STL bewusst nicht: keine Einheit, 15 GB.
 - **Maßbereich als Filter** („Höhe 0,7 bis 0,8 m“): braucht die Maße als Zahlen in den Suchzeilen (`FELDER` in
   `publish.mjs`, eine Spalte), dann ein Parameter in `fundus_search`. Nur Poly Haven hat Maße; Fuel, Commons und
   Khronos nicht.

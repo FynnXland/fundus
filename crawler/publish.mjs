@@ -17,6 +17,7 @@ import { validateItem, KINDS } from './lib/schema.mjs';
 import { dedupe, inhaltsDubletten } from './lib/dedupe.mjs';
 import { unterkategorie } from './lib/taxonomy.mjs';
 import { projektArt } from './lib/projekte.mjs';
+import { ladeMasse } from './masse.mjs';
 import { ladeKatalog } from './lib/store.mjs';
 import { SOURCES } from './sources/index.mjs';
 import { baueAusgabe } from './lib/ausgabe.mjs';
@@ -35,6 +36,14 @@ export const STARTGROESSE = 240;
 const ZIEL = process.argv.includes('--ziel') ? process.argv[process.argv.indexOf('--ziel') + 1] : 'public/data';
 
 // rechte: { titel: { <normalised title>: { fakten } } } from crawler/rechtecheck.mjs; freigegeben: ids Fynn cleared
+// "0,41 × 0,50 × 0,62 m (B × T × H, aus der Datei gemessen)" from an entry of data/masse.json (metres), or undefined.
+// The note keeps it apart from a size the source states (Poly Haven); mcp/src/werkzeuge.mjs reads both forms.
+const metrisch = (v) => v.toFixed(v < 0.1 ? 3 : 2).replace('.', ',');
+export function gemesseneAbmessung(m) {
+  if (!m || m.fehler || ![m.b, m.t, m.h].every(Number.isFinite)) return undefined;
+  return `${[m.b, m.t, m.h].map(metrisch).join(' × ')} m (B × T × H, aus der Datei gemessen)`;
+}
+
 export function publishable(katalog, status, gesperrt = {}, rechte = { titel: {} }, freigegeben = []) {
   const out = [];
   const skipped = { ungueltig: 0, kaputt: 0, gesperrt: 0, rechte: 0 };
@@ -188,6 +197,8 @@ async function main() {
   try { rechte = JSON.parse(await readFile('data/rechtecheck.json', 'utf8')); } catch {}
   const freigegeben = JSON.parse(await readFile('crawler/config.json', 'utf8')).rechte?.freigegeben ?? [];
 
+  // sizes measured from the model files (crawler/masse.mjs) for models whose source gives none
+  const masse = await ladeMasse();
   const { items: gueltig, skipped } = publishable(katalog, status, gesperrt, rechte, freigegeben);
   // same address at two sources (Commons directly and through Openverse), then same content
   const ohneAdressDoppel = dedupe(gueltig);
@@ -198,6 +209,7 @@ async function main() {
     if (it.source.id === 'wikimedia') it.tags = it.tags.filter((t) => !/user:|taken on|taken with|images of|photographs of|monuments in|heritage|(19|20)\d\d|january|february|march|april|may |june|july|august|september|october|november|december|wikidata|location|by country/i.test(t));
     // GitHub repositories that are skills or 3D models move to that kind (crawler/lib/projekte.mjs)
     it.kind = projektArt(it) ?? it.kind;
+    if (it.kind === '3d' && !it.meta?.abmessung) { const a = gemesseneAbmessung(masse[it.id]); if (a) it.meta = { ...it.meta, abmessung: a }; }
     it.unter = unterkategorie(it);
     const v = vorschau[it.id];
     if (v?.pfad) it.vorschau = { pfad: v.pfad, b: v.b, h: v.h };

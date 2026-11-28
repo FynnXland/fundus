@@ -41,6 +41,10 @@ jobs:
       - run: node crawler/rechtecheck.mjs --max-minuten 10
         env:
           FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
+      # sizes of new 3D models at Fuel and Khronos, read from their model files (crawler/masse.mjs), capped
+      - run: node crawler/masse.mjs --max-minuten 8
+        env:
+          FUNDUS_KONTAKT: ${{ vars.FUNDUS_KONTAKT }}
       # capped, so links, tests and deploy still fit in the job; a large backlog is worked off over several nights
       - run: npm run vorschau -- --max-minuten 35
       # rotating: the entries checked longest ago; the whole catalogue comes round every few nights

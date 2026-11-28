@@ -88,7 +88,7 @@ export function detailtext(it, { mitUrls = true } = {}) {
   const m = it.meta ?? {};
   // size, polygons and textures before the download (Poly Haven models carry them): an agent furnishing a room should
   // not download ten models only to measure them (MCP feedback 28.11.2026)
-  if (m.abmessung) zeilen.push(`Size: ${m.abmessung.replace(/,/g, '.').replace('(B × T × H)', '(width × depth × height, as given by the source)')}`);
+  if (m.abmessung) zeilen.push(`Size: ${m.abmessung.replace(/,/g, '.').replace('(B × T × H)', '(width × depth × height, as given by the source)').replace('(B × T × H. aus der Datei gemessen)', '(width × depth × height, measured by Fundus from the model file: rough, and only as right as the scale of the model)')}`);
   const fakten = [
     it.popularity ? `${it.popularity.value} ${it.popularity.label}` : '',
     m.polygone ? `${m.polygone} polygons` : '',
