@@ -26,7 +26,7 @@ export function lizenzSatz(l) {
 }
 
 /* ---------------- Bausteine ---------------- */
-const NAMEN = { abmessung: 'Abmessung', original: 'Original', dauer: 'Dauer', polygone: 'Polygone', aufloesung: 'Auflösung', art: 'Art', sterne: 'Sterne auf GitHub', sprache: 'Sprache', zuletzt: 'Letzte Änderung', repository: 'Repository', sammlung: 'Sammlung', dateien: 'Dateien', schnitte: 'Schnitte', kategorie: 'Kategorie', icons: 'Icons', abrufe: 'Downloads', version: 'Version', blender: 'Blender', godot: 'Godot', stil: 'Stil', gestalter: 'Gestaltung' };
+const NAMEN = { abmessung: 'Abmessung', original: 'Original', dauer: 'Dauer', polygone: 'Polygone', aufloesung: 'Auflösung', art: 'Art', sterne: 'Sterne auf GitHub', sprache: 'Sprache', zuletzt: 'Letzte Änderung', repository: 'Repository', sammlung: 'Sammlung', dateien: 'Dateien', schnitte: 'Schnitte', kategorie: 'Kategorie', icons: 'Icons', abrufe: 'Downloads', version: 'Version', blender: 'Blender', godot: 'Godot', stil: 'Stil', gestalter: 'Gestaltung', material: 'Material', zustand: 'Zustand' };
 
 /* ---------------- 3D: which file the viewer can show ---------------- */
 const MODELL_FORMATE = ['glb', 'gltf', 'dae', 'obj', 'stl', 'ply'];

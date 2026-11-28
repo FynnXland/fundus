@@ -357,6 +357,16 @@ describe('MCP-Werkzeuge', () => {
     const r = await ruf('fundus_download_links', { id: 'wikimedia:88992301', download: 3 });
     assert.equal(r.isError, true);
   });
+
+  test('Download-Links für mehrere Einträge auf einmal, ein fehlender bricht den Rest nicht ab', mitSdk, async () => {
+    const { ruf, textVon } = await verbinde({});
+    const t = textVon(await ruf('fundus_download_links', { ids: ['polyhaven:gallinera_chair', 'wikimedia:88992301', 'gibt:esnicht'] }));
+    assert.match(t, /^gallinera_chair_2k\.gltf\thttps:\/\/dl\.polyhaven\.org\//m);
+    assert.match(t, /\[wikimedia:88992301\], option 1/);
+    assert.match(t, /gibt:esnicht/);
+    const leer = await ruf('fundus_download_links', {});
+    assert.equal(leer.isError, true);
+  });
 });
 
 /* ---------------- HTTP (Worker, Pages Function) ---------------- */
@@ -584,4 +594,17 @@ test('Suche: Sprache, Mindestbeliebtheit und Sortierung nach Beliebtheit; ähnli
   await assert.rejects(() => kern.suchen({ sortierung: 'popular' }), /needs a kind/);
   // c shares two tags with a; d and b share one each, the more popular of them first
   assert.deepEqual((await kern.aehnliche('a')).map((r) => r.id), ['c', 'd', 'b']);
+});
+
+test('Details nennen Maße, Polygone, Material und Zustand vor dem Download', async () => {
+  const { detailtext } = await import('../mcp/src/werkzeuge.mjs');
+  const it = {
+    id: 'polyhaven:gamepad', title: 'Gamepad', kind: '3d', unter: 'Werkzeug & Technik', tags: ['controller'],
+    creator: { name: 'Josh Dean' }, license: { name: 'CC0 1.0', attribution: false }, source: { url: 'https://polyhaven.com/a/gamepad', name: 'Poly Haven' },
+    meta: { abmessung: '0,40 × 0,43 × 0,019 m (B × T × H)', polygone: '9546', aufloesung: '4096 × 4096 px', material: 'Kunststoff', zustand: 'abgenutzt' },
+    preview: {}, downloads: [{ label: 'glTF-Paket (2K-Texturen)', url: 'https://dl.polyhaven.org/x.gltf', format: 'zip' }],
+  };
+  const t = detailtext(it);
+  assert.match(t, /^Size: 0\.40 × 0\.43 × 0\.019 m \(width × depth × height, as given by the source\)$/m);
+  assert.match(t, /9546 polygons · textures up to 4096 × 4096 px · material Kunststoff · condition abgenutzt/);
 });

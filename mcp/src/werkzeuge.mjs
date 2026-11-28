@@ -64,9 +64,11 @@ function suchkopf(e, { q, art, limit }) {
   else teile.push(`${e.treffer.length} matches${was} on this page (total not counted with these filters).`);
   if (e.treffer.some((r) => r.serie && r.hier)) teile.push('A row marked [group …] is one example for a group of related entries (series, set, one designer); pass group to list them.');
   if (e.beliebt) teile.push('Sorted by popularity (stars, downloads, ratings), most popular first.');
-  if (e.teilweise) teile.push(`Stopped after ${e.abrufe} index files to stay cheap; continue with cursor "${e.weiter}" or narrow the search (kind, query).`);
+  // an incomplete search proves nothing (MCP feedback 28.11.2026: "blue sky clouds" stopped after 12 index files and
+  // the agent could not tell "nothing there" from "not searched deep enough")
+  if (e.teilweise) teile.push(`The search is not complete: it stopped after ${e.abrufe} index files to stay cheap, so ${e.treffer.length ? 'more matches may exist' : 'no match so far does not mean Fundus has none'}. Continue with cursor "${e.weiter}", or narrow it with kind (and subfolder) so fewer files are needed.`);
   else if (e.weiter) teile.push(`More: cursor "${e.weiter}".`);
-  if (!e.treffer.length && !e.weiter && limit) teile.push('Try another word (synonym, English or German), fewer filters or fundus_catalog for valid filter values.');
+  if (!e.treffer.length && !e.weiter && limit) teile.push('The whole index was searched: nothing matches. Words are matched literally (word starts, plurals, small typos) and most titles are English, so German compounds rarely match ("Blumenstillleben": try "flower still life"). Try another word, fewer filters or fundus_catalog for valid filter values.');
   return teile.join(' ');
 }
 
@@ -83,7 +85,20 @@ export function detailtext(it, { mitUrls = true } = {}) {
   ];
   zeilen.push(`Use: commercial use and adaptation are allowed (Fundus lists no NC or ND licenses)${l.attribution ? '; name creator and license' : ''}${l.shareAlike ? '; pass adaptations on under the same license (share-alike or copyleft)' : ''}. The license text decides.`);
   if (it.description) zeilen.push(`Description: ${zeichen(it.description, 300)}`);
-  const fakten = [it.popularity ? `${it.popularity.value} ${it.popularity.label}` : '', it.meta?.sprache ? `language ${it.meta.sprache}` : '', it.meta?.zuletzt ? `last change at the source ${it.meta.zuletzt}` : ''].filter(Boolean);
+  const m = it.meta ?? {};
+  // size, polygons and textures before the download (Poly Haven models carry them): an agent furnishing a room should
+  // not download ten models only to measure them (MCP feedback 28.11.2026)
+  if (m.abmessung) zeilen.push(`Size: ${m.abmessung.replace(/,/g, '.').replace('(B × T × H)', '(width × depth × height, as given by the source)')}`);
+  const fakten = [
+    it.popularity ? `${it.popularity.value} ${it.popularity.label}` : '',
+    m.polygone ? `${m.polygone} polygons` : '',
+    m.aufloesung ? `textures up to ${m.aufloesung}` : '',
+    m.material ? `material ${m.material}` : '',
+    m.zustand ? `condition ${m.zustand}` : '',
+    m.dauer ? `duration ${m.dauer}` : '',
+    m.sprache ? `language ${m.sprache}` : '',
+    m.zuletzt ? `last change at the source ${m.zuletzt}` : '',
+  ].filter(Boolean);
   if (fakten.length) zeilen.push(`Facts: ${fakten.join(' · ')}`);
   // Fundus relays no files: for code the reader gets the addresses and fetches them itself
   const repo = it.source.id === 'github' ? it.meta?.repository ?? it.meta?.sammlung : null;
@@ -155,7 +170,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
       description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first and well-known entries (stars, downloads) are lifted. A column popularity shows stars, downloads or rating where an entry has them. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Related entries (a numbered series, an icon set, one designer at game-icons) come as one example row marked [group id: size]; pass group to list the members. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
       inputSchema: z.object({
         query: z.string().optional().describe('search words, e.g. "wooden chair"; English and German titles exist'),
-        kind: z.string().optional().describe('bild, grafik, 3d, textur, hdri, icon, musik, sound, schrift, skript, projekt, skill, video'),
+        kind: z.string().optional().describe('bild, grafik, 3d, textur, hdri, icon, musik, sound, schrift, skript, projekt, skill, video. Libraries, engines and apps (three.js, Godot) are projekt; skript holds small single scripts'),
         subfolder: z.string().optional().describe('subfolder of the kind, exactly as in fundus_catalog, e.g. "Möbel"'),
         tags: z.array(z.string()).optional().describe('every tag must match the entry tags'),
         license: z.string().optional().describe('exact license name, e.g. "CC0 1.0", "CC BY 4.0", "MIT"'),
@@ -251,7 +266,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     'fundus_details',
     {
       title: 'Fundus: entry details',
-      description: 'Full details of up to 5 entries: creator, license with link, ready-made attribution text, source page, description and the download options with format, size and direct link (packages list their file count). Use before downloading.',
+      description: 'Full details of up to 5 entries: creator, license with link, ready-made attribution text, source page, description, facts the source gives (for many 3D models: size in metres, polygons, texture resolution, material) and the download options with format, size and direct link (packages list their file count). Use before downloading.',
       inputSchema: z.object({ ids: z.array(z.string()).min(1).max(5).describe('entry ids from fundus_search') }),
       annotations: NUR_LESEN,
     },
@@ -340,33 +355,48 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
       'fundus_download_links',
       {
         title: 'Fundus: direct download links',
-        description: 'Direct links to the files of one download option at the original source (Fundus hosts no files), with the attribution text to keep next to them. Packages (e.g. glTF with textures) list every file with its relative path; save them in that structure.',
+        description: 'Direct links to the files of a download option at the original source (Fundus hosts no files), with the attribution text to keep next to them. Pass id for one entry or ids for up to 10 at once (one option number for all, default 1). Packages (e.g. glTF with textures) list every file with its relative path; save them in that structure. A package file may sit in a folder of another resolution at the source (Poly Haven shares one .bin across resolutions); that is expected.',
         inputSchema: z.object({
-          id: z.string().describe('entry id'),
-          download: z.number().int().min(1).optional().describe('download option number from fundus_details, default 1'),
+          id: z.string().optional().describe('entry id (or use ids)'),
+          ids: z.array(z.string()).min(1).max(10).optional().describe('up to 10 entry ids, like fundus_details takes them'),
+          download: z.number().int().min(1).optional().describe('download option number from fundus_details, default 1 (the same for all ids)'),
         }),
         annotations: NUR_LESEN,
       },
-      async ({ id, download }) => {
+      async ({ id, ids, download }) => {
         try {
-          const it = await kern.eintrag(id);
+          const alle = [...new Set([...(id ? [id] : []), ...(ids ?? [])])];
+          if (!alle.length) throw new FundusFehler('pass id (one entry) or ids (up to 10 entries)');
+          if (alle.length > 10) throw new FundusFehler('at most 10 entries per call');
           const nr = download ?? 1;
-          const d = it.downloads[nr - 1];
-          if (!d) throw new FundusFehler(`${id} has ${it.downloads.length} download option(s)`);
-          const dateien = dateienVon(d);
-          const zeilen = [
-            `${it.title} [${it.id}], option ${nr}: ${d.label}${groesse(d.paket?.size ?? d.size) ? `, ${groesse(d.paket?.size ?? d.size)}` : ''}`,
-            `License: ${it.license.name}${it.license.url ? ` ${it.license.url}` : ''}`,
-            `Attribution (save as a text file next to the files): ${namensnennung(it)}`,
-          ];
-          if (d.paket) {
-            zeilen.push(`Package "${d.paket.name}", ${dateien.length} files (relative path<TAB>url):`);
-            for (const f of dateien) zeilen.push(`${f.pfad}\t${f.url}`);
-          } else zeilen.push(`File: ${dateien[0].url}`);
-          return text(zeilen.join('\n'));
+          const bloecke = [];
+          let fehlgeschlagen = 0;
+          for (const eid of alle) {
+            try { bloecke.push(await linkBlock(eid, nr)); } catch (err) { if (!(err instanceof FundusFehler)) throw err; bloecke.push(err.message); fehlgeschlagen++; }
+          }
+          // nothing usable at all is an error (as before for a single id); a partly good batch is an answer
+          if (fehlgeschlagen === alle.length) throw new FundusFehler(bloecke.join('\n'));
+          return text(bloecke.join('\n\n'));
         } catch (err) { return fehler(err); }
       },
     );
+    // one entry's links; a missing option is that entry's problem, not the whole call's
+    async function linkBlock(id, nr) {
+      const it = await kern.eintrag(id);
+      const d = it.downloads[nr - 1];
+      if (!d) throw new FundusFehler(`${id} has ${it.downloads.length} download option(s); option ${nr} does not exist`);
+      const dateien = dateienVon(d);
+      const zeilen = [
+        `${it.title} [${it.id}], option ${nr}: ${d.label}${groesse(d.paket?.size ?? d.size) ? `, ${groesse(d.paket?.size ?? d.size)}` : ''}`,
+        `License: ${it.license.name}${it.license.url ? ` ${it.license.url}` : ''}`,
+        `Attribution (save as a text file next to the files): ${namensnennung(it)}`,
+      ];
+      if (d.paket) {
+        zeilen.push(`Package "${d.paket.name}", ${dateien.length} files (relative path<TAB>url):`);
+        for (const f of dateien) zeilen.push(`${f.pfad}\t${f.url}`);
+      } else zeilen.push(`File: ${dateien[0].url}`);
+      return zeilen.join('\n');
+    }
   }
 
   return server;

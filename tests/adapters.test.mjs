@@ -55,6 +55,19 @@ test('Poly Haven: Modell mit glTF-Paket und Dateizuordnung für den Viewer', () 
   assert.equal(it.license.id, 'CC0-1.0');
 });
 
+test('Poly Haven: Maße in Metern, Material und Zustand, 1K-Paket als letzte Option', () => {
+  const { info, files } = fx('polyhaven-model');
+  const it = parsePolyHaven('ArmChair_01', info, files);
+  // dimensions from the listing (mm, z up): the armchair is 1.07 m high
+  assert.equal(it.meta.abmessung, '0,85 × 0,77 × 1,07 m (B × T × H)');
+  assert.equal(it.meta.material, 'Holz, Stoff');
+  assert.equal(it.meta.zustand, 'abgenutzt');
+  assert.ok(it.tags.includes('worn') && it.tags.includes('fabric'));
+  assert.equal(it.downloads[0].label, 'glTF-Paket (2K-Texturen)');
+  assert.equal(it.downloads.at(-1).label, 'glTF-Paket (1K-Texturen)');
+  assert.ok(it.downloads.at(-1).paket.files.some((f) => f.path.endsWith('_1k.jpg')));
+});
+
 test('ambientCG: ZIP-Downloads in fester Reihenfolge', () => {
   const it = parseAmbient(fx('ambientcg-asset'));
   valid(it);

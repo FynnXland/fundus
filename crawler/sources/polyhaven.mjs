@@ -21,6 +21,18 @@ const source = {
 
 const TYPE = { 0: 'hdri', 1: 'textur', 2: 'modell' };
 
+// Models: the listing carries the size in millimetres ([x, y, z], Blender axes: z is up) and attributes for material
+// and wear. Fundus stores the size in metres, so an agent can tell before the download whether a table is 75 cm high
+// (MCP feedback 28.11.2026: ten downloads only to measure the models).
+const MATERIAL = { metal: 'Metall', wood: 'Holz', plastic: 'Kunststoff', glass: 'Glas', stone: 'Stein', brass: 'Messing', steel: 'Stahl', rubber: 'Gummi', fabric: 'Stoff', plant: 'Pflanze', leather: 'Leder', ceramic: 'Keramik', food: 'Lebensmittel', paper: 'Papier' };
+const ZUSTAND = { worn: 'abgenutzt', weathered: 'verwittert', clean: 'sauber', rusted: 'rostig', painted: 'bemalt' };
+const meter = (mm) => (mm / 1000).toFixed(mm < 100 ? 3 : 2).replace('.', ',');
+/** "0,85 × 0,77 × 1,07 m (B × T × H)" from Poly Haven's dimensions in mm, or undefined. */
+export function abmessung(d) {
+  if (!Array.isArray(d) || d.length !== 3 || !d.every((x) => Number.isFinite(x) && x > 0)) return undefined;
+  return `${d.map(meter).join(' × ')} m (B × T × H)`;
+}
+
 function packageFrom(name, entry) {
   if (!entry?.url) return null;
   const main = entry.url.split('/').pop();
@@ -47,7 +59,8 @@ export function parseAsset(id, info, files) {
     const gltf2k = res(files.gltf, '2k')?.gltf;
     const blend = res(files.blend, '2k', '1k')?.blend;
     const fbx = res(files.fbx, '2k', '1k')?.fbx;
-    for (const [label, entry, tag] of [['glTF-Paket (2K-Texturen)', gltf2k, 'gltf_2k'], ['Blender-Paket (.blend)', blend, 'blend'], ['FBX-Paket', fbx, 'fbx']]) {
+    // 1K last, so the numbers of the older options stay as they were
+    for (const [label, entry, tag] of [['glTF-Paket (2K-Texturen)', gltf2k, 'gltf_2k'], ['Blender-Paket (.blend)', blend, 'blend'], ['FBX-Paket', fbx, 'fbx'], ['glTF-Paket (1K-Texturen)', gltf1k, 'gltf_1k']]) {
       const pkg = packageFrom(`${id}_${tag}`, entry);
       if (pkg) downloads.push({ label, url: entry.url, format: 'zip', size: pkg.size, paket: pkg });
     }
@@ -56,6 +69,12 @@ export function parseAsset(id, info, files) {
       preview = { type: 'model', thumb, url: gltf1k.url, dateien: map };
     }
     if (info.polycount) meta.polygone = String(info.polycount);
+    const masse = abmessung(info.dimensions);
+    if (masse) meta.abmessung = masse;
+    const mat = [].concat(info.attributes?.material ?? []);
+    if (mat.length) meta.material = mat.map((m) => MATERIAL[m] ?? m).join(', ');
+    const zustand = [].concat(info.attributes?.condition ?? []);
+    if (zustand.length) meta.zustand = zustand.map((z) => ZUSTAND[z] ?? z).join(', ');
   } else if (type === 'hdri') {
     for (const r of ['1k', '2k', '4k']) {
       const hdr = files.hdri?.[r]?.hdr;
@@ -87,7 +106,8 @@ export function parseAsset(id, info, files) {
     sourceId: id,
     kind: type === 'modell' ? '3d' : type === 'hdri' ? 'hdri' : 'textur',
     title: info.name,
-    tags: [...(info.categories ?? []), ...(info.tags ?? [])],
+    // material and wear as words too, so "worn wood" or "brass" finds them
+    tags: [...new Set([...(info.categories ?? []), ...(info.tags ?? []), ...(type === 'modell' ? [].concat(info.attributes?.material ?? [], info.attributes?.condition ?? []) : [])])],
     creator: { name: Object.keys(info.authors ?? {}).join(', ') || 'Poly Haven' },
     landing: `https://polyhaven.com/a/${id}`,
     license: 'CC0',

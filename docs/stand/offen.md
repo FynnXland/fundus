@@ -64,3 +64,32 @@ Idee: Eine KI legt über den MCP-Zugang Ordner (Sammlungen) an, die im fynn.land
 - Medizin & Anatomie bei Bildern: `hospital` zieht Gebäudeansichten hinein (5 von 50 Proben falsch).
 - 41.990 Projekte und 9.452 Bilder bleiben in „Sonstiges“; mehr ginge nur mit README-Texten bzw. Schlagworten der Quelle.
 - fynn.land: Der Fundus-Eintrag nennt seit `f5a5241` „über 560.000 Einträge“; live erst nach einem Deploy der Hauptseite.
+
+## 6. Rückmeldung einer KI zum MCP-Zugang (28.11.2026)
+
+Eine KI hat mit Fundus einen Raum eingerichtet (3D-Möbel, Gemälde) und aufgeschrieben, was fehlte. Erledigt am 28.11.:
+
+- Poly Haven liefert für alle 522 Modelle Maße (mm, z oben), Material und Zustand; Fundus speichert sie jetzt
+  (`meta.abmessung` „0,85 × 0,77 × 1,07 m (B × T × H)“, `meta.material`, `meta.zustand`, Material und Zustand auch als
+  Tags) und `fundus_details` zeigt sie mit Polygonen und Texturauflösung. Dazu ein glTF-Paket mit 1K-Texturen (letzte
+  Option, die Nummern der alten bleiben).
+- `fundus_download_links` nimmt `ids` (bis 10) wie `fundus_details`; ein fehlender Eintrag bricht den Rest nicht ab.
+- Suchmeldungen: Eine abgebrochene Suche sagt, dass „kein Treffer bisher“ nichts beweist; eine vollständige sagt, dass
+  der ganze Index durchsucht wurde, und nennt die wörtliche Suche und deutsche Komposita.
+
+Offen, nach Nutzen geordnet:
+
+- **Maßbereich als Filter** („Höhe 0,7 bis 0,8 m“): braucht die Maße als Zahlen in den Suchzeilen (`FELDER` in
+  `publish.mjs`, eine Spalte), dann ein Parameter in `fundus_search`. Nur Poly Haven hat Maße; Fuel, Commons und
+  Khronos nicht.
+- **Kleinere Fassungen von Bildern**: Commons liefert jede Breite über die Thumb-Adresse
+  (`upload.wikimedia.org/…/thumb/…/<breite>px-…`), Museen oft über IIIF. Eine Option „verkleinert, 2.000 px“ je Bild
+  wäre billig; Gemälde kamen mit 7 bis 27 MB.
+- **Stil und Epoche**: Kein Quellfeld. Poly Havens Tags enthalten Stilwörter (vintage, victorian, 80's, modern,
+  industrial); ein abgeleitetes `meta.stil` aus einer festen Liste ginge, sonst nichts Verlässliches.
+- **„Passt zusammen“**: Gruppen gibt es nur nach Serie und Urheber. Poly Haven ordnet Modelle in Kategorien
+  (`category`, z. B. „Furniture/Seating/Chairs“), nicht in Raumsets. Ohne Quelle eine Bewertung von Fundus, also nicht.
+- **Vorderseite, Stellflächen, benannte Teile**: nur durch Auswerten der Modelldateien. Teuer und außerhalb dessen,
+  was Fundus von den Quellen übernimmt; nicht geplant.
+- Erledigt: Die KI hat three.js in `skript` gesucht, es liegt unter `projekt`; die Beschreibung von `kind` in
+  `fundus_search` sagt das jetzt.
