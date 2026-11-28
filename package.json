@@ -11,7 +11,7 @@
     "crawl": "node crawler/crawl.mjs",
     "links": "node crawler/check-links.mjs",
     "daten": "node crawler/publish.mjs",
-    "test": "node --test tests/",
+    "test": "node --test \"tests/*.test.mjs\"",
     "vorschau": "node crawler/thumbs.mjs",
     "build:web": "node crawler/publish.mjs && node scripts/web-bauen.mjs",
     "vorschau:r2": "node scripts/vorschau-r2.mjs abgleich"
