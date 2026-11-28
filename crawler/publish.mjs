@@ -39,6 +39,12 @@ const ZIEL = process.argv.includes('--ziel') ? process.argv[process.argv.indexOf
 // "0,41 × 0,50 × 0,62 m (B × T × H, aus der Datei gemessen)" from an entry of data/masse.json (metres), or undefined.
 // The note keeps it apart from a size the source states (Poly Haven); mcp/src/werkzeuge.mjs reads both forms.
 const metrisch = (v) => v.toFixed(v < 0.1 ? 3 : 2).replace('.', ',');
+/** [width, depth, height] in metres from meta.abmessung of a 3D model ("0,85 × 0,77 × 1,07 m (B × T × H…"), or null. */
+export function masseAusMeta(it) {
+  const m = it.kind === '3d' && /^([\d,]+) × ([\d,]+) × ([\d,]+) m \(B × T × H/.exec(it.meta?.abmessung ?? '');
+  return m ? [m[1], m[2], m[3]].map((x) => Number(x.replace(',', '.'))) : null;
+}
+
 export function gemesseneAbmessung(m) {
   if (!m || m.fehler || ![m.b, m.t, m.h].every(Number.isFinite)) return undefined;
   return `${[m.b, m.t, m.h].map(metrisch).join(' × ')} m (B × T × H, aus der Datei gemessen)`;
@@ -236,7 +242,7 @@ async function main() {
 
   // index parts, search tiles and the block for stand.json (crawler/lib/ausgabe.mjs)
   const bild = (it) => { const f = ohneTracking(kleineFremdvorschau(it)); return f ? { f } : null; };
-  const { dateien, index, teilVon } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe, bild });
+  const { dateien, index, teilVon } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe, bild, masse: masseAusMeta });
   index.karten = KARTEN_STELLEN;
   const shards = new Map();
   for (const it of items) {

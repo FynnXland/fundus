@@ -6,6 +6,7 @@
 //                            KOPF2 in all). The site scrolls through these instead of loading every part of the
 //                            kind (Projekte: 634 parts, 94 MB); the rest is reached through subfolders and search.
 //   index/<art>/beste.json   row numbers (refs) of the up to BESTE most recommended rows that have a rang, best first.
+//   index/<art>/masse.json   { ref: [width, depth, height] } in metres for rows whose size is known (3D models)
 //                            The MCP search lifts popular entries with it without loading their rows.
 //   index/<art>/<nn>.json    all rows of the kind in parts of at most TEIL rows, ordered by subfolder, group,
 //                            tags, mix. Neighbouring rows are alike, so a search, a subfolder or a group needs few parts.
@@ -74,7 +75,7 @@ function gruppenDatei(mitglieder, teilVon, bild) {
  * without own preview ({ f: url } or null).
  * Returns { dateien: Map path -> JSON-able, index: the block for stand.json, teilVon: Map id -> part number }.
  */
-export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgruppe, teil = TEIL, kopf = KOPF, gross = GROSS, kopf2 = KOPF2, budget, bild = () => null }) {
+export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgruppe, teil = TEIL, kopf = KOPF, gross = GROSS, kopf2 = KOPF2, budget, bild = () => null, masse = () => null }) {
   const dateien = new Map();
   const teilVon = new Map();
   const proArt = new Map(arten.map((a) => [a, []]));
@@ -94,6 +95,7 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
     const nr = new Map(unter.map((u, i) => [u, i]));
     const teile = [];
     const refVon = new Map();
+    const groessen = {}; // ref -> [width, depth, height] in metres, for the size filter of the MCP search
     for (let i = 0; i < sortiert.length; i += teil) {
       const stueck = sortiert.slice(i, i + teil);
       const n = teile.length;
@@ -104,6 +106,8 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
         if (it.serie && b && b[2] === it.serie.id && b[0] + b[1] === ref) b[1]++;
         else if (it.serie) bloecke.push([ref, 1, it.serie.id]);
         refVon.set(it.id, ref);
+        const m = masse(it);
+        if (m) groessen[ref] = m;
         eintraege.push([ref++, suchfelder(it)]);
       }
       // [rows, first subfolder, last subfolder] as positions in the list unter
@@ -111,7 +115,9 @@ export function baueAusgabe(items, { arten, felder, zeile, suchfelder, lizenzgru
     }
     const besteRefs = beste.filter((it) => (it.rang ?? 0) > 0).slice(0, BESTE).map((it) => refVon.get(it.id));
     if (besteRefs.length) dateien.set(`index/${art}/beste.json`, besteRefs);
-    index.arten.push({ art, anzahl: liste.length, kopf: Math.min(kopf, liste.length), ...(zweiter.length ? { kopf2: zweiter.length } : {}), ...(besteRefs.length ? { beste: besteRefs.length } : {}), unter, teile });
+    const mitMassen = Object.keys(groessen).length;
+    if (mitMassen) dateien.set(`index/${art}/masse.json`, groessen);
+    index.arten.push({ art, anzahl: liste.length, kopf: Math.min(kopf, liste.length), ...(zweiter.length ? { kopf2: zweiter.length } : {}), ...(besteRefs.length ? { beste: besteRefs.length } : {}), ...(mitMassen ? { masse: mitMassen } : {}), unter, teile });
     const mitglieder = new Map();
     for (const it of sortiert) {
       if (!it.serie) continue;

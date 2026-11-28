@@ -11,6 +11,7 @@
 // the background and fn(was) is called once when it is there. Anything that needs all rows to be right (a
 // licence, format or source filter, another sort order) stays complete in both modes.
 import { woerter, kachelnFuer, kachelDatei, suche, rangfolge } from '../crawler/lib/suchindex.mjs';
+import { alternativen } from '../crawler/lib/synonyme.mjs';
 
 export const ARTEN = {
   bild: { label: 'Bilder', einzahl: 'Bild' },
@@ -265,7 +266,8 @@ function blockVon(k, ref) {
 const zeileVonRef = (k, ref) => { const t = k.bloecke.length ? blockVon(k, ref) : null; return t?.zeilen?.[ref - t.start]; };
 
 async function sucheLaden(k, w, was) {
-  const ws = [...new Set(woerter(w.q))];
+  // German words also load the tiles of their English equivalents ("Teppich": rug, carpet; crawler/lib/synonyme.mjs)
+  const ws = [...new Set(woerter(w.q).flatMap((x) => alternativen(x).flat()))];
   const noetig = new Set(ws.flatMap((x) => kachelnNoetig(x, k.schluessel)));
   await pool([...noetig].map((s) => () => ladeKachel(k, s)), VORDERGRUND);
   let refs = rangfolge(suche(w.q, k.kacheln, k.schluessel));

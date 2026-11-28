@@ -67,6 +67,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
   const kacheln = new Merker(200);
   const karten = new Merker(48); // shard -> { id: entry } (about 200 KB raw each)
   const beste = new Merker(16); // art -> Map ref -> place among the most popular of the kind
+  const groessen = new Merker(4); // art -> Map ref -> [width, depth, height] in metres (index/<art>/masse.json)
   const zeilen = new Merker(5000); // id -> row, filled by everything that loads rows
   const serien = new Merker(16); // art -> { <group id>: group } from index/<art>/gruppen.json, only for listing a group
 
@@ -94,7 +95,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     standLauf ??= holeJson('stand.json')
       .then((s) => {
         if (s.index?.version !== 2) throw new FundusFehler(`Unknown data format (stand.index.version ${s.index?.version ?? 'missing'}, expected 2)`);
-        if (k && k.stand.crawledAt !== s.crawledAt) { teile.clear(); kacheln.clear(); karten.clear(); zeilen.clear(); serien.clear(); beste.clear(); }
+        if (k && k.stand.crawledAt !== s.crawledAt) { teile.clear(); kacheln.clear(); karten.clear(); zeilen.clear(); serien.clear(); beste.clear(); groessen.clear(); }
         k = baue(s);
         standZeit = Date.now();
         return k;
@@ -109,7 +110,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     const bloecke = [];
     let ref = 0;
     for (const e of ix.arten) {
-      const a = { art: e.art, anzahl: e.anzahl, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [], beste: e.beste ?? 0 };
+      const a = { art: e.art, anzahl: e.anzahl, unter: e.unter, start: ref, ende: ref + e.anzahl, teile: [], beste: e.beste ?? 0, masse: e.masse ?? 0 };
       let von = ref;
       e.teile.forEach(([n, u0, u1], nr) => {
         const t = { art: e.art, nr, anzahl: n, von: u0, bis: u1, start: von, datei: `index/${e.art}/${String(nr).padStart(2, '0')}.json` };
@@ -228,6 +229,17 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     return rangfolge(treffer.map((e) => [e[0], wert(e)]));
   }
 
+  /** Map ref -> [width, depth, height] in metres for the rows of a kind whose size is known, or null. */
+  async function groessenFuer(name) {
+    if (!k.arten.get(name)?.masse) return null;
+    let m = groessen.get(name);
+    if (!m) {
+      const o = await holeJson(`index/${name}/masse.json`, { fehlend: {} });
+      m = groessen.set(name, new Map(Object.entries(o ?? {}).map(([r, v]) => [Number(r), v])));
+    }
+    return m;
+  }
+
   /** art -> Map ref -> place among the most popular rows of that kind (index/<art>/beste.json), only kinds that have one. */
   async function plaetzeFuer(artNamen) {
     const plaetze = new Map();
@@ -306,7 +318,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
    * the others count in gefaltet but not towards limit. The cursor stays a position, so a later page can show the
    * same group again.
    */
-  async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, gruppe, zusammenfassen = true, limit = 10, cursor, sortierung, minBeliebt, seit, sprache } = {}) {
+  async function suchen({ q, art: artName, unter, tags, lizenz, lizenzgruppe, format, quelle, mitVorschau, gruppe, zusammenfassen = true, limit = 10, cursor, sortierung, minBeliebt, seit, sprache, groesse = {} } = {}) {
     await stand();
     if (sortierung && !['relevance', 'popular'].includes(sortierung)) throw new FundusFehler('sort must be "relevance" or "popular"');
     if (seit && !/^\d{4}-\d{2}-\d{2}$/.test(seit)) throw new FundusFehler('since must be a date like 2026-11-01');
@@ -324,6 +336,12 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
     if (lizenzgruppe && !LIZENZGRUPPEN[lizenzgruppe]) throw new FundusFehler(`license_group must be one of ${Object.keys(LIZENZGRUPPEN).join(', ')}`);
     const lizenzN = lizenz ? normalisiere(lizenz) : null;
     const formatN = format ? normalisiere(format).replace(/^\./, '') : null;
+    // one format, several spellings: glTF comes as .glb or as .gltf (Poly Haven ships .gltf packages), jpeg is jpg
+    const FAMILIE = { glb: ['glb', 'gltf'], gltf: ['gltf', 'glb'], jpeg: ['jpg'], jpg: ['jpg'], tiff: ['tif'], tif: ['tif'] };
+    const formate = formatN ? FAMILIE[formatN] ?? [formatN] : null;
+    // size in metres: { minB, maxB, minT, maxT, minH, maxH }; only 3D models, only those whose size is known
+    const grenzen = Object.entries(groesse ?? {}).filter(([, v]) => Number.isFinite(v));
+    if (grenzen.length && (grp ? grp.art : artName) && (grp ? grp.art : artName) !== '3d') throw new FundusFehler('the size filters apply to kind "3d" only');
     const tagWoerter = (Array.isArray(tags) ? tags : tags ? [tags] : []).map((t) => woerter(t)).filter((w) => w.length);
     limit = Math.max(1, Math.min(50, Math.floor(limit)));
     let pos = 0;
@@ -336,7 +354,7 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       (!unterName || r.unter === unterName) &&
       (!lizenzN || normalisiere(r.lizenz) === lizenzN) &&
       (!lizenzgruppe || r.gruppe === lizenzgruppe) &&
-      (!formatN || r.formate.split(' ').includes(formatN)) &&
+      (!formate || r.formate.split(' ').some((f) => formate.includes(f))) &&
       (!qid || r.quelle === qid) &&
       (!mitVorschau || Boolean(r.vorschau)) &&
       tagWoerter.every((ws) => { const t = woerter(`${r.tags} ${r.unter}`); return ws.every((w) => t.some((x) => x.startsWith(w))); }) &&
@@ -344,7 +362,10 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
       (!minBeliebt || (r.pop?.[0] ?? 0) >= minBeliebt) &&
       (!seit || (r.neu ?? '') >= seit) &&
       (!grp || r.serie === grp.id);
-    const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length || grp || spracheN || minBeliebt || seit);
+    const zeilenfilter = Boolean(lizenzN || lizenzgruppe || formatN || qid || mitVorschau || tagWoerter.length || grp || spracheN || minBeliebt || seit || grenzen.length);
+    const IDX = { minB: [0, 1], maxB: [0, -1], minT: [1, 1], maxT: [1, -1], minH: [2, 1], maxH: [2, -1] };
+    const groessePasst = (m) => Boolean(m) && grenzen.every(([k2, v]) => { const [i, richtung] = IDX[k2] ?? [0, 0]; return richtung > 0 ? m[i] >= v : richtung < 0 ? m[i] <= v : true; });
+    const masse3d = grenzen.length || a?.art === '3d' || grp?.art === '3d' ? await groessenFuer('3d') : null;
 
     // the sequence of refs to walk
     let refs = null; // ranked hits (search) or null (listing over blocks)
@@ -446,10 +467,13 @@ export function erstelleKern({ daten, vorschau, fetch: holen = globalThis.fetch.
         }
         await Promise.all(vorne.map((u) => ladeTeil(u, zaehler)));
       }
-      const r = teile.get(t.datei)[i];
+      const r0 = teile.get(t.datei)[i];
       const fehlend = fehlt?.get(refs[pos]);
       pos++;
-      if (!r || !passt(r)) continue;
+      if (!r0 || !passt(r0)) continue;
+      const masse = r0.art === '3d' ? masse3d?.get(ref) : undefined;
+      if (grenzen.length && !groessePasst(masse)) continue;
+      const r = masse ? { ...r0, masse } : r0;
       if (!falten || !r.serie) { treffer.push(fehlend ? { ...r, fehlt: fehlend } : r); continue; }
       const da = gezeigt.get(r.serie);
       if (da) { da.hier++; gefaltet++; continue; }

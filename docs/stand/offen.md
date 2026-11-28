@@ -83,7 +83,14 @@ Offen, nach Nutzen geordnet:
   JSON-Teil der glTF-Datei, 93 plausibel; über 10 m sind Testszenen) und Fuel (2.642, aus `model.sdf` und nur den
   Mesh-Dateien, Meter, Z oben). Auf der Karte „… m (B × T × H, aus der Datei gemessen)“, im MCP als grob gekennzeichnet.
   Nachts misst der Lauf neue Modelle nach (8 Minuten). Commons-STL bewusst nicht: keine Einheit, 15 GB.
-- **Maßbereich als Filter** („Höhe 0,7 bis 0,8 m“): braucht die Maße als Zahlen in den Suchzeilen (`FELDER` in
+- **Zweite Rückmeldung (28.11. nachmittags), umgesetzt:** deutsche Suchwörter finden ihre englischen Entsprechungen
+  (`crawler/lib/synonyme.mjs`, 263 Wörter, auch auf der Seite); `format: glb` findet auch `.gltf`; die
+  Vorschau-Beschreibung verspricht keine Kontaktbögen mehr, wenn der Server keine zeichnet (`KONTAKTBOGEN "0"`);
+  `ungrouped` klappt Gruppen auf; Stilwörter sind als Tags beschrieben; `size` filtert 3D-Modelle nach Maßen
+  („height<=0.8 width<=1.8“, `index/3d/masse.json`) und die Suchzeilen zeigen eine Größenspalte. Nicht umgesetzt:
+  Bildauflösung in den Suchzeilen. Die doppelt geladenen Werkzeuge kommen aus der Einrichtung des Clients (lokaler
+  `mcp__fundus__*` und der Connector), nicht aus Fundus; maßgeblich ist der Connector `https://fundus.fynn.land/mcp`.
+- ~~**Maßbereich als Filter**~~ erledigt mit `size`, siehe oben. Ursprünglich: („Höhe 0,7 bis 0,8 m“): braucht die Maße als Zahlen in den Suchzeilen (`FELDER` in
   `publish.mjs`, eine Spalte), dann ein Parameter in `fundus_search`. Nur Poly Haven hat Maße; Fuel, Commons und
   Khronos nicht.
 - **Kleinere Fassungen von Bildern**: Commons liefert jede Breite über die Thumb-Adresse

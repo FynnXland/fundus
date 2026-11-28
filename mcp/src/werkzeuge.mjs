@@ -35,15 +35,32 @@ function vorschauSpalte(r) {
 export function suchzeilen(treffer, { rueckfall = false } = {}) {
   // a column for stars, downloads or ratings only when a row on the page has one (pictures and icons have none)
   const mitZahl = treffer.some((r) => r.bew || r.pop);
-  const kopf = `id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview${mitZahl ? '\tpopularity' : ''}${rueckfall ? '\tmissing' : ''}`;
+  // a size column when a 3D row on the page has a known size (index/3d/masse.json): width × depth × height in metres
+  const mitGroesse = treffer.some((r) => r.masse);
+  const kopf = `id\ttitle\tkind/subfolder\tlicense\tformats\tsource\tcreator\tpreview${mitGroesse ? '\tsize m (w×d×h)' : ''}${mitZahl ? '\tpopularity' : ''}${rueckfall ? '\tmissing' : ''}`;
   const zeilen = treffer.map((r) =>
-    [r.id, `${zeichen(r.titel, 70)}${gruppenMarke(r)}`, `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(mitZahl ? [beliebtheitSpalte(r)] : []), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
+    [r.id, `${zeichen(r.titel, 70)}${gruppenMarke(r)}`, `${r.art}/${r.unter}`, r.lizenz, r.formate.split(' ').slice(0, 5).join(' '), r.quellname, zeichen(r.urheber, 30), vorschauSpalte(r), ...(mitGroesse ? [r.masse ? r.masse.map((v) => (v < 0.1 ? v.toFixed(3) : v.toFixed(2))).join('×') : '-'] : []), ...(mitZahl ? [beliebtheitSpalte(r)] : []), ...(rueckfall ? [r.fehlt ?? '-'] : [])].join('\t'),
   );
   return [kopf, ...zeilen].join('\n');
 }
 
 /** A member of a group in a folded page: the row is its example, the mark names the group, its size and the hits here. */
 const gruppenMarke = (r) => (r.serie && r.hier ? ` [group ${r.serie}: ${r.serieAnzahl} entries${r.hier > 1 ? `, ${r.hier} here` : ''}]` : '');
+
+/** "height<=0.8 width>=1.2" (also h, w, d, depth, metres, comma decimals) -> { maxH: 0.8, minB: 1.2 }. */
+export function groessenGrenzen(text) {
+  const out = {};
+  if (!text) return out;
+  const ACHSE = { w: 'B', width: 'B', d: 'T', depth: 'T', h: 'H', height: 'H' };
+  const teile = String(text).toLowerCase().replace(/,(\d)/g, '.$1').match(/[a-z]+\s*[<>]=?\s*\d+(?:\.\d+)?/g) ?? [];
+  for (const teil of teile) {
+    const [, achse, op, zahl] = /([a-z]+)\s*([<>]=?)\s*(\d+(?:\.\d+)?)/.exec(teil);
+    if (!ACHSE[achse]) throw new FundusFehler(`size: unknown measure "${achse}"; use width, depth or height`);
+    out[`${op.startsWith('<') ? 'max' : 'min'}${ACHSE[achse]}`] = Number(zahl);
+  }
+  if (!teile.length) throw new FundusFehler('size: write limits like "height<=0.8 width<=1.8" (metres)');
+  return out;
+}
 
 function suchkopf(e, { q, art, limit }) {
   const was = `${e.gruppe ? ` in group ${e.gruppe.id} "${e.gruppe.name}"${e.gruppe.urheber ? ` by ${e.gruppe.urheber}` : ''}` : ''}${q ? ` for "${q}"` : ''}${art && !e.gruppe ? ` in ${art}` : ''}`;
@@ -88,7 +105,7 @@ export function detailtext(it, { mitUrls = true } = {}) {
   const m = it.meta ?? {};
   // size, polygons and textures before the download (Poly Haven models carry them): an agent furnishing a room should
   // not download ten models only to measure them (MCP feedback 28.11.2026)
-  if (m.abmessung) zeilen.push(`Size: ${m.abmessung.replace(/,/g, '.').replace('(B × T × H)', '(width × depth × height, as given by the source)').replace('(B × T × H. aus der Datei gemessen)', '(width × depth × height, measured by Fundus from the model file: rough, and only as right as the scale of the model)')}`);
+  if (m.abmessung) zeilen.push(`Size: ${m.abmessung.replace(/,/g, '.').replace('(B × T × H)', '(width × depth × height, as given by the source; the bounding box, so an arm or cable counts)').replace('(B × T × H. aus der Datei gemessen)', '(width × depth × height, measured by Fundus from the model file: rough, and only as right as the scale of the model)')}`);
   const fakten = [
     it.popularity ? `${it.popularity.value} ${it.popularity.label}` : '',
     m.polygone ? `${m.polygone} polygons` : '',
@@ -169,13 +186,13 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
       title: 'Fundus: search assets',
       description: 'Searches the Fundus catalogue of free assets and returns compact tab-separated rows (id, title, kind/subfolder, license, formats, source, creator, preview = own thumbnail yes/source/-). Query words are matched in title, tags, subfolder, kind name, creator, formats and description (word starts, plurals, small typos); title hits rank first and well-known entries (stars, downloads) are lifted. A column popularity shows stars, downloads or rating where an entry has them. Entries matching all words come first; if fewer than 3 do, entries matching most words follow, with a last column "missing" naming the words they lack. All filters are optional and combine; without query it lists a kind or subfolder. Related entries (a numbered series, an icon set, one designer at game-icons) come as one example row marked [group id: size]; pass group to list the members. Paged: pass the returned cursor for the next page. Next steps: fundus_preview (look), fundus_details (license, downloads).',
       inputSchema: z.object({
-        query: z.string().optional().describe('search words, e.g. "wooden chair"; English and German titles exist'),
+        query: z.string().optional().describe('search words, e.g. "wooden chair"; titles are mostly English, common German words also find their English equivalents'),
         kind: z.string().optional().describe('bild, grafik, 3d, textur, hdri, icon, musik, sound, schrift, skript, projekt, skill, video. Libraries, engines and apps (three.js, Godot) are projekt; skript holds small single scripts'),
         subfolder: z.string().optional().describe('subfolder of the kind, exactly as in fundus_catalog, e.g. "Möbel"'),
-        tags: z.array(z.string()).optional().describe('every tag must match the entry tags'),
+        tags: z.array(z.string()).optional().describe('every tag must match; style, era and material are tags (vintage, mid-century, rustic, wood, worn)'),
         license: z.string().optional().describe('exact license name, e.g. "CC0 1.0", "CC BY 4.0", "MIT"'),
         license_group: z.enum(['frei', 'nennung', 'gleich']).optional().describe('frei = no attribution needed, nennung = attribution, gleich = share-alike/copyleft'),
-        format: z.string().optional().describe('file format, e.g. glb, gltf, blend, fbx, stl, png, svg, mp3, wav, ogg, woff2, exr, hdr'),
+        format: z.string().optional().describe('file format, e.g. glb, gltf, blend, fbx, stl, png, svg, mp3, wav, ogg, woff2, exr, hdr (glb and gltf count as one)'),
         source: z.string().optional().describe('source id or name, e.g. polyhaven, ambientcg, wikimedia'),
         has_preview: z.boolean().optional().describe('only entries with an own thumbnail (fundus_preview works for them)'),
         language: z.string().optional().describe('programming language of a repository, e.g. "Rust", "Python", "C++", "TypeScript" (projekt, skript)'),
@@ -184,14 +201,21 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
         sort: z.enum(['relevance', 'popular']).optional().describe('relevance (default: word match, lifted by popularity) or popular (most stars/downloads first; without query it needs kind and lists the best known of the kind or subfolder)'),
         limit: z.number().int().min(1).max(50).optional().describe('rows per page, default 10'),
         group: z.string().optional().describe('group id from a [group …] mark, e.g. "3d.4f2a9c1e": lists the members of that group'),
+        ungrouped: z.boolean().optional().describe('true = no folding of group members'),
+        size: z.string().optional().describe('3D models with a known size, metres, e.g. "height<=0.8 width<=1.8" (width, depth, height; <= or >=)'),
         cursor: z.string().optional().describe('from the previous answer'),
       }),
       annotations: NUR_LESEN,
     },
     async (a) => {
       try {
-        const e = await kern.suchen({ q: a.query, art: a.kind, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, gruppe: a.group, limit: a.limit ?? 10, cursor: a.cursor, sortierung: a.sort, minBeliebt: a.min_popularity, seit: a.since, sprache: a.language });
-        const kopf = suchkopf(e, { q: a.query, art: a.kind, limit: a.limit ?? 10 });
+        const groesse = groessenGrenzen(a.size);
+        const mitGroesse = Object.keys(groesse).length > 0;
+        // a size filter means 3D models; say so instead of failing on a missing kind
+        const art = a.kind ?? (mitGroesse && !a.group ? '3d' : undefined);
+        const e = await kern.suchen({ q: a.query, art, unter: a.subfolder, tags: a.tags, lizenz: a.license, lizenzgruppe: a.license_group, format: a.format, quelle: a.source, mitVorschau: a.has_preview, gruppe: a.group, zusammenfassen: !a.ungrouped, limit: a.limit ?? 10, cursor: a.cursor, sortierung: a.sort, minBeliebt: a.min_popularity, seit: a.since, sprache: a.language, groesse });
+        let kopf = suchkopf(e, { q: a.query, art, limit: a.limit ?? 10 });
+        if (mitGroesse) kopf += ' Size filter: only 3D models whose size is known count (all Poly Haven models as given by the source; Fuel and Khronos measured by Fundus from the files, rough). A size is the bounding box of the model as delivered: an arm, cable or open door counts.';
         return text(e.treffer.length ? `${kopf}\n${suchzeilen(e.treffer, { rueckfall: e.rueckfall })}` : kopf);
       } catch (err) { return fehler(err); }
     },
@@ -201,10 +225,14 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     'fundus_preview',
     {
       title: 'Fundus: look at previews',
-      description: `Shows the own small preview pictures of catalogue entries, so you can judge them before downloading (3D models appear as a rendered still). layout "sheet" (default for several ids) puts all previews numbered on one picture with small cells: about ${Math.round((160 * 120) / 750)} image tokens per entry at cell_width 160, versus about ${Math.round((320 * 240) / 750)} for a single full preview. Only entries with preview "yes" in fundus_search have an own preview.${quellbild ? ' from_source also fetches the thumbnail at the original source for entries without own preview (direct request from this computer to the source).' : ' For entries without own preview the answer names the source thumbnail URL.'}`,
+      // the description says what this server does: without a codec (the Worker on the free plan) there are no
+      // contact sheets, and promising them cost an agent two failed calls (MCP feedback 28.11.2026)
+      description: codec
+        ? `Shows the own small preview pictures of catalogue entries, so you can judge them before downloading (3D models appear as a rendered still). layout "sheet" (default for several ids) puts all previews numbered on one picture with small cells: about ${Math.round((160 * 120) / 750)} image tokens per entry at cell_width 160, versus about ${Math.round((320 * 240) / 750)} for a single full preview. Only entries with preview "yes" in fundus_search have an own preview.${quellbild ? ' from_source also fetches the thumbnail at the original source for entries without own preview (direct request from this computer to the source).' : ' For entries without own preview the answer names the source thumbnail URL.'}`
+        : `Shows the own small preview pictures (320 px) of up to 6 catalogue entries per call, one picture each, so you can judge them before downloading (3D models appear as a rendered still). This server draws no contact sheets. Only entries with preview "yes" in fundus_search have an own preview.${quellbild ? ' from_source also fetches the thumbnail at the original source for entries without own preview (direct request from this computer to the source).' : ' For entries without own preview the answer names the source thumbnail URL.'}`,
       inputSchema: z.object({
-        ids: z.array(z.string()).min(1).max(16).describe('entry ids from fundus_search'),
-        layout: z.enum(['sheet', 'single']).optional().describe('sheet = one numbered contact sheet (cheap), single = one full 320 px picture per id (max 6)'),
+        ids: z.array(z.string()).min(1).max(codec ? 16 : 6).describe(codec ? 'entry ids from fundus_search' : 'entry ids from fundus_search, at most 6'),
+        layout: z.enum(['sheet', 'single']).optional().describe(codec ? 'sheet = one numbered contact sheet (cheap), single = one full 320 px picture per id (max 6)' : 'only "single" on this server'),
         cell_width: z.number().int().min(64).max(320).optional().describe('sheet cell width in px, default 160'),
         ...(quellbild ? { from_source: z.boolean().optional().describe('also fetch source thumbnails for entries without own preview') } : {}),
       }),
@@ -266,7 +294,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
     'fundus_details',
     {
       title: 'Fundus: entry details',
-      description: 'Full details of up to 5 entries: creator, license with link, ready-made attribution text, source page, description, facts the source gives (for many 3D models: size in metres, polygons, texture resolution, material) and the download options with format, size and direct link (packages list their file count). Use before downloading.',
+      description: 'Full details of up to 5 entries: creator, license with link, ready-made attribution text, source page, description, facts (3D: size in metres, polygons) and the download options with format, size and direct link (packages list their file count). Use before downloading.',
       inputSchema: z.object({ ids: z.array(z.string()).min(1).max(5).describe('entry ids from fundus_search') }),
       annotations: NUR_LESEN,
     },
@@ -355,7 +383,7 @@ export function baueServer({ kern, codec = null, herunterladen = null, quellbild
       'fundus_download_links',
       {
         title: 'Fundus: direct download links',
-        description: 'Direct links to the files of a download option at the original source (Fundus hosts no files), with the attribution text to keep next to them. Pass id for one entry or ids for up to 10 at once (one option number for all, default 1). Packages (e.g. glTF with textures) list every file with its relative path; save them in that structure. A package file may sit in a folder of another resolution at the source (Poly Haven shares one .bin across resolutions); that is expected.',
+        description: 'Direct links to the files of a download option at the original source (Fundus hosts no files), with the attribution text to keep next to them. id for one entry or ids for up to 10 (one option number for all). Packages list every file with its relative path; keep that structure (a file may sit in another resolution folder at the source, that is fine).',
         inputSchema: z.object({
           id: z.string().optional().describe('entry id (or use ids)'),
           ids: z.array(z.string()).min(1).max(10).optional().describe('up to 10 entry ids, like fundus_details takes them'),

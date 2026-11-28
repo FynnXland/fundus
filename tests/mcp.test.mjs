@@ -35,7 +35,9 @@ const items = [...eintraege].sort(mix);
 const byId = new Map(items.map((it) => [it.id, it]));
 
 function baueSite({ teil = 2, kopf = 2 } = {}) {
-  const { dateien, index } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe, teil, kopf });
+  // sizes as publish.mjs takes them from meta.abmessung (made up for the excerpt: two chairs, the prism has none)
+  const MASSE = { 'polyhaven:gallinera_chair': [0.47, 0.53, 0.83], 'polyhaven:painted_wooden_chair_01': [0.45, 0.5, 0.92], 'khronos:SheenChair': [0.83, 0.57, 0.69] };
+  const { dateien, index } = baueAusgabe(items, { arten: Object.keys(KINDS), felder: FELDER, zeile: (it) => zeile(it), suchfelder, lizenzgruppe, teil, kopf, masse: (it) => MASSE[it.id] ?? null });
   const perKind = Object.fromEntries(Object.keys(KINDS).map((k) => [k, 0]));
   const perUnter = Object.fromEntries(Object.keys(KINDS).map((k) => [k, {}]));
   const perFormat = {};
@@ -92,9 +94,11 @@ const erwartet = (fn) => items.filter(fn).map((it) => it.id).sort();
 /* ---------------- Core ---------------- */
 
 describe('Kern', () => {
-  test('die Kopie der Suche in mcp/src gleicht crawler/lib/suchindex.mjs (sonst: cd mcp && npm run sync)', async () => {
-    const [a, b] = await Promise.all([readFile(path.join(wurzel, 'crawler/lib/suchindex.mjs'), 'utf8'), readFile(path.join(wurzel, 'mcp/src/suchindex.mjs'), 'utf8')]);
-    assert.equal(b, a);
+  test('die Kopien der Suche in mcp/src gleichen crawler/lib (sonst: cd mcp && npm run sync)', async () => {
+    for (const datei of ['suchindex.mjs', 'synonyme.mjs']) {
+      const [a, b] = await Promise.all([readFile(path.join(wurzel, 'crawler/lib', datei), 'utf8'), readFile(path.join(wurzel, 'mcp/src', datei), 'utf8')]);
+      assert.equal(b, a, datei);
+    }
   });
 
   test('Vorschaupfad wie crawler/thumbs.mjs', async () => {
@@ -605,6 +609,54 @@ test('Details nennen Maße, Polygone, Material und Zustand vor dem Download', as
     preview: {}, downloads: [{ label: 'glTF-Paket (2K-Texturen)', url: 'https://dl.polyhaven.org/x.gltf', format: 'zip' }],
   };
   const t = detailtext(it);
-  assert.match(t, /^Size: 0\.40 × 0\.43 × 0\.019 m \(width × depth × height, as given by the source\)$/m);
+  assert.match(t, /^Size: 0\.40 × 0\.43 × 0\.019 m \(width × depth × height, as given by the source; the bounding box/m);
   assert.match(t, /9546 polygons · textures up to 4096 × 4096 px · material Kunststoff · condition abgenutzt/);
+});
+
+
+describe('Rückmeldung 28.11.2026: deutsche Wörter, Formatfamilie, Größe', () => {
+  test('deutsche Wörter finden ihre englischen Entsprechungen, das deutsche Wort bleibt das Suchwort', async () => {
+    const { alternativen } = await import('../crawler/lib/synonyme.mjs');
+    assert.deepEqual(alternativen('teppich'), [['teppich'], ['rug'], ['carpet']]);
+    assert.deepEqual(alternativen('stillleben'), [['stillleben'], ['still', 'life']]);
+    assert.deepEqual(alternativen('chair'), [['chair']]);
+    const { kern } = neuerKern();
+    const e = await kern.suchen({ q: 'stuhl', art: '3d' });
+    assert.ok(e.treffer.some((r) => r.id === 'polyhaven:gallinera_chair'), 'Stuhl findet chair');
+    const v = await kern.suchen({ q: 'antik stuhl' });
+    assert.equal(v.treffer[0].id, 'polyhaven:gallinera_chair');
+  });
+
+  test('format glb findet auch .gltf-Pakete', async () => {
+    const { kern } = neuerKern();
+    const e = await kern.suchen({ q: 'chair', art: '3d', format: 'glb' });
+    assert.ok(e.treffer.some((r) => r.quelle === 'polyhaven'), JSON.stringify(e.treffer.map((r) => r.id)));
+  });
+
+  test('Größenfilter nur über Einträge mit bekannter Größe, die Zeilen tragen die Größe', async () => {
+    const { kern } = neuerKern();
+    const niedrig = await kern.suchen({ art: '3d', groesse: { maxH: 0.85 } });
+    assert.deepEqual(niedrig.treffer.map((r) => r.id).sort(), ['khronos:SheenChair', 'polyhaven:gallinera_chair']);
+    assert.deepEqual(niedrig.treffer.find((r) => r.id === 'khronos:SheenChair').masse, [0.83, 0.57, 0.69]);
+    const breit = await kern.suchen({ q: 'chair', groesse: { minB: 0.8 } });
+    assert.deepEqual(breit.treffer.map((r) => r.id), ['khronos:SheenChair']);
+    await assert.rejects(kern.suchen({ art: 'bild', groesse: { maxH: 1 } }), /kind "3d" only/);
+  });
+
+  test('size als Text: Höhe, Breite, Tiefe mit <= und >=', async () => {
+    const { groessenGrenzen } = await import('../mcp/src/werkzeuge.mjs');
+    assert.deepEqual(groessenGrenzen('height<=0.8 width>=1,2'), { maxH: 0.8, minB: 1.2 });
+    assert.deepEqual(groessenGrenzen('d < 0.6'), { maxT: 0.6 });
+    assert.throws(() => groessenGrenzen('volume<=2'), /unknown measure/);
+    assert.throws(() => groessenGrenzen('klein'), /height<=0.8/);
+  });
+
+  test('Suchzeilen bekommen eine Größenspalte, sobald eine Zeile eine Größe hat', async () => {
+    const { suchzeilen } = await import('../mcp/src/werkzeuge.mjs');
+    const { kern } = neuerKern();
+    const e = await kern.suchen({ q: 'chair', art: '3d' });
+    const t = suchzeilen(e.treffer);
+    assert.match(t.split('\n')[0], /\tsize m \(w×d×h\)/);
+    assert.match(t, /polyhaven:gallinera_chair\t.*\t0\.47×0\.53×0\.83/);
+  });
 });

@@ -13,6 +13,8 @@
 // suche() is the AND search (every word must match). The pieces below it (kartenFuer, undVerknuepft,
 // teilTreffer) let a caller fall back to entries matching most words when AND finds (almost) nothing.
 
+import { alternativen } from './synonyme.mjs';
+
 export const GEWICHTE = [3, 2, 1, 0.5];
 
 /** Lowercase, accents and umlauts folded (ä → a, ß → ss), so "Gemälde" and "gemalde" meet. */
@@ -186,8 +188,8 @@ export function kachelnFuerWort(w, schluessel) {
   return out;
 }
 
-/** All tiles a query needs. */
-export const kachelnFuerAnfrage = (anfrage, schluessel) => [...new Set([...new Set(woerter(anfrage))].flatMap((w) => kachelnFuerWort(w, schluessel)))];
+/** All tiles a query needs, the English equivalents of German words included (synonyme.mjs). */
+export const kachelnFuerAnfrage = (anfrage, schluessel) => [...new Set([...new Set(woerter(anfrage))].flatMap((w) => alternativen(w).flat()).flatMap((w) => kachelnFuerWort(w, schluessel)))];
 
 /**
  * Score of every ref for one query word: exact 1, singular or plural of it 0.9 ("chairs"/"chair"), start of a
@@ -220,10 +222,25 @@ export function wortPunkte(w, kacheln, schluessel) {
   return punkte;
 }
 
-/** The per-word scores of a query: { ws: distinct words, karten: [Map ref -> score] in the same order }. */
+/**
+ * The per-word scores of a query: { ws: distinct words, karten: [Map ref -> score] in the same order }. A German word
+ * with English equivalents ("teppich": rug, carpet) scores what any of them finds; a two-word equivalent ("still life")
+ * needs both words. The word stays one query word, so "missing" names it as typed.
+ */
 export function kartenFuer(anfrage, kacheln, schluessel) {
   const ws = [...new Set(woerter(anfrage))].slice(0, 16);
-  return { ws, karten: ws.map((w) => wortPunkte(w, kacheln, schluessel)) };
+  return { ws, karten: ws.map((w) => wortKarte(w, kacheln, schluessel)) };
+}
+
+function wortKarte(w, kacheln, schluessel) {
+  const alts = alternativen(w);
+  if (alts.length === 1) return wortPunkte(w, kacheln, schluessel);
+  const out = new Map();
+  for (const alt of alts) {
+    const m = alt.length === 1 ? wortPunkte(alt[0], kacheln, schluessel) : new Map([...undVerknuepft(alt.map((x) => wortPunkte(x, kacheln, schluessel)))].map(([r, p]) => [r, p / alt.length]));
+    for (const [r, p] of m) if ((out.get(r) ?? 0) < p) out.set(r, p);
+  }
+  return out;
 }
 
 /** Refs found by every word, score = sum of the word scores. */
@@ -290,7 +307,7 @@ export function suche(anfrage, kacheln, schluessel) {
   if (!ws.length) return new Map();
   let ergebnis = null;
   for (const w of ws) {
-    const punkte = wortPunkte(w, kacheln, schluessel);
+    const punkte = wortKarte(w, kacheln, schluessel);
     if (ergebnis === null) ergebnis = punkte;
     else {
       const neu = new Map();
